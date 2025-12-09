@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('fpid');
             $table->string('nama_pegawai');
             $table->string('name');
+            $table->string('role'); // ka-unit, pmk, pko, admin
+            $table->foreignId('parent_id')->nullable()->constrained('users')->onDelete('set null');
             $table->string('email')->unique();
             $table->string('password');
             $table->string('nip_nrp');
@@ -31,10 +33,12 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
 
-            // Indexes untuk performance (PostgreSQL)
+            // Indexes untuk performance
             $table->index('email');
             $table->index('guid');
             $table->index('nip_nrp');
+            $table->index('parent_id');
+            $table->index('role');
         });
     }
 

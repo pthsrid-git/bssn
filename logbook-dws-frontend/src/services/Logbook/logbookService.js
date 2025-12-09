@@ -36,19 +36,32 @@ api.interceptors.response.use(
 )
 
 export const logbookService = {
+
   async login(credentials) {
     try {
       const response = await api.post('/auth/login', credentials)
       
-      if (response.data.access_token) {
-        localStorage.setItem('token', response.data.access_token)
-        localStorage.setItem('user', JSON.stringify(response.data.user))
-        api.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`
+      console.log('📡 Full Response:', response.data)
+      
+      // Sesuaikan dengan struktur response backend
+      const data = response.data.data // Ambil dari response.data.data
+      
+      if (data && data.access_token) {
+        const { access_token, user } = data
+        
+        localStorage.setItem('token', access_token)
+        localStorage.setItem('user', JSON.stringify(user))
+        api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
+        
+        console.log('✅ Token saved:', access_token)
+        console.log('✅ User saved:', user)
+      } else {
+        console.error('❌ No access_token in response')
       }
       
       return response.data
     } catch (error) {
-      console.error('Login error:', error)
+      console.error('❌ Login error:', error.response?.data)
       throw error
     }
   },

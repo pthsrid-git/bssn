@@ -130,7 +130,17 @@ import ModalDetailAktivitas from '../components/Logbook/ModalDetailAktivitas.vue
 import { logbookService } from '../services/Logbook/logbookService'
 
 const activeTab = ref('pengisian')
-const selectedDate = ref('Desember (07 Desember 2025)')
+const selectedDate = ref('')
+
+onMounted(() => {
+  const today = new Date()
+  const monthName = today.toLocaleDateString('id-ID', { month: 'long' })
+  const formattedDate = today.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })
+  selectedDate.value = `${monthName} (${formattedDate})`
+  
+  fetchLogbook()
+})
+
 const loading = ref(false)
 const loadingSKP = ref(false)
 const showAddModal = ref(false)

@@ -19,19 +19,19 @@
           <div class="flex gap-8">
             <div>
               <div class="text-xs text-gray-500 mb-1">Nama</div>
-              <div class="text-sm font-medium text-gray-900">{{ userData?.name || 'Moh. Kemal Hibatullah Ammar' }}</div>
+              <div class="text-sm font-medium text-gray-900">{{ userData?.nama_pegawai || userData?.name || '-' }}</div>
             </div>
             <div>
               <div class="text-xs text-gray-500 mb-1">NIP</div>
-              <div class="text-sm font-medium text-gray-900">{{ userData?.nip_nrp || '199908292022031001' }}</div>
+              <div class="text-sm font-medium text-gray-900">{{ userData?.nip_nrp || '-' }}</div>
             </div>
             <div>
               <div class="text-xs text-gray-500 mb-1">Jenis Pegawai</div>
-              <div class="text-sm font-medium text-gray-900">{{ userData?.jenis_pegawai || 'Pegawai' }}</div>
+              <div class="text-sm font-medium text-gray-900">{{ userData?.pangkat_golongan || '-' }}</div>
             </div>
             <div>
               <div class="text-xs text-gray-500 mb-1">Unit Kerja</div>
-              <div class="text-sm font-medium text-gray-900">{{ userData?.nama_unit_organisasi || 'Biro Organisasi dan Sumber Daya Manusia' }}</div>
+              <div class="text-sm font-medium text-gray-900">{{ userData?.nama_unit_organisasi || '-' }}</div>
             </div>
           </div>
           <div>
@@ -51,19 +51,19 @@
         <div class="md:hidden space-y-3">
           <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
             <div class="text-xs text-gray-500 mb-1">Nama</div>
-            <div class="text-sm font-medium text-gray-900">{{ userData?.name || 'Moh. Kemal Hibatullah Ammar' }}</div>
+            <div class="text-sm font-medium text-gray-900">{{ userData?.nama_pegawai || userData?.name || '-' }}</div>
           </div>
           <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
             <div class="text-xs text-gray-500 mb-1">NIP</div>
-            <div class="text-sm font-medium text-gray-900">{{ userData?.nip || '199908292022031001' }}</div>
+            <div class="text-sm font-medium text-gray-900">{{ userData?.nip_nrp || '-' }}</div>
           </div>
           <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
             <div class="text-xs text-gray-500 mb-1">Jenis Pegawai</div>
-            <div class="text-sm font-medium text-gray-900">{{ userData?.jenis_pegawai || 'Pegawai' }}</div>
+            <div class="text-sm font-medium text-gray-900">{{ userData?.jenis_pegawai || '-' }}</div>
           </div>
           <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
             <div class="text-xs text-gray-500 mb-1">Unit Kerja</div>
-            <div class="text-sm font-medium text-gray-900">{{ userData?.unit_kerja || 'Biro Organisasi dan Sumber Daya Manusia' }}</div>
+            <div class="text-sm font-medium text-gray-900">{{ userData?.nama_unit_organisasi || '-' }}</div>
           </div>
           <button 
             @click="syncEkinerja"
@@ -220,25 +220,25 @@
           <div class="space-y-2">
             <div class="flex">
               <span class="text-xs text-gray-600 w-32">Nama</span>
-              <span class="text-xs text-gray-900 font-medium">{{ skpDetail.pegawai.nama }}</span>
+              <span class="text-xs text-gray-900 font-medium">{{ userData?.nama_pegawai || userData?.name || '-' }}</span>
             </div>
             <div class="flex">
               <span class="text-xs text-gray-600 w-32">NIP</span>
-              <span class="text-xs text-gray-900 font-medium">{{ skpDetail.pegawai.nip }}</span>
+              <span class="text-xs text-gray-900 font-medium">{{ userData?.nip_nrp || '-' }}</span>
             </div>
             <div class="flex">
               <span class="text-xs text-gray-600 w-32">Pangkat / Gol. Ruang</span>
-              <span class="text-xs text-gray-900 font-medium">{{ skpDetail.pegawai.pangkat }}</span>
+              <span class="text-xs text-gray-900 font-medium">{{ userData?.pangkat_golongan || '-' }}</span>
             </div>
             <div class="flex">
               <span class="text-xs text-gray-600 w-32">Jabatan</span>
-              <span class="text-xs text-gray-900 font-medium">{{ skpDetail.pegawai.jabatan }}</span>
+              <span class="text-xs text-gray-900 font-medium">{{ userData?.nama_jabatan || '-' }}</span>
             </div>
             <div class="flex">
               <span class="text-xs text-gray-600 w-32">Unit Kerja</span>
               <div class="flex-1">
-                <span class="text-xs text-gray-900 font-medium">{{ skpDetail.pegawai.unitKerja }}</span>
-                <div class="text-xs text-gray-500 mt-1">ID : {{ skpDetail.pegawai.unitKerjaId }}</div>
+                <span class="text-xs text-gray-900 font-medium">{{ userData?.nama_unit_organisasi || '-' }}</span>
+                <div class="text-xs text-gray-500 mt-1">ID : {{ userData?.guid || '-' }}</div>
               </div>
             </div>
           </div>
@@ -247,30 +247,33 @@
         <!-- Pejabat penilai kinerja -->
         <div class="bg-blue-50 rounded-lg p-4">
           <h3 class="text-sm font-semibold text-gray-900 mb-3">Pejabat penilai kinerja</h3>
-          <div class="space-y-2">
+          <div v-if="userData?.parent" class="space-y-2">
             <div class="flex">
               <span class="text-xs text-gray-600 w-32">Nama</span>
-              <span class="text-xs text-gray-900 font-medium">{{ skpDetail.penilai.nama }}</span>
+              <span class="text-xs text-gray-900 font-medium">{{ userData.parent.nama_pegawai || '-' }}</span>
             </div>
             <div class="flex">
               <span class="text-xs text-gray-600 w-32">NIP</span>
-              <span class="text-xs text-gray-900 font-medium">{{ skpDetail.penilai.nip }}</span>
+              <span class="text-xs text-gray-900 font-medium">{{ userData.parent.nip_nrp || '-' }}</span>
             </div>
             <div class="flex">
               <span class="text-xs text-gray-600 w-32">Pangkat / Gol. Ruang</span>
-              <span class="text-xs text-gray-900 font-medium">{{ skpDetail.penilai.pangkat }}</span>
+              <span class="text-xs text-gray-900 font-medium">{{ userData.parent.pangkat_golongan || '-' }}</span>
             </div>
             <div class="flex">
               <span class="text-xs text-gray-600 w-32">Jabatan</span>
-              <span class="text-xs text-gray-900 font-medium">{{ skpDetail.penilai.jabatan }}</span>
+              <span class="text-xs text-gray-900 font-medium">{{ userData.parent.nama_jabatan || '-' }}</span>
             </div>
             <div class="flex">
               <span class="text-xs text-gray-600 w-32">Unit Kerja</span>
               <div class="flex-1">
-                <span class="text-xs text-gray-900 font-medium">{{ skpDetail.penilai.unitKerja }}</span>
-                <div class="text-xs text-gray-500 mt-1">ID : {{ skpDetail.penilai.unitKerjaId }}</div>
+                <span class="text-xs text-gray-900 font-medium">{{ userData.parent.nama_unit_organisasi || '-' }}</span>
+                <div class="text-xs text-gray-500 mt-1">ID : {{ userData.parent.guid || '-' }}</div>
               </div>
             </div>
+          </div>
+          <div v-else class="text-xs text-gray-500 text-center py-4">
+            Tidak ada pejabat penilai
           </div>
         </div>
       </div>
@@ -531,9 +534,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
-// Props
 const props = defineProps({
   loading: {
     type: Boolean,
@@ -541,12 +543,25 @@ const props = defineProps({
   }
 })
 
-// State
-const userData = ref(null)
+// Get user data from localStorage
+const userData = computed(() => {
+  const userStr = localStorage.getItem('user')
+  if (userStr) {
+    try {
+      return JSON.parse(userStr)
+    } catch (e) {
+      console.error('Error parsing user data:', e)
+      return {}
+    }
+  }
+  return {}
+})
+
 const showDetail = ref(false)
 const selectedSkpId = ref(null)
 const activeTab = ref('utama')
 
+// Dummy SKP data - bisa diganti dengan API call
 const skpData = ref([
   {
     id: 1,
@@ -744,49 +759,16 @@ const backToList = () => {
   selectedSkpId.value = null
 }
 
-// Lifecycle
 onMounted(() => {
-  // Note: In a real application with API integration, you would fetch user data like this:
-  // Example data structure from database:
-  // userData.value = {
-  //   id: 2,
-  //   name: "MASRUHAN KHOTIB, S.Tr.TP",
-  //   nama_pegawai: "MASRUHAN KHOTIB, S.Tr.TP",
-  //   nip_nrp: "199908292022031001",
-  //   email: "yyyy.yyyy@bssn.go.id",
-  //   fpid: "yyyy",
-  //   golongan: "II/c",
-  //   pangkat_golongan: "Pengatur (II/c)",
-  //   kelas: "6",
-  //   nama_jabatan: "Pengolah Data dan Informasi",
-  //   nama_lengkap_peta_jabatan: "Pengolah Data dan Informasi pada Pusat Data dan Teknologi Informasi Komunikasi, Badan Siber dan Sandi Negara",
-  //   kode_peta_jabatan: "LAK-LAHDATIN.P2",
-  //   nama_unit_organisasi: "Pusat Data dan Teknologi Informasi Komunikasi, Badan Siber dan Sandi Negara",
-  //   kode_unit_organisasi: "P2",
-  //   guid: "f66f0271-628c-4f66-990c-4672663e1626",
-  //   created_at: "2025-12-06T18:21:14.000000Z",
-  //   updated_at: "2025-12-06T18:21:14.000000Z"
-  // }
+  console.log('User Data loaded:', userData.value)
   
-  // For demo purposes, using default data
-  userData.value = {
-    name: "MASRUHAN KHOTIB, S.Tr.TP",
-    nama_pegawai: "MASRUHAN KHOTIB, S.Tr.TP",
-    nip_nrp: "199908292022031001",
-    pangkat_golongan: "Pengatur (II/c)",
-    nama_jabatan: "Pengolah Data dan Informasi",
-    nama_unit_organisasi: "Pusat Data dan Teknologi Informasi Komunikasi, Badan Siber dan Sandi Negara",
-    guid: "f66f0271-628c-4f66-990c-4672663e1626"
-  }
-  
-  // Update skpDetail with userData
-  skpDetail.value.pegawai = {
-    nama: userData.value.nama_pegawai || userData.value.name,
-    nip: userData.value.nip_nrp,
-    pangkat: userData.value.pangkat_golongan,
-    jabatan: userData.value.nama_jabatan,
-    unitKerja: userData.value.nama_unit_organisasi,
-    unitKerjaId: userData.value.guid
+  // Update skpData dengan data user yang sebenarnya
+  if (userData.value) {
+    skpData.value = skpData.value.map(skp => ({
+      ...skp,
+      unitKerja: userData.value.nama_unit_organisasi || skp.unitKerja,
+      jabatan: userData.value.nama_jabatan || skp.jabatan
+    }))
   }
 })
 </script>

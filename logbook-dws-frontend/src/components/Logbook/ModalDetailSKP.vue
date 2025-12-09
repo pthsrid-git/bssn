@@ -40,25 +40,25 @@
             <div class="space-y-2">
               <div class="flex">
                 <span class="text-xs text-gray-600 w-32">Nama</span>
-                <span class="text-xs text-gray-900 font-medium">{{ skpDetail.pegawai.nama }}</span>
+                <span class="text-xs text-gray-900 font-medium">{{ userData.nama_pegawai }}</span>
               </div>
               <div class="flex">
                 <span class="text-xs text-gray-600 w-32">NIP</span>
-                <span class="text-xs text-gray-900 font-medium">{{ skpDetail.pegawai.nip }}</span>
+                <span class="text-xs text-gray-900 font-medium">{{ userData.nip_nrp }}</span>
               </div>
               <div class="flex">
                 <span class="text-xs text-gray-600 w-32">Pangkat / Gol. Ruang</span>
-                <span class="text-xs text-gray-900 font-medium">{{ skpDetail.pegawai.pangkat }}</span>
+                <span class="text-xs text-gray-900 font-medium">{{ userData.pangkat_golongan || '-' }}</span>
               </div>
               <div class="flex">
                 <span class="text-xs text-gray-600 w-32">Jabatan</span>
-                <span class="text-xs text-gray-900 font-medium">{{ skpDetail.pegawai.jabatan }}</span>
+                <span class="text-xs text-gray-900 font-medium">{{ userData.nama_jabatan || '-' }}</span>
               </div>
               <div class="flex">
                 <span class="text-xs text-gray-600 w-32">Unit Kerja</span>
                 <div class="flex-1">
-                  <span class="text-xs text-gray-900 font-medium">{{ skpDetail.pegawai.unitKerja }}</span>
-                  <div class="text-xs text-gray-500 mt-1">ID : {{ skpDetail.pegawai.unitKerjaId }}</div>
+                  <span class="text-xs text-gray-900 font-medium">{{ userData.nama_unit_organisasi || '-' }}</span>
+                  <div class="text-xs text-gray-500 mt-1">ID : {{ userData.guid || '-' }}</div>
                 </div>
               </div>
             </div>
@@ -67,30 +67,33 @@
           <!-- Pejabat penilai kinerja -->
           <div class="bg-blue-50 rounded-lg p-4">
             <h3 class="text-sm font-semibold text-gray-900 mb-3">Pejabat penilai kinerja</h3>
-            <div class="space-y-2">
+            <div v-if="userData.parent" class="space-y-2">
               <div class="flex">
                 <span class="text-xs text-gray-600 w-32">Nama</span>
-                <span class="text-xs text-gray-900 font-medium">{{ skpDetail.penilai.nama }}</span>
+                <span class="text-xs text-gray-900 font-medium">{{ userData.parent.nama_pegawai }}</span>
               </div>
               <div class="flex">
                 <span class="text-xs text-gray-600 w-32">NIP</span>
-                <span class="text-xs text-gray-900 font-medium">{{ skpDetail.penilai.nip }}</span>
+                <span class="text-xs text-gray-900 font-medium">{{ userData.parent.nip_nrp || '-' }}</span>
               </div>
               <div class="flex">
                 <span class="text-xs text-gray-600 w-32">Pangkat / Gol. Ruang</span>
-                <span class="text-xs text-gray-900 font-medium">{{ skpDetail.penilai.pangkat }}</span>
+                <span class="text-xs text-gray-900 font-medium">{{ userData.parent.pangkat_golongan || '-' }}</span>
               </div>
               <div class="flex">
                 <span class="text-xs text-gray-600 w-32">Jabatan</span>
-                <span class="text-xs text-gray-900 font-medium">{{ skpDetail.penilai.jabatan }}</span>
+                <span class="text-xs text-gray-900 font-medium">{{ userData.parent.nama_jabatan || '-' }}</span>
               </div>
               <div class="flex">
                 <span class="text-xs text-gray-600 w-32">Unit Kerja</span>
                 <div class="flex-1">
-                  <span class="text-xs text-gray-900 font-medium">{{ skpDetail.penilai.unitKerja }}</span>
-                  <div class="text-xs text-gray-500 mt-1">ID : {{ skpDetail.penilai.unitKerjaId }}</div>
+                  <span class="text-xs text-gray-900 font-medium">{{ userData.parent.nama_unit_organisasi || '-' }}</span>
+                  <div class="text-xs text-gray-500 mt-1">ID : {{ userData.parent.kode_unit_organisasi || '-' }}</div>
                 </div>
               </div>
+            </div>
+            <div v-else class="text-xs text-gray-500 text-center py-4">
+              Tidak ada pejabat penilai
             </div>
           </div>
         </div>
@@ -211,7 +214,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 const props = defineProps({
   show: {
@@ -228,60 +231,23 @@ const emit = defineEmits(['close'])
 
 const activeTab = ref('utama')
 
-// Dummy data
+// Get user data from localStorage
+const userData = computed(() => {
+  const userStr = localStorage.getItem('user')
+  if (userStr) {
+    try {
+      return JSON.parse(userStr)
+    } catch (e) {
+      console.error('Error parsing user data:', e)
+      return {}
+    }
+  }
+  return {}
+})
+
+// Dummy data untuk hasil kerja
 const skpDetail = ref({
-  pegawai: {
-    nama: 'Moh. Kemal Hibatullah Ammar',
-    nip: '199908292022031001',
-    pangkat: 'Pengatur / II/c',
-    jabatan: 'Pranata Komputer Terampil',
-    unitKerja: 'Biro Organisasi dan Sumber Daya Manusia',
-    unitKerjaId: '8ae483c67b04ddcd017bf1aa8ec56dc2'
-  },
-  penilai: {
-    nama: 'ANTON MARTIN, S.E., M.H.',
-    nip: '197006132000121001',
-    pangkat: 'Pembina Utama Muda / IVc',
-    jabatan: 'KEPALA BIRO ORGANISASI DAN SUMBER DAYA MANUSIA',
-    unitKerja: 'Biro Organisasi dan Sumber Daya Manusia',
-    unitKerjaId: '8ae483c67b04ddcd017bf1aa8ec56dc2'
-  },
   hasilKerja: [
-    {
-      rencanaPimpinan: 'Pengangkatan pegawai BSSN yang sesuai kebutuhan',
-      rencanaHasil: 'Terpenuhinya KepKA BSSN tentang Pengangkatan CPNS Umum Tahun 2025',
-      aspek: 'Kuantitas',
-      indikator: 'Terpenuhinya Surat pengangkatan CPNS Umum Tahun 2025',
-      target: '100%'
-    },
-    {
-      rencanaPimpinan: 'Pengangkatan pegawai BSSN yang sesuai kebutuhan',
-      rencanaHasil: 'Terpenuhinya KepKA BSSN tentang Pengangkatan CPNS Umum Tahun 2025',
-      aspek: 'Kuantitas',
-      indikator: 'Terpenuhinya Surat pengangkatan CPNS Umum Tahun 2025',
-      target: '100%'
-    },
-    {
-      rencanaPimpinan: 'Pengangkatan pegawai BSSN yang sesuai kebutuhan',
-      rencanaHasil: 'Terpenuhinya KepKA BSSN tentang Pengangkatan CPNS Umum Tahun 2025',
-      aspek: 'Kuantitas',
-      indikator: 'Terpenuhinya Surat pengangkatan CPNS Umum Tahun 2025',
-      target: '100%'
-    },
-    {
-      rencanaPimpinan: 'Pengangkatan pegawai BSSN yang sesuai kebutuhan',
-      rencanaHasil: 'Terpenuhinya KepKA BSSN tentang Pengangkatan CPNS Umum Tahun 2025',
-      aspek: 'Kuantitas',
-      indikator: 'Terpenuhinya Surat pengangkatan CPNS Umum Tahun 2025',
-      target: '100%'
-    },
-    {
-      rencanaPimpinan: 'Pengangkatan pegawai BSSN yang sesuai kebutuhan',
-      rencanaHasil: 'Terpenuhinya KepKA BSSN tentang Pengangkatan CPNS Umum Tahun 2025',
-      aspek: 'Kuantitas',
-      indikator: 'Terpenuhinya Surat pengangkatan CPNS Umum Tahun 2025',
-      target: '100%'
-    },
     {
       rencanaPimpinan: 'Pengangkatan pegawai BSSN yang sesuai kebutuhan',
       rencanaHasil: 'Terpenuhinya KepKA BSSN tentang Pengangkatan CPNS Umum Tahun 2025',
@@ -299,7 +265,25 @@ const skpDetail = ref({
   ]
 })
 
+const getRoleName = (role) => {
+  const roleNames = {
+    'ka-unit': 'Kepala Unit',
+    'pmk': 'Pejabat Manajemen Kinerja',
+    'pko': 'Pegawai Karier/Operasional',
+    'admin': 'Administrator'
+  }
+  return roleNames[role] || role
+}
+
 const closeModal = () => {
   emit('close')
 }
+
+// Optional: Load SKP data dari API jika diperlukan
+onMounted(() => {
+  if (props.skpId) {
+    // Fetch SKP detail dari API
+    // await fetchSKPDetail(props.skpId)
+  }
+})
 </script>

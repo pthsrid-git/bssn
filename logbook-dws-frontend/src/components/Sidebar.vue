@@ -227,6 +227,8 @@
         Halo Pusdaik
       </a>
 
+      <div class="px-4 text-xs font-semibold text-gray-400 mb-3 tracking-wider">RUANG KERJA</div>
+
       <!-- Logout -->
       <div class="px-4 mt-4 pt-4 border-t border-[#263053]">
         <button
