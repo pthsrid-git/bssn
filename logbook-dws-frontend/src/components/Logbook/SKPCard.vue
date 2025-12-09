@@ -7,42 +7,43 @@
         Sasaran Kerja Pegawai (SKP)
       </h1>
 
+      <!-- Divider -->
+      <div class="border-t border-gray-200 my-6"></div>
+
       <!-- Data Profil Section -->
       <div class="mb-8">
         <h2 class="text-base font-semibold text-gray-900 mb-4">Data Profil</h2>
         
         <!-- Desktop Profile Grid - Horizontal Layout -->
-        <div class="hidden md:block bg-gray-50 border border-gray-200 rounded-lg overflow-hidden">
-          <div class="flex items-center">
-            <div class="flex-1 grid grid-cols-4 divide-x divide-gray-200">
-              <div class="px-4 py-3">
-                <div class="text-xs text-gray-500 mb-1">Nama</div>
-                <div class="text-sm font-medium text-gray-900">{{ userData?.name || 'Moh. Kemal Hibatullah Ammar' }}</div>
-              </div>
-              <div class="px-4 py-3">
-                <div class="text-xs text-gray-500 mb-1">NIP</div>
-                <div class="text-sm font-medium text-gray-900">{{ userData?.nip || '199908292022031001' }}</div>
-              </div>
-              <div class="px-4 py-3">
-                <div class="text-xs text-gray-500 mb-1">Jenis Pegawai</div>
-                <div class="text-sm font-medium text-gray-900">{{ userData?.jenis_pegawai || 'Pegawai' }}</div>
-              </div>
-              <div class="px-4 py-3">
-                <div class="text-xs text-gray-500 mb-1">Unit Kerja</div>
-                <div class="text-sm font-medium text-gray-900">{{ userData?.unit_kerja || 'Biro Organisasi dan Sumber Daya Manusia' }}</div>
-              </div>
+        <div class="hidden md:flex items-center justify-between bg-white border-b border-gray-200 pb-6">
+          <div class="flex gap-8">
+            <div>
+              <div class="text-xs text-gray-500 mb-1">Nama</div>
+              <div class="text-sm font-medium text-gray-900">{{ userData?.name || 'Moh. Kemal Hibatullah Ammar' }}</div>
             </div>
-            <div class="px-4 py-3 border-l border-gray-200">
-              <button 
-                @click="syncEkinerja"
-                class="flex items-center gap-2 bg-yellow-50 text-yellow-700 px-3 py-2 rounded-lg text-xs font-medium border border-yellow-200 hover:bg-yellow-100 transition-colors whitespace-nowrap"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                </svg>
-                Sinkronasi ekinerja BKN
-              </button>
+            <div>
+              <div class="text-xs text-gray-500 mb-1">NIP</div>
+              <div class="text-sm font-medium text-gray-900">{{ userData?.nip_nrp || '199908292022031001' }}</div>
             </div>
+            <div>
+              <div class="text-xs text-gray-500 mb-1">Jenis Pegawai</div>
+              <div class="text-sm font-medium text-gray-900">{{ userData?.jenis_pegawai || 'Pegawai' }}</div>
+            </div>
+            <div>
+              <div class="text-xs text-gray-500 mb-1">Unit Kerja</div>
+              <div class="text-sm font-medium text-gray-900">{{ userData?.nama_unit_organisasi || 'Biro Organisasi dan Sumber Daya Manusia' }}</div>
+            </div>
+          </div>
+          <div>
+            <button 
+              @click="syncEkinerja"
+              class="flex items-center gap-2 bg-yellow-50 text-yellow-700 px-4 py-2 rounded-lg text-sm font-medium border border-yellow-200 hover:bg-yellow-100 transition-colors whitespace-nowrap"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+              </svg>
+              Sinkronasi ekinerja BKN
+            </button>
           </div>
         </div>
 
@@ -75,9 +76,6 @@
           </button>
         </div>
       </div>
-
-      <!-- Divider -->
-      <div class="border-t border-gray-200 my-6"></div>
 
       <!-- Daftar Sasaran Kerja Pegawai -->
       <div>
