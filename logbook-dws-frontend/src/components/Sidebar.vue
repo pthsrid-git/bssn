@@ -227,7 +227,54 @@
         Halo Pusdaik
       </a>
 
-      <div class="px-4 text-xs font-semibold text-gray-400 mb-3 tracking-wider">RUANG KERJA</div>
+      <!-- RUANG KERJA -->
+    <div class="px-4 text-xs font-semibold text-gray-400 mt-6 mb-3 tracking-wider">RUANG KERJA</div>
+
+    <!-- Dashboard Kinerja -->
+    <router-link
+      to="/logbook-katim"
+      :class="[
+        'flex items-center gap-3 px-4 py-3 text-sm transition-colors relative',
+        activeMenu === 'logbook-katim' ? 'bg-[#263053] text-[#FBC143]' : 'text-white hover:bg-[#263053]'
+      ]"
+      @click="handleMenuClick('logbook-katim')"
+    >
+      <div 
+        v-if="activeMenu === 'logbook-katim'"
+        class="absolute left-0 top-0 bottom-0 w-1 bg-[#FBC143]"
+      ></div>
+
+      <svg class="w-5 h-5 flex-shrink-0"
+        :class="activeMenu === 'logbook-katim' ? 'text-[#FBC143]' : ''"
+        fill="none" stroke="currentColor" viewBox="0 0 24 24"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 2v20l6-2 6 2V2H6z"/>
+      </svg>
+      Logbook Katim
+    </router-link>
+
+    <!-- Monitoring -->
+    <router-link
+      to="/monitoring"
+      :class="[
+        'flex items-center gap-3 px-4 py-3 text-sm transition-colors relative',
+        activeMenu === 'monitoring' ? 'bg-[#263053] text-[#FBC143]' : 'text-white hover:bg-[#263053]'
+      ]"
+      @click="handleMenuClick('monitoring')"
+    >
+      <div 
+        v-if="activeMenu === 'monitoring'"
+        class="absolute left-0 top-0 bottom-0 w-1 bg-[#FBC143]"
+      ></div>
+
+      <svg class="w-5 h-5 flex-shrink-0"
+        :class="activeMenu === 'monitoring' ? 'text-[#FBC143]' : ''"
+        fill="none" stroke="currentColor" viewBox="0 0 24 24"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 12h2m-7 8h14a2 2 0 002-2V5a2 2 0 00-2-2H6a2 2 0 00-2 2v13a2 2 0 002 2z"/>
+      </svg>
+      Monitoring
+    </router-link>
 
       <!-- Logout -->
       <div class="px-4 mt-4 pt-4 border-t border-[#263053]">

@@ -26,6 +26,11 @@ const routes = [
         path: 'logbook',
         name: 'Logbook',
         component: () => import('../views/Logbook.vue')
+      },
+      {
+        path: 'logbook-katim',
+        name: 'LogbookKatim',
+        component: () => import('../views/LogbookKatim.vue')
       }
     ]
   },
