@@ -2,12 +2,12 @@
   <!-- Main Card Container with Tabs -->
   <div class="bg-white rounded-xl shadow-sm">
     <!-- Tabs Inside Card -->
-    <div class="border-b px-6">
-      <div class="flex gap-8">
+    <div class="border-b px-4 sm:px-6">
+      <div class="flex gap-4 sm:gap-8 overflow-x-auto">
         <button 
           @click="activeTab = 'pengisian'"
           :class="[
-            'py-4 px-2 text-sm font-semibold border-b-2 transition-colors uppercase tracking-wide',
+            'py-3 sm:py-4 px-2 text-xs sm:text-sm font-semibold border-b-2 transition-colors uppercase tracking-wide whitespace-nowrap',
             activeTab === 'pengisian' 
               ? 'border-[#FBC143] text-gray-900' 
               : 'border-transparent text-gray-500 hover:text-gray-700'
@@ -18,7 +18,7 @@
         <button 
           @click="activeTab = 'skp'"
           :class="[
-            'py-4 px-2 text-sm font-semibold border-b-2 transition-colors uppercase tracking-wide',
+            'py-3 sm:py-4 px-2 text-xs sm:text-sm font-semibold border-b-2 transition-colors uppercase tracking-wide whitespace-nowrap',
             activeTab === 'skp' 
               ? 'border-[#FBC143] text-gray-900' 
               : 'border-transparent text-gray-500 hover:text-gray-700'
@@ -30,62 +30,57 @@
     </div>
 
     <!-- Tab Content Inside Card -->
-    <div class="p-6">
+    <div class="p-4 sm:p-6">
       <!-- SKP Content -->
       <div v-if="activeTab === 'skp'">
-        <div class="text-center py-20">
-          <svg class="w-20 h-20 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-          </svg>
-          <h3 class="text-xl font-semibold text-gray-700 mb-2">Halaman SKP</h3>
-          <p class="text-gray-500">Konten SKP akan ditampilkan di sini</p>
-        </div>
+        <SKPCard :loading="loadingSKP" />
       </div>
 
       <!-- Pengisian Logbook Content -->
       <div v-if="activeTab === 'pengisian'">
         <!-- Title and Action Button -->
-        <div class="flex items-center justify-between mb-6">
-          <h1 class="text-2xl font-semibold text-gray-900">Pengisian Logbook</h1>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <h1 class="text-xl sm:text-2xl font-semibold text-gray-900">Pengisian Logbook</h1>
           <button 
             @click="showAddModal = true"
-            class="flex items-center gap-2 bg-[#FBC143] hover:bg-[#f5b835] px-5 py-2.5 rounded-lg font-medium text-sm text-gray-900 transition-colors"
+            class="flex items-center justify-center gap-2 bg-[#FBC143] hover:bg-[#f5b835] px-4 sm:px-5 py-2.5 rounded-lg font-medium text-sm text-gray-900 transition-colors w-full sm:w-auto"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
-            Tambah Aktivitas Harian
+            <span class="hidden sm:inline">Tambah Aktivitas Harian</span>
+            <span class="sm:hidden">Tambah Aktivitas</span>
           </button>
         </div>
 
         <!-- Date Filter and Actions -->
-        <div class="flex items-center justify-between gap-3 mb-6">
-          <div class="flex items-center gap-3 bg-gray-50 px-4 py-2.5 rounded-lg border border-gray-200">
-            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+          <div class="flex items-center gap-2 sm:gap-3 bg-gray-50 px-4 py-2.5 rounded-lg border border-gray-200 w-full sm:w-auto">
+            <svg class="w-4 sm:w-5 h-4 sm:h-5 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
             </svg>
             <input 
               v-model="selectedDate" 
               type="text" 
-              class="text-sm outline-none bg-transparent min-w-[200px]"
+              class="text-sm outline-none bg-transparent w-full sm:min-w-[200px]"
               placeholder="Juli (24 Juli 2025)"
             />
           </div>
           
           <div class="flex gap-3">
             <button 
-              class="flex items-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm font-medium transition-colors bg-white"
+              class="flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm font-medium transition-colors bg-white flex-1 sm:flex-none"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
               </svg>
-              Filter
+              <span class="hidden sm:inline">Filter</span>
             </button>
-            <button class="flex items-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm font-medium transition-colors bg-white">
+            <button class="flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm font-medium transition-colors bg-white flex-1 sm:flex-none">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
               </svg>
-              Cari...
+              <span class="hidden sm:inline">Cari...</span>
             </button>
           </div>
         </div>
@@ -111,6 +106,7 @@
 
   <!-- Modal Tambah Aktivitas -->
   <ModalTambahAktivitas
+    v-if="showAddModal"
     :show="showAddModal"
     @close="showAddModal = false"
     @success="handleSuccess"
@@ -118,6 +114,7 @@
 
   <!-- Modal Detail Aktivitas -->
   <ModalDetailAktivitas
+    v-if="showDetailModal"
     :show="showDetailModal"
     :entry="selectedEntry"
     @close="showDetailModal = false"
@@ -127,6 +124,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import LogbookCard from '../components/Logbook/LogbookCard.vue'
+import SKPCard from '../components/Logbook/SKPCard.vue'
 import ModalTambahAktivitas from '../components/Logbook/ModalTambahAktivitas.vue'
 import ModalDetailAktivitas from '../components/Logbook/ModalDetailAktivitas.vue'
 import { logbookService } from '../services/Logbook/logbookService'
@@ -134,6 +132,7 @@ import { logbookService } from '../services/Logbook/logbookService'
 const activeTab = ref('pengisian')
 const selectedDate = ref('Desember (07 Desember 2025)')
 const loading = ref(false)
+const loadingSKP = ref(false)
 const showAddModal = ref(false)
 const showDetailModal = ref(false)
 const selectedEntry = ref(null)
@@ -145,7 +144,6 @@ const showDetail = (entry) => {
   showDetailModal.value = true
 }
 
-// PERBAIKAN: Ganti dari handleSubmit ke handleSuccess
 const handleSuccess = (data) => {
   console.log('✅ Logbook berhasil ditambahkan:', data)
   showAddModal.value = false
@@ -158,47 +156,28 @@ const fetchLogbook = async () => {
     const response = await logbookService.getLogbooks()
     const logbooks = response.data || []
     
-    console.log('📦 Raw logbooks from API:', logbooks)
-    
-    // Dapatkan bulan dan tahun saat ini
+    // Process logbook data
     const now = new Date()
     const currentMonth = now.getMonth()
     const currentYear = now.getFullYear()
-    
-    // Dapatkan jumlah hari dalam bulan
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate()
     
-    // Buat map dari logbook yang ada berdasarkan tanggal (key: YYYY-MM-DD)
     const logbookMap = {}
     logbooks.forEach(log => {
-      // Pastikan format tanggal konsisten (YYYY-MM-DD)
       let dateKey = log.tanggal
-      
-      // Jika tanggal dalam format lain, convert ke YYYY-MM-DD
       if (dateKey && !dateKey.match(/^\d{4}-\d{2}-\d{2}$/)) {
         const d = new Date(dateKey)
         dateKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
       }
-      
-      console.log(`📅 Mapping logbook: ${dateKey}`, log)
       logbookMap[dateKey] = log
     })
     
-    console.log('🗺️ Logbook map:', logbookMap)
-    
-    // Generate entries untuk setiap hari dalam bulan
     const entries = []
     for (let day = 1; day <= daysInMonth; day++) {
-      // Gunakan format YYYY-MM-DD langsung tanpa timezone conversion
       const dateKey = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-      
-      // Buat date object untuk cek day of week
       const currentDate = new Date(currentYear, currentMonth, day)
-      const dayOfWeek = currentDate.getDay() // 0 = Minggu, 6 = Sabtu
+      const dayOfWeek = currentDate.getDay()
       
-      console.log(`🔍 Day ${day}: dateKey=${dateKey}, dayOfWeek=${dayOfWeek}, hasLogbook=${!!logbookMap[dateKey]}`)
-      
-      // Cek apakah Minggu (0) atau Sabtu (6)
       if (dayOfWeek === 0 || dayOfWeek === 6) {
         entries.push({
           id: `empty-${dateKey}`,
@@ -207,7 +186,6 @@ const fetchLogbook = async () => {
           message: 'Tidak ada aktivitas'
         })
       } else if (logbookMap[dateKey]) {
-        // Ada logbook untuk hari ini
         const log = logbookMap[dateKey]
         entries.push({
           id: log.id,
@@ -237,7 +215,6 @@ const fetchLogbook = async () => {
           isEmpty: false
         })
       } else {
-        // Tidak ada logbook untuk hari kerja ini
         entries.push({
           id: `empty-${dateKey}`,
           date: dateKey,
@@ -247,7 +224,6 @@ const fetchLogbook = async () => {
       }
     }
     
-    console.log('✅ Final entries:', entries)
     logbookEntries.value = entries
   } catch (error) {
     console.error('Error fetching logbook:', error)
@@ -256,7 +232,21 @@ const fetchLogbook = async () => {
   }
 }
 
+const fetchSKP = async () => {
+  loadingSKP.value = true
+  try {
+    // TODO: Implement API call untuk fetch SKP data
+    // const response = await skpService.getAll()
+    // skpData.value = response.data
+  } catch (error) {
+    console.error('Error fetching SKP:', error)
+  } finally {
+    loadingSKP.value = false
+  }
+}
+
 onMounted(() => {
   fetchLogbook()
+  // fetchSKP()
 })
 </script>

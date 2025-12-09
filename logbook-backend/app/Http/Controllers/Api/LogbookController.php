@@ -186,7 +186,7 @@ class LogbookController extends Controller
         ]);
 
         // Validate status value if provided
-        if (isset($data['status']) && !in_array($data['status'], ['Draft', 'Disubmit', 'Disetujui', 'Ditolak'])) {
+        if (isset($data['status']) && !in_array($data['status'], ['Disubmit', 'Disetujui', 'Ditolak'])) {
             return response()->json([
                 'success' => false,
                 'message' => 'Invalid status value'

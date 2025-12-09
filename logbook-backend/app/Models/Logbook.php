@@ -72,12 +72,6 @@ class Logbook extends Model
         return null;
     }
 
-    // Helper methods for status
-    public function isDraft()
-    {
-        return $this->status === self::STATUS_DRAFT;
-    }
-
     public function isSubmitted()
     {
         return $this->status === self::STATUS_DISUBMIT;

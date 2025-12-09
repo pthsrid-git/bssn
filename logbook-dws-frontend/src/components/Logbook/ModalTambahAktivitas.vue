@@ -261,7 +261,7 @@ const formData = reactive({
   indikator_hasil_rencana_kerja: '',
   aktivitas_kegiatan_harian: '',
   keterangan: '',
-  status: 'Draft'
+  status: 'Disubmit'
 })
 
 watch(() => props.show, (newVal) => {
