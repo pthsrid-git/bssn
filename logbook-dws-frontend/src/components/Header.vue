@@ -13,7 +13,7 @@
 
       <span class="text-sm sm:text-base text-gray-900 font-semibold">DWS</span>
       <span class="text-sm sm:text-base text-gray-500">|</span>
-      <span class="text-sm sm:text-base font-semibold text-gray-900 hidden sm:inline">RUANG PRIBADI</span>
+      <span class="text-sm sm:text-base font-semibold text-gray-900 hidden sm:inline">{{ currentSection }}</span>
     </div>
     
     <div class="flex items-center gap-3 sm:gap-4">
@@ -31,12 +31,32 @@
 </template>
 
 <script setup>
-defineProps({
+import { computed } from 'vue'
+
+const props = defineProps({
   user: {
     type: Object,
+    required: true
+  },
+  activeMenu: {
+    type: String,
     required: true
   }
 })
 
 defineEmits(['toggle-menu'])
+
+// Menentukan section berdasarkan menu aktif
+const currentSection = computed(() => {
+  const ruangPribadiMenus = ['beranda', 'logbook', 'kepegawaian', 'keuangan', 'pengetahuan', 'kesehatan', 'halo-pusdaik']
+  const ruangKerjaMenus = ['logbook-katim', 'logbook-atasan']
+  
+  if (ruangKerjaMenus.includes(props.activeMenu)) {
+    return 'RUANG KERJA'
+  } else if (ruangPribadiMenus.includes(props.activeMenu)) {
+    return 'RUANG PRIBADI'
+  }
+  
+  return 'RUANG PRIBADI' // Default
+})
 </script>

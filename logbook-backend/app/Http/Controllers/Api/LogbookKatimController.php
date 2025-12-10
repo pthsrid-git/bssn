@@ -11,15 +11,15 @@ use Illuminate\Support\Facades\Validator;
 class LogbookKatimController extends Controller
 {
     /**
-     * Get daftar anggota tim (bawahan dengan parent_id = user login id)
+     * Get daftar anggota tim (bawahan + katim yang login)
      */
     public function getTeamMembers(Request $request)
     {
         try {
             $user = auth()->user();
 
-            // Get semua user yang parent_id-nya sama dengan id user yang login
-            $teamMembers = User::where('parent_id', $user->id)
+            // Get semua user yang parent_id-nya sama dengan id user yang login (staff)
+            $staffMembers = User::where('parent_id', $user->id)
                 ->select([
                     'id',
                     'name',
@@ -33,9 +33,27 @@ class LogbookKatimController extends Controller
                 ])
                 ->get();
 
+            // Tambahkan katim sendiri (user yang login)
+            $katimData = User::where('id', $user->id)
+                ->select([
+                    'id',
+                    'name',
+                    'nama_pegawai',
+                    'nip_nrp',
+                    'pangkat_golongan',
+                    'nama_jabatan',
+                    'email',
+                    'kode_unit_organisasi',
+                    'nama_unit_organisasi'
+                ])
+                ->first();
+
+            // Gabungkan katim + staff (katim di posisi pertama)
+            $allMembers = collect([$katimData])->merge($staffMembers);
+
             return response()->json([
                 'success' => true,
-                'data' => $teamMembers
+                'data' => $allMembers
             ]);
         } catch (\Exception $e) {
             \Log::error('Error fetching team members', ['error' => $e->getMessage()]);
@@ -47,17 +65,21 @@ class LogbookKatimController extends Controller
     }
 
     /**
-     * Get logbook anggota tim berdasarkan member ID
+     * Get logbook anggota tim berdasarkan member ID (termasuk katim sendiri)
      */
     public function getMemberLogs(Request $request, $memberId)
     {
         try {
             $user = auth()->user();
 
-            // Validasi bahwa member adalah bawahan dari user yang login
-            $member = User::where('id', $memberId)
-                ->where('parent_id', $user->id)
-                ->first();
+            // Validasi bahwa member adalah bawahan dari user yang login ATAU user sendiri
+            $member = User::where(function ($query) use ($user, $memberId) {
+                $query->where('id', $memberId)
+                    ->where(function ($q) use ($user) {
+                        $q->where('parent_id', $user->id) // Staff
+                            ->orWhere('id', $user->id);      // Katim sendiri
+                    });
+            })->first();
 
             if (!$member) {
                 return response()->json([
@@ -69,14 +91,14 @@ class LogbookKatimController extends Controller
             // Query logbook
             $query = Logbook::where('user_id', $memberId);
 
-            // Filter by month
-            if ($request->has('month') && $request->month) {
-                $query->whereMonth('tanggal', $request->month);
+            // Filter by month (pakai 'bulan' sesuai frontend)
+            if ($request->has('bulan') && $request->bulan) {
+                $query->whereMonth('tanggal', $request->bulan);
             }
 
-            // Filter by year
-            if ($request->has('year') && $request->year) {
-                $query->whereYear('tanggal', $request->year);
+            // Filter by year (pakai 'tahun' sesuai frontend)
+            if ($request->has('tahun') && $request->tahun) {
+                $query->whereYear('tanggal', $request->tahun);
             }
 
             // Filter by status
@@ -103,17 +125,18 @@ class LogbookKatimController extends Controller
     }
 
     /**
-     * Get detail logbook
+     * Get detail logbook (termasuk logbook katim sendiri)
      */
     public function getLogDetail($logId)
     {
         try {
             $user = auth()->user();
 
-            // Get logbook dengan validasi bahwa pemilik logbook adalah bawahan user
+            // Get logbook dengan validasi bahwa pemilik logbook adalah bawahan user ATAU user sendiri
             $logbook = Logbook::with('user')
                 ->whereHas('user', function ($query) use ($user) {
-                    $query->where('parent_id', $user->id);
+                    $query->where('parent_id', $user->id)
+                        ->orWhere('id', $user->id);
                 })
                 ->findOrFail($logId);
 
@@ -132,60 +155,89 @@ class LogbookKatimController extends Controller
 
     /**
      * Approve logbook - update status dan catatan_katim
+     * Note: Katim tidak bisa approve logbook sendiri, hanya staff
      */
     public function approveLog(Request $request, $logId)
     {
         try {
             $user = auth()->user();
 
-            // Get logbook dengan validasi bahwa pemilik adalah bawahan
+            // Validasi input catatan_katim (opsional)
+            $validated = $request->validate([
+                'catatan_katim' => 'nullable|string|max:1000'
+            ]);
+
+            // Get logbook dengan validasi bahwa pemilik adalah bawahan (BUKAN logbook sendiri)
             $logbook = Logbook::whereHas('user', function ($query) use ($user) {
-                $query->where('parent_id', $user->id);
+                $query->where('parent_id', $user->id); // Hanya staff, bukan katim sendiri
             })
                 ->where('status', 'Disubmit')
                 ->findOrFail($logId);
 
-            // Update hanya status dan catatan_katim
+            // Cek jika ini logbook katim sendiri (double check)
+            if ($logbook->user_id === $user->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Anda tidak dapat menyetujui logbook sendiri'
+                ], 403);
+            }
+
+            // Update catatan_katim (jika ada)
             $logbook->update([
-                'status' => 'Disetujui',
-                'catatan_katim' => $request->catatan ?? null
+                'catatan_katim' => $validated['catatan_katim'] ?? $logbook->catatan_katim
             ]);
 
-            \Log::info('Logbook approved by Katim', [
+            // Log untuk debugging
+            \Log::info('Logbook catatan updated by Katim', [
                 'logbook_id' => $logId,
-                'katim_id' => $user->id
+                'katim_id' => $user->id,
+                'staff_id' => $logbook->user_id,
+                'catatan_katim' => $validated['catatan_katim'] ?? null
             ]);
+
+            // Refresh data dari database
+            $logbook->refresh();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Logbook berhasil disetujui',
+                'message' => 'Catatan berhasil disimpan',
                 'data' => $logbook
             ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $e->errors()
+            ], 422);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Logbook tidak ditemukan atau tidak dapat disetujui'
+                'message' => 'Logbook tidak ditemukan atau tidak dapat diupdate'
             ], 404);
         } catch (\Exception $e) {
-            \Log::error('Error approving logbook', ['error' => $e->getMessage()]);
+            \Log::error('Error updating logbook catatan', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menyetujui logbook: ' . $e->getMessage()
+                'message' => 'Gagal menyimpan catatan: ' . $e->getMessage()
             ], 500);
         }
     }
 
     /**
      * Reject logbook - update status dan catatan_katim (wajib isi)
+     * Note: Katim tidak bisa reject logbook sendiri, hanya staff
      */
     public function rejectLog(Request $request, $logId)
     {
         try {
             $validator = Validator::make($request->all(), [
-                'catatan' => 'required|string|min:10'
+                'catatan_katim' => 'required|string|min:10'
             ], [
-                'catatan.required' => 'Alasan penolakan wajib diisi',
-                'catatan.min' => 'Alasan penolakan minimal 10 karakter'
+                'catatan_katim.required' => 'Alasan penolakan wajib diisi',
+                'catatan_katim.min' => 'Alasan penolakan minimal 10 karakter'
             ]);
 
             if ($validator->fails()) {
@@ -198,23 +250,32 @@ class LogbookKatimController extends Controller
 
             $user = auth()->user();
 
-            // Get logbook dengan validasi bahwa pemilik adalah bawahan
+            // Get logbook dengan validasi bahwa pemilik adalah bawahan (BUKAN logbook sendiri)
             $logbook = Logbook::whereHas('user', function ($query) use ($user) {
-                $query->where('parent_id', $user->id);
+                $query->where('parent_id', $user->id); // Hanya staff, bukan katim sendiri
             })
                 ->where('status', 'Disubmit')
                 ->findOrFail($logId);
 
-            // Update hanya status dan catatan_katim
+            // Cek jika ini logbook katim sendiri (double check)
+            if ($logbook->user_id === $user->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Anda tidak dapat menolak logbook sendiri'
+                ], 403);
+            }
+
+            // Update status dan catatan_katim
             $logbook->update([
                 'status' => 'Ditolak',
-                'catatan_katim' => $request->catatan
+                'catatan_katim' => $request->catatan_katim
             ]);
 
             \Log::info('Logbook rejected by Katim', [
                 'logbook_id' => $logId,
                 'katim_id' => $user->id,
-                'reason' => $request->catatan
+                'staff_id' => $logbook->user_id,
+                'reason' => $request->catatan_katim
             ]);
 
             return response()->json([
@@ -237,7 +298,7 @@ class LogbookKatimController extends Controller
     }
 
     /**
-     * Get summary/statistik logbook tim
+     * Get summary/statistik logbook tim (termasuk katim sendiri)
      */
     public function getTeamSummary(Request $request)
     {
@@ -246,8 +307,9 @@ class LogbookKatimController extends Controller
             $month = $request->month ?? now()->month;
             $year = $request->year ?? now()->year;
 
-            // Get team member IDs
-            $teamMemberIds = User::where('parent_id', $user->id)->pluck('id');
+            // Get team member IDs (staff + katim sendiri)
+            $staffIds = User::where('parent_id', $user->id)->pluck('id');
+            $teamMemberIds = $staffIds->push($user->id); // Tambahkan katim sendiri
 
             // Get statistics
             $totalLogbooks = Logbook::whereIn('user_id', $teamMemberIds)
@@ -276,7 +338,7 @@ class LogbookKatimController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => [
-                    'total_members' => $teamMemberIds->count(),
+                    'total_members' => $teamMemberIds->count(), // Staff + Katim
                     'total_logbooks' => $totalLogbooks,
                     'pending' => $pendingLogbooks,
                     'approved' => $approvedLogbooks,

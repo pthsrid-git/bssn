@@ -162,20 +162,7 @@
           </div>
         </div>
 
-        <!-- Empty State -->
-        <div v-else-if="logbookEntries.length === 0" class="min-h-[200px] flex items-center justify-center">
-          <div class="text-center">
-            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-              </svg>
-            </div>
-            <h2 class="text-xl font-bold text-gray-900 mb-2">Tidak Ada Data Logbook</h2>
-            <p class="text-gray-600">Belum ada entri logbook untuk periode yang dipilih</p>
-          </div>
-        </div>
-
-        <!-- Logbook Cards -->
+        <!-- Logbook Cards - Selalu tampil (termasuk empty state untuk semua hari) -->
         <LogbookKatimEntryCard
           v-for="entry in logbookEntries"
           :key="entry.id"
@@ -184,6 +171,14 @@
         />
       </div>
     </div>
+
+    <!-- Detail Modal -->
+    <LogbookKatimDetailModal
+      :show="showDetailModal"
+      :entry="selectedEntry"
+      @close="handleCloseModal"
+      @saved="handleSaved"
+    />
   </div>
 </template>
 
@@ -192,6 +187,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { logbookKatimService } from '../services/Logbook/logbookKatimService'
 import LogbookKatimEntryCard from '../components/Logbook/LogbookKatimEntryCard.vue'
+import LogbookKatimDetailModal from '../components/Logbook/LogbookKatimDetailModal.vue'
 
 const router = useRouter()
 
@@ -204,6 +200,8 @@ const searchQuery = ref('')
 const selectedMember = ref(null)
 const logbookEntries = ref([])
 const selectedMonth = ref(getCurrentMonth())
+const showDetailModal = ref(false)
+const selectedEntry = ref(null)
 
 // ==================== COMPUTED ====================
 const filteredMembers = computed(() => {
@@ -276,38 +274,72 @@ const fetchMemberLogbook = async (memberId) => {
 }
 
 const transformLogbookData = (data) => {
-  if (!data || data.length === 0) return []
+  // Get year dan month dari selectedMonth
+  const [year, month] = selectedMonth.value.split('-')
   
-  return data.map(log => {
-    // Cek apakah hari libur atau tidak ada aktivitas
-    if (log.is_weekend || log.is_holiday || !log.id) {
-      return {
-        id: log.tanggal,
-        date: log.tanggal,
+  // Generate semua tanggal dalam bulan
+  const daysInMonth = new Date(parseInt(year), parseInt(month), 0).getDate()
+  const allDates = []
+  
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dateStr = `${year}-${month}-${String(day).padStart(2, '0')}`
+    const date = new Date(dateStr)
+    const dayOfWeek = date.getDay() // 0 = Minggu, 6 = Sabtu
+    
+    // Cari logbook untuk tanggal ini (jika data ada)
+    const logForDate = data && data.length > 0 
+      ? data.find(log => {
+          if (!log.tanggal) return false
+          const logDate = new Date(log.tanggal)
+          return logDate.getDate() === day
+        })
+      : null
+    
+    // Cek apakah weekend (Sabtu atau Minggu)
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6
+    
+    if (isWeekend) {
+      // Weekend - selalu empty state
+      allDates.push({
+        id: dateStr,
+        date: dateStr,
         isEmpty: true,
-        message: log.keterangan || 'Tidak ada aktivitas'
-      }
+        message: dayOfWeek === 0 ? 'Tidak ada aktivitas' : 'Tidak ada aktivitas'
+      })
+    } else if (!logForDate || !logForDate.id) {
+      // Hari kerja tapi belum ada logbook
+      allDates.push({
+        id: dateStr,
+        date: dateStr,
+        isEmpty: true,
+        message: 'Tidak ada aktivitas'
+      })
+    } else {
+      // Ada logbook
+      const timeStart = logForDate.jam_mulai ? logForDate.jam_mulai.substring(0, 5) : '00:00'
+      const timeEnd = logForDate.jam_selesai ? logForDate.jam_selesai.substring(0, 5) : '00:00'
+      
+      allDates.push({
+        id: logForDate.id,
+        date: dateStr,
+        isEmpty: false,
+        time: `${timeStart} - ${timeEnd}`,
+        files: logForDate.file_name ? '1 file' : '0 file',
+        status: logForDate.status || 'Draft',
+        rencana_hasil_kinerja: logForDate.rencana_hasil_kinerja_skp || '-',
+        indikator_hasil: logForDate.indikator_hasil_rencana_kerja || '-',
+        aktivitas_harian: logForDate.aktivitas_kegiatan_harian || '-',
+        keterangan: logForDate.keterangan || '-',
+        catatan_katim: logForDate.catatan_katim || '-',
+        catatan_atasan: logForDate.catatan_atasan || '-',
+        file_path: logForDate.file_path,
+        file_name: logForDate.file_name,
+        file_size: logForDate.file_size
+      })
     }
-    
-    // Format waktu
-    const timeStart = log.waktu_mulai ? log.waktu_mulai.substring(0, 5) : '00:00'
-    const timeEnd = log.waktu_selesai ? log.waktu_selesai.substring(0, 5) : '00:00'
-    
-    return {
-      id: log.id,
-      date: log.tanggal,
-      isEmpty: false,
-      time: `${timeStart} - ${timeEnd}`,
-      files: log.jumlah_file ? `${log.jumlah_file} file` : '0 file',
-      status: log.status || 'Draft',
-      rencana_hasil_kinerja: log.rencana_hasil_kinerja || '-',
-      indikator_hasil: log.indikator_hasil || '-',
-      aktivitas_harian: log.aktivitas_harian || '-',
-      keterangan: log.keterangan || '-',
-      catatan_katim: log.catatan_katim || '-',
-      catatan_atasan: log.catatan_atasan || '-'
-    }
-  })
+  }
+  
+  return allDates
 }
 
 const handleViewLogbook = (member) => {
@@ -328,10 +360,24 @@ const handleMonthChange = () => {
 }
 
 const handleViewDetail = (entry) => {
-  // TODO: Implementasi view detail - bisa buka modal atau navigate ke halaman detail
-  console.log('View detail:', entry)
-  // Contoh navigasi ke detail page
-  // router.push({ name: 'LogbookDetail', params: { id: entry.id } })
+  if (entry.isEmpty) return
+  
+  selectedEntry.value = entry
+  showDetailModal.value = true
+}
+
+const handleCloseModal = () => {
+  showDetailModal.value = false
+  selectedEntry.value = null
+}
+
+const handleSaved = (updatedData) => {
+  console.log('✅ Data saved:', updatedData)
+  
+  // Refresh data setelah save
+  if (selectedMember.value) {
+    fetchMemberLogbook(selectedMember.value.id)
+  }
 }
 
 // ==================== LIFECYCLE ====================

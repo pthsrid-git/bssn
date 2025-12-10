@@ -81,9 +81,14 @@ export const logbookKatimService = {
   /**
    * Approve logbook
    */
-  async approveLog(logId) {
+  async approveLog(logId, catatanKatim = null) {
     try {
-      const response = await api.post(`/logbook-katim/logs/${logId}/approve`)
+      const payload = {}
+      if (catatanKatim) {
+        payload.catatan_katim = catatanKatim
+      }
+      
+      const response = await api.post(`/logbook-katim/logs/${logId}/approve`, payload)
       console.log('✅ Log approved:', response.data)
       return response.data
     } catch (error) {

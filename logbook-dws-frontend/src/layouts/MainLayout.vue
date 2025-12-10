@@ -17,9 +17,10 @@
 
     <!-- Main Content -->
     <div class="flex-1 flex flex-col min-w-0">
-      <!-- Header -->
+      <!-- Header with activeMenu prop -->
       <Header 
-        :user="user" 
+        :user="user"
+        :active-menu="activeMenu"
         @toggle-menu="mobileMenuOpen = !mobileMenuOpen"
       />
 
@@ -32,7 +33,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import Sidebar from '../components/Sidebar.vue'
 import Header from '../components/Header.vue'
@@ -49,17 +50,58 @@ const user = ref({
 const activeMenu = ref('beranda')
 const mobileMenuOpen = ref(false)
 
+// Route to Menu mapping
+const getMenuIdFromPath = (path) => {
+  // Remove trailing slash for consistency
+  const normalizedPath = path.endsWith('/') && path !== '/' 
+    ? path.slice(0, -1) 
+    : path
+
+  const menuMap = {
+    '/beranda': 'beranda',
+    '/logbook': 'logbook',
+    '/logbook-katim': 'logbook-katim',
+    '/logbook-atasan': 'logbook-atasan',
+    '/monitoring': 'monitoring',
+    '/keuangan': 'keuangan',
+    '/pengetahuan': 'pengetahuan',
+    '/kesehatan': 'kesehatan',
+    '/halo-pusdaik': 'halo-pusdaik'
+  }
+  
+  return menuMap[normalizedPath] || 'beranda'
+}
+
+// Update active menu based on route
+const updateActiveMenu = () => {
+  activeMenu.value = getMenuIdFromPath(route.path)
+}
+
+// Watch route changes
+watch(() => route.path, () => {
+  updateActiveMenu()
+}, { immediate: true })
+
 const handleMenuChange = (menu) => {
   activeMenu.value = menu
   mobileMenuOpen.value = false
   
-  // Navigate based on menu
-  if (menu === 'beranda') {
-    router.push('/beranda')
-  } else if (menu === 'logbook') {
-    router.push('/logbook')
+  // Navigate based on menu (optional - router-link in sidebar already handles this)
+  const routeMap = {
+    'beranda': '/beranda',
+    'logbook': '/logbook',
+    'logbook-katim': '/logbook-katim',
+    'logbook-atasan': '/logbook-atasan',
+    'monitoring': '/monitoring',
+    'keuangan': '/keuangan',
+    'pengetahuan': '/pengetahuan',
+    'kesehatan': '/kesehatan',
+    'halo-pusdaik': '/halo-pusdaik'
   }
-  // Tambahkan routing lain sesuai kebutuhan
+  
+  if (routeMap[menu]) {
+    router.push(routeMap[menu])
+  }
 }
 
 const loadProfile = async () => {
@@ -76,24 +118,6 @@ const loadProfile = async () => {
       nama_pegawai: 'User',
       nama_jabatan: 'Staff'
     }
-  }
-}
-
-// Update active menu based on current route
-const updateActiveMenu = () => {
-  const path = route.path
-  if (path.includes('/beranda')) {
-    activeMenu.value = 'beranda'
-  } else if (path.includes('/logbook')) {
-    activeMenu.value = 'logbook'
-  } else if (path.includes('/keuangan')) {
-    activeMenu.value = 'keuangan'
-  } else if (path.includes('/pengetahuan')) {
-    activeMenu.value = 'pengetahuan'
-  } else if (path.includes('/kesehatan')) {
-    activeMenu.value = 'kesehatan'
-  } else if (path.includes('/halo-pusdaik')) {
-    activeMenu.value = 'halo-pusdaik'
   }
 }
 

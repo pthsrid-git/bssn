@@ -15,22 +15,45 @@ const routes = [
     path: '/',
     component: () => import('../layouts/MainLayout.vue'),
     meta: { requiresAuth: true },
-    redirect: '/beranda', // Default redirect ke beranda
+    redirect: '/beranda',
     children: [
       {
         path: 'beranda',
         name: 'Beranda',
-        component: () => import('../views/Beranda.vue')
+        component: () => import('../views/Beranda.vue'),
+        meta: { 
+          requiresAuth: true,
+          allowedRoles: ['all'] // Semua user bisa akses
+        }
       },
       {
         path: 'logbook',
         name: 'Logbook',
-        component: () => import('../views/Logbook.vue')
+        component: () => import('../views/Logbook.vue'),
+        meta: { 
+          requiresAuth: true,
+          allowedRoles: ['all'] // Semua user bisa akses
+        }
       },
       {
         path: 'logbook-katim',
         name: 'LogbookKatim',
-        component: () => import('../views/LogbookKatim.vue')
+        component: () => import('../views/LogbookKatim.vue'),
+        meta: { 
+          requiresAuth: true,
+          allowedRoles: ['pmk', 'katim'], // Hanya PMK (Ketua Tim)
+          requiredPermission: 'logbook-katim'
+        }
+      },
+      {
+        path: 'logbook-atasan',
+        name: 'LogbookAtasan',
+        component: () => import('../views/LogbookAtasan.vue'),
+        meta: { 
+          requiresAuth: true,
+          allowedRoles: ['ka-unit', 'kaunit'], // Hanya Ka-unit
+          requiredPermission: 'logbook-atasan'
+        }
       }
     ]
   },
@@ -49,6 +72,68 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
 })
+
+// Helper function to check permissions
+const checkPermission = (user, requiredPermission) => {
+  if (!requiredPermission) return true
+  
+  // Helper functions untuk role detection
+  const isPKO = (user) => {
+    if (user.role === 'pko' || user.role === 'staff') return true
+    if (user.kode_jabatan === 'PKO') return true
+    if (user.level === 1 || user.level === 'pko') return true
+    
+    if (user.parent_id !== null && user.parent_id !== undefined) {
+      const jabatan = user.nama_jabatan?.toLowerCase() || ''
+      if (!jabatan.includes('kepala') && !jabatan.includes('ketua')) {
+        return true
+      }
+    }
+    return false
+  }
+  
+  const isPMK = (user) => {
+    if (user.role === 'pmk' || user.role === 'katim' || user.role === 'ketua_tim') return true
+    if (user.kode_jabatan === 'PMK' || user.kode_jabatan === 'KATIM') return true
+    if (user.level === 2 || user.level === 'pmk') return true
+    if (user.is_pmk === true || user.is_katim === true) return true
+    
+    const jabatan = user.nama_jabatan?.toLowerCase() || ''
+    if (jabatan.includes('ketua tim') || jabatan.includes('kepala tim')) {
+      return true
+    }
+    return false
+  }
+  
+  const isKaUnit = (user) => {
+    if (user.role === 'ka-unit' || user.role === 'kaunit' || user.role === 'atasan' || user.role === 'kepala_unit') return true
+    if (user.kode_jabatan === 'KA-UNIT' || user.kode_jabatan === 'KAUNIT') return true
+    if (user.level === 3 || user.level === 'ka-unit') return true
+    if (user.is_ka_unit === true || user.is_atasan === true) return true
+    
+    if (user.parent_id === null || user.parent_id === undefined) {
+      const jabatan = user.nama_jabatan?.toLowerCase() || ''
+      if (jabatan.includes('kepala') || jabatan.includes('direktur') || jabatan.includes('kabag')) {
+        return true
+      }
+    }
+    return false
+  }
+  
+  const menuPermissions = {
+    'logbook-katim': () => {
+      // Hanya PMK (Ketua Tim)
+      return isPMK(user)
+    },
+    'logbook-atasan': () => {
+      // Hanya Ka-unit
+      return isKaUnit(user)
+    }
+  }
+  
+  const permissionCheck = menuPermissions[requiredPermission]
+  return permissionCheck ? permissionCheck() : true
+}
 
 // Navigation Guard
 router.beforeEach((to, from, next) => {
@@ -69,10 +154,39 @@ router.beforeEach((to, from, next) => {
         path: '/login',
         query: { redirect: to.fullPath }
       })
-    } else {
-      console.log('Authenticated, proceeding')
-      next()
+      return
     }
+    
+    // Check permission jika ada requiredPermission
+    const requiredPermission = to.meta.requiredPermission
+    if (requiredPermission) {
+      try {
+        const userData = localStorage.getItem('user')
+        const user = userData ? JSON.parse(userData) : null
+        
+        if (!user) {
+          console.log('User data not found, redirecting to beranda')
+          next('/beranda')
+          return
+        }
+        
+        const hasPermission = checkPermission(user, requiredPermission)
+        
+        if (!hasPermission) {
+          console.log('Permission denied, redirecting to beranda')
+          alert('Anda tidak memiliki akses ke halaman ini')
+          next('/beranda')
+          return
+        }
+      } catch (error) {
+        console.error('Error checking permission:', error)
+        next('/beranda')
+        return
+      }
+    }
+    
+    console.log('Authenticated and authorized, proceeding')
+    next()
   }
   // Jika route untuk guest (login) dan user sudah login
   else if (to.matched.some(record => record.meta.guest)) {
