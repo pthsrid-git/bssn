@@ -3,118 +3,137 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-    /**
-     * Register a new user
-     */
+
     public function register(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:admin_eperforma,pko,pmk',
+        $request->validate([
+            'name'      => 'required|string|max:255',
+            'fullname'  => 'required|string|max:255',
+            'email'     => 'required|email|unique:users,email',
+            'nip'       => 'required|string|unique:users,nip',
+            'password'  => 'required|string|min:8|confirmed',
+            'pangkat'               => 'nullable|string|max:255',
+            'jabatan'               => 'nullable|string|max:255',
+            'kode_unit_organisasi'  => 'nullable|string|max:50',
+            'parent_id'             => 'nullable|exists:users,id',
         ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
-            ], 422);
-        }
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
+            'guid'      => Str::uuid()->toString(),
+            'uuid'      => Str::uuid()->toString(),
+            'name'      => $request->name,
+            'fullname'  => $request->fullname,
+            'email'     => $request->email,
+            'fpid'      => $request->nip, // asumsi FPID = NIP
+            'nip'       => $request->nip,
+            'pangkat'   => $request->pangkat,
+            'jabatan'   => $request->jabatan,
+            'password'  => Hash::make($request->password),
+
+            // default role
+            'role'      => $request->role,
+
+            // hierarchy
+            'parent_id'            => $request->parent_id,
+            'kode_unit_organisasi' => $request->kode_unit_organisasi,
         ]);
+
+        // Auto login (JWT)
+        $token = auth('api')->login($user);
 
         return response()->json([
             'success' => true,
-            'message' => 'User berhasil didaftarkan',
-            'data' => $user
+            'message' => 'Registrasi berhasil',
+            'data' => [
+                'token' => $token,
+                'token_type' => 'bearer',
+                'expires_in' => auth('api')->factory()->getTTL() * 60,
+                'user' => new UserResource($user),
+            ]
         ], 201);
     }
 
     /**
-     * Login user and create token
+     * Login user with JWT
      */
     public function login(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required|string|min:8',
+        $request->validate([
+            'nip' => 'required|string',
+            'password' => 'required|string',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
-            ], 422);
+        // Find user by NIP
+        $user = User::where('nip', $request->nip)->first();
+
+        // Check credentials
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            throw ValidationException::withMessages([
+                'nip' => ['NIP atau password salah.'],
+            ]);
         }
 
-        $credentials = $request->only('email', 'password');
-
-        if (!$token = auth('api')->attempt($credentials)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Email atau password salah'
-            ], 401);
-        }
-
-        return $this->respondWithToken($token);
-    }
-
-    /**
-     * Get the authenticated User
-     */
-    public function me()
-    {
-        return response()->json([
-            'success' => true,
-            'data' => auth('api')->user()
-        ]);
-    }
-
-    /**
-     * Log the user out (Invalidate the token)
-     */
-    public function logout()
-    {
-        auth('api')->logout();
+        // Generate JWT token
+        $token = auth('api')->login($user);
 
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil logout'
+            'message' => 'Login berhasil',
+            'data' => [
+                'token' => $token,
+                'token_type' => 'bearer',
+                'expires_in' => auth('api')->factory()->getTTL() * 60,
+                'user' => new UserResource($user)
+            ]
         ]);
     }
 
     /**
-     * Refresh a token
+     * Get authenticated user
+     */
+    public function me(Request $request)
+    {
+        return response()->json([
+            'success' => true,
+            'data' => new UserResource(auth()->user())
+        ]);
+    }
+
+    /**
+     * Logout user
+     */
+    public function logout(Request $request)
+    {
+        auth()->logout();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Logout berhasil'
+        ]);
+    }
+
+    /**
+     * Refresh JWT token
      */
     public function refresh()
     {
-        return $this->respondWithToken(auth('api')->refresh());
-    }
-
-    /**
-     * Get the token array structure
-     */
-    protected function respondWithToken($token)
-    {
         return response()->json([
             'success' => true,
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth('api')->factory()->getTTL() * 60,
-            'user' => auth('api')->user()
+            'message' => 'Token berhasil diperbarui',
+            'data' => [
+                'token' => auth()->refresh(),
+                'token_type' => 'bearer',
+                'expires_in' => auth('api')->factory()->getTTL() * 60
+            ]
         ]);
     }
 }

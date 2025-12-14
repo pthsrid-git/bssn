@@ -11,11 +11,17 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware) {
+    ->withMiddleware(function (Middleware $middleware): void {
+        //
+        $middleware->api(prepend: [
+            \Illuminate\Http\Middleware\HandleCors::class,
+        ]);
+
         $middleware->alias([
-            'role' => \App\Http\Middleware\CheckRole::class,
+            'jwt.auth' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
+            'jwt.refresh' => \Tymon\JWTAuth\Http\Middleware\RefreshToken::class,
         ]);
     })
-    ->withExceptions(function (Exceptions $exceptions) {
+    ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();

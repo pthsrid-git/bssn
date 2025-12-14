@@ -2,201 +2,94 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
-use App\Models\Periode;
-use App\Models\UnitKerja;
 
-class DatabaseSeeder extends Seeder
+class UserSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
+     * Run the database seeds.
      */
     public function run(): void
     {
-        $this->command->info('🌱 Starting Database Seeding...');
+        $users = [
+            // PKO (Staff)
+            [
+                'name' => 'Kemal',
+                'fullname' => 'Moh. Kemal Hibatullah Ammar',
+                'email' => 'pko@bssn.go.id',
+                'fpid' => '1234',
+                'nip' => '482716594203857194',
+                'pangkat' => 'Penata Muda Tk. I (III/b)',
+                'jabatan' => 'Pranata Komputer Pertama',
+                'password' => Hash::make('password'),
+                'role' => 'pko',
+                'kode_unit_organisasi' => '38',
+            ],
 
-        // ========================================
-        // 1. CREATE PERIODE
-        // ========================================
-        $this->command->info('📅 Creating Periode...');
+            // PMK (Katim)
+            [
+                'name' => 'Ahmad',
+                'fullname' => 'Ahmad Kepala Tim',
+                'email' => 'pmk@bssn.go.id',
+                'fpid' => '1235',
+                'nip' => '482716594203857195',
+                'pangkat' => 'Penata (III/c)',
+                'jabatan' => 'Kepala Tim',
+                'password' => Hash::make('password'),
+                'role' => 'pmk',
+                'kode_unit_organisasi' => '38',
+            ],
 
-        $periode = Periode::create([
-            'tahun_mulai' => 2025,
-            'tahun_selesai' => 2029,
-            'status' => 'active',
-        ]);
+            // Ka-unit
+            [
+                'name' => 'Budi',
+                'fullname' => 'Budi Kepala Unit',
+                'email' => 'kaunit@bssn.go.id',
+                'fpid' => '1236',
+                'nip' => '482716594203857196',
+                'pangkat' => 'Penata Tingkat I (III/d)',
+                'jabatan' => 'Kepala Unit Kerja',
+                'password' => Hash::make('password'),
+                'role' => 'ka-unit',
+                'kode_unit_organisasi' => '38',
+            ],
 
-        $this->command->info('✓ Periode created: 2025-2029');
+            // Admin
+            [
+                'name' => 'Admin',
+                'fullname' => 'Administrator Sistem',
+                'email' => 'admin@bssn.go.id',
+                'fpid' => '1237',
+                'nip' => '482716594203857197',
+                'pangkat' => 'Pembina (IV/a)',
+                'jabatan' => 'Administrator',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+                'kode_unit_organisasi' => '38',
+            ],
+        ];
 
-        // ========================================
-        // 2. CREATE UNIT KERJA HIERARCHY
-        // ========================================
-        $this->command->info('🏢 Creating Unit Kerja...');
+        foreach ($users as $userData) {
+            User::create($userData);
+        }
 
-        // Sekretariat Utama (Root)
-        $sekretariatUtama = UnitKerja::create([
-            'kode' => 'SU',
-            'nama' => 'Sekretariat Utama',
-            'parent_id' => null,
-            'level' => 'pusat',
-        ]);
+        // Set hierarchy
+        $pko = User::where('role', 'pko')->first();
+        $katim = User::where('role', 'pmk')->first();
+        $kaunit = User::where('role', 'ka-unit')->first();
 
-        // Deputi I
-        $deputi1 = UnitKerja::create([
-            'kode' => 'D1',
-            'nama' => 'Deputi Bidang Identifikasi dan Deteksi',
-            'parent_id' => $sekretariatUtama->id,
-            'level' => 'deputi',
-        ]);
+        if ($pko && $katim) {
+            $pko->update(['parent_id' => $katim->id]);
+        }
 
-        // Deputi II
-        $deputi2 = UnitKerja::create([
-            'kode' => 'D2',
-            'nama' => 'Deputi Bidang Proteksi',
-            'parent_id' => $sekretariatUtama->id,
-            'level' => 'deputi',
-        ]);
+        if ($katim && $kaunit) {
+            $katim->update(['parent_id' => $kaunit->id]);
+        }
 
-        // Deputi III
-        $deputi3 = UnitKerja::create([
-            'kode' => 'D3',
-            'nama' => 'Deputi Bidang Penindakan dan Pemulihan',
-            'parent_id' => $sekretariatUtama->id,
-            'level' => 'deputi',
-        ]);
-
-        // Deputi IV
-        $deputi4 = UnitKerja::create([
-            'kode' => 'D4',
-            'nama' => 'Deputi Bidang Keamanan Siber dan Sandi',
-            'parent_id' => $sekretariatUtama->id,
-            'level' => 'deputi',
-        ]);
-
-        // Subdeputi under Deputi III
-        UnitKerja::create([
-            'kode' => 'D31',
-            'nama' => 'Subdeputi Penindakan Keamanan Siber Sektor Pemerintahan',
-            'parent_id' => $deputi3->id,
-            'level' => 'subdeputi',
-        ]);
-
-        UnitKerja::create([
-            'kode' => 'D32',
-            'nama' => 'Subdeputi Penindakan Keamanan Siber Sektor Strategis',
-            'parent_id' => $deputi3->id,
-            'level' => 'subdeputi',
-        ]);
-
-        UnitKerja::create([
-            'kode' => 'D33',
-            'nama' => 'Subdeputi Pemulihan Keamanan Siber',
-            'parent_id' => $deputi3->id,
-            'level' => 'subdeputi',
-        ]);
-
-        // Pusat-Pusat
-        UnitKerja::create([
-            'kode' => 'P1',
-            'nama' => 'Pusat Operasi Keamanan Siber Nasional',
-            'parent_id' => $sekretariatUtama->id,
-            'level' => 'pusat',
-        ]);
-
-        UnitKerja::create([
-            'kode' => 'P2',
-            'nama' => 'Pusat Data dan Informasi',
-            'parent_id' => $sekretariatUtama->id,
-            'level' => 'pusat',
-        ]);
-
-        UnitKerja::create([
-            'kode' => 'P3',
-            'nama' => 'Pusat Riset dan Pengembangan',
-            'parent_id' => $sekretariatUtama->id,
-            'level' => 'pusat',
-        ]);
-
-        $this->command->info('✓ Unit Kerja created: 11 units');
-
-        // ========================================
-        // 3. CREATE USERS
-        // ========================================
-        $this->command->info('👥 Creating Users...');
-
-        // Super Admin
-        $admin = User::create([
-            'name' => 'Super Admin',
-            'email' => 'admin@bssn.go.id',
-            'password' => Hash::make('password123'),
-            'role' => 'admin_eperforma',
-        ]);
-
-        // PKO Users
-        $pko1 = User::create([
-            'name' => 'PKO Deputi III',
-            'email' => 'pko.d3@bssn.go.id',
-            'password' => Hash::make('password123'),
-            'role' => 'pko',
-        ]);
-
-        $pko2 = User::create([
-            'name' => 'PKO Subdeputi III.1',
-            'email' => 'pko.d31@bssn.go.id',
-            'password' => Hash::make('password123'),
-            'role' => 'pko',
-        ]);
-
-        // PMK Users
-        $pmk1 = User::create([
-            'name' => 'PMK Subdeputi III.1',
-            'email' => 'pmk.d31@bssn.go.id',
-            'password' => Hash::make('password123'),
-            'role' => 'pmk',
-        ]);
-
-        $pmk2 = User::create([
-            'name' => 'PMK Subdeputi III.2',
-            'email' => 'pmk.d32@bssn.go.id',
-            'password' => Hash::make('password123'),
-            'role' => 'pmk',
-        ]);
-
-        $pmk3 = User::create([
-            'name' => 'PMK Subdeputi III.3',
-            'email' => 'pmk.d33@bssn.go.id',
-            'password' => Hash::make('password123'),
-            'role' => 'pmk',
-        ]);
-
-        $this->command->info('✓ Users created: 6 users');
-
-        // ========================================
-        // SUMMARY
-        // ========================================
-        $this->command->info('');
-        $this->command->info('✅ Database seeded successfully!');
-        $this->command->info('===========================================');
-        $this->command->info('📊 SUMMARY:');
-        $this->command->info('- Periode: 1 (2025-2029)');
-        $this->command->info('- Unit Kerja: 11');
-        $this->command->info('- Users: 6');
-        $this->command->info('===========================================');
-        $this->command->info('🔑 DEFAULT CREDENTIALS:');
-        $this->command->info('');
-        $this->command->info('Admin ePerforma:');
-        $this->command->info('  Email: admin@bssn.go.id');
-        $this->command->info('  Password: password123');
-        $this->command->info('');
-        $this->command->info('PKO:');
-        $this->command->info('  Email: pko.d3@bssn.go.id / pko.d31@bssn.go.id');
-        $this->command->info('  Password: password123');
-        $this->command->info('');
-        $this->command->info('PMK:');
-        $this->command->info('  Email: pmk.d31@bssn.go.id / pmk.d32@bssn.go.id / pmk.d33@bssn.go.id');
-        $this->command->info('  Password: password123');
-        $this->command->info('===========================================');
+        echo "✓ Created 4 test users (PKO, PMK, Ka-unit, Admin)\n";
+        echo "✓ Set user hierarchy (PKO → PMK → Ka-unit)\n";
+        echo "✓ All passwords: 'password'\n";
     }
 }
