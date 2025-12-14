@@ -7,7 +7,7 @@ export const logbookAtasanRoute = {
   meta: {
     title: 'Logbook Atasan',
     menu: true,
-    guard: 'project.role.kerja.atasan',
+    guard: 'project.role.kerja.kaunit',
     icon: 'fa-duotone fa-book',
     order: 2
   }

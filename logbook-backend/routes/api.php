@@ -53,23 +53,14 @@ Route::middleware('auth:api')->group(function () {
 
     // Logbook Atasan routes
     Route::prefix('logbook-atasan')->group(function () {
-        // Get daftar pegawai dalam unit kerja
         Route::get('pegawai', [LogbookAtasanController::class, 'getPegawaiList']);
-
-        // Get summary/statistik
-        Route::get('summary', [LogbookAtasanController::class, 'getUnitSummary']);
-
-        // Get logbook pegawai
         Route::get('pegawai/{pegawaiId}/logs', [LogbookAtasanController::class, 'getPegawaiLogs']);
-
-        // Detail logbook
         Route::get('logs/{logId}', [LogbookAtasanController::class, 'getLogDetail']);
 
-        // Approve & Reject
         Route::post('logs/{logId}/approve', [LogbookAtasanController::class, 'approveLog']);
         Route::post('logs/{logId}/reject', [LogbookAtasanController::class, 'rejectLog']);
 
-        // Update catatan atasan saja
         Route::put('logs/{logId}/catatan', [LogbookAtasanController::class, 'updateCatatanAtasan']);
+        Route::get('summary', [LogbookAtasanController::class, 'getUnitSummary']);
     });
 });

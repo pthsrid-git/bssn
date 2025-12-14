@@ -33,6 +33,12 @@ const routes = [
         name: 'ruang-kerja',
         redirect: { name: 'ruang-kerja.logbook-katim' },
         children: [...ruangKerjaRoutes]
+      },
+      {
+        path: 'ruang-kerja',
+        name: 'ruang-kerja',
+        redirect: { name: 'ruang-kerja.logbook-kaunit' },
+        children: [...ruangKerjaRoutes]
       }
     ]
   },
