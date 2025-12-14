@@ -135,7 +135,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserDwsStore } from '@/stores/userDwsStore'
 
@@ -203,6 +203,34 @@ const handleLogin = async () => {
     // Save JWT token
     localStorage.setItem('auth_token', data.data.token)
     
+    // IMPORTANT: Format user data for router permissions
+    const userData = data.data.user
+    
+    // Check if user already has permissions in proper format
+    let formattedPermissions = {
+      ruangPribadi: [] as string[],
+      ruangKerja: [] as string[]
+    }
+    
+    // If user data has permissions in Laravel format, convert it
+    if (userData.permissions && Array.isArray(userData.permissions)) {
+      // Assume all permissions are for ruangPribadi for now
+      formattedPermissions.ruangPribadi = userData.permissions
+    } 
+    // If permissions already in the right format
+    else if (userData.permissions && userData.permissions.ruangPribadi) {
+      formattedPermissions = userData.permissions
+    }
+    
+    // Create formatted user object
+    const formattedUser = {
+      ...userData,
+      permissions: formattedPermissions
+    }
+    
+    // Save formatted user to localStorage
+    localStorage.setItem('user', JSON.stringify(formattedUser))
+    
     // Save NIP if remember me is checked
     if (form.value.remember) {
       localStorage.setItem('remember_nip', form.value.nip)
@@ -210,12 +238,12 @@ const handleLogin = async () => {
       localStorage.removeItem('remember_nip')
     }
 
-    // Set user in store (data already in correct format from UserResource)
-    userDwsStore.setUser(data.data.user)
+    // Set user in store
+    userDwsStore.setUser(formattedUser)
 
-    // Redirect to dashboard
-    console.log('🚀 Redirecting to dashboard...')
-    router.push('/dashboard-dws/ruang-pribadi/dashboard')
+    // Redirect using named route
+    router.push({ name: 'ruang-pribadi.dashboard' })
+    
   } catch (error: any) {
     console.error('❌ Login error:', error)
     
@@ -234,10 +262,16 @@ const handleLogin = async () => {
   }
 }
 
-// Load remembered NIP on mount
-const rememberedNip = localStorage.getItem('remember_nip')
-if (rememberedNip) {
-  form.value.nip = rememberedNip
-  form.value.remember = true
-}
+// Load remembered NIP on mount - FIXED VERSION
+onMounted(() => {
+  try {
+    const rememberedNip = localStorage.getItem('remember_nip')
+    if (rememberedNip) {
+      form.value.nip = rememberedNip
+      form.value.remember = true
+    }
+  } catch (error) {
+    console.error('Error loading remembered NIP:', error)
+  }
+})
 </script>

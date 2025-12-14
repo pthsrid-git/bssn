@@ -167,6 +167,16 @@
           </div>
         </div>
 
+        <!-- Error Message -->
+        <div v-if="errorMessage" class="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+          {{ errorMessage }}
+        </div>
+
+        <!-- Success Message -->
+        <div v-if="successMessage" class="p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700">
+          {{ successMessage }}
+        </div>
+
         <!-- Submit -->
         <div class="flex justify-end pt-2">
           <button
@@ -187,11 +197,16 @@
 import { ref, computed } from 'vue'
 import ModalDefault from '@/components/modal/ModalDefault.vue'
 
+// Define emits
+const emit = defineEmits(['success'])
+
 const modalRef = ref()
 const fileInput = ref<HTMLInputElement>()
 const hiddenDateInput = ref<HTMLInputElement>()
 const selectedFile = ref<File | null>(null)
 const loading = ref(false)
+const errorMessage = ref('')
+const successMessage = ref('')
 
 const today = new Date()
 const formattedTanggal = ref('')
@@ -260,6 +275,8 @@ const handleFile = (e: Event) => {
 
 const submitForm = async () => {
   loading.value = true
+  errorMessage.value = ''
+  successMessage.value = ''
 
   const fd = new FormData()
   fd.append('tanggal', form.value.tanggal)
@@ -276,7 +293,7 @@ const submitForm = async () => {
   }
 
   try {
-    await fetch(`${import.meta.env.VITE_API_BASE_URL}/logbooks`, {
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/logbooks`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
@@ -285,9 +302,23 @@ const submitForm = async () => {
       body: fd
     })
     
-    modalRef.value.close()
+    if (response.ok) {
+      successMessage.value = 'Aktivitas berhasil ditambahkan!'
+      
+      // Emit success event untuk trigger refresh di parent
+      emit('success')
+      
+      // Tunggu sebentar agar user bisa melihat success message
+      setTimeout(() => {
+        modalRef.value.close()
+      }, 1000)
+    } else {
+      const errorData = await response.json()
+      errorMessage.value = errorData.message || 'Gagal menambahkan aktivitas'
+    }
   } catch (error) {
     console.error('Error submitting form:', error)
+    errorMessage.value = 'Terjadi kesalahan saat menambahkan aktivitas'
   } finally {
     loading.value = false
   }
@@ -296,6 +327,8 @@ const submitForm = async () => {
 const handleVisibility = (visible: boolean) => {
   if (!visible) {
     selectedFile.value = null
+    errorMessage.value = ''
+    successMessage.value = ''
     // Reset form
     form.value = {
       tanggal: today.toISOString().split('T')[0],

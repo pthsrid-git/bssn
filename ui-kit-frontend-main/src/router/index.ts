@@ -14,21 +14,18 @@ const routes = [
   },
   {
     path: '/',
-    redirect: (to: any) => {
-      const token = localStorage.getItem('auth_token')
-      return token ? '/dashboard-dws/ruang-pribadi/beranda' : '/login'
-    }
+    name: 'root',
+    redirect: { name: 'ruang-pribadi.dashboard' }
   },
   {
     path: '/dashboard-dws',
     component: LayoutDashboardDws,
-    redirect: '/dashboard-dws/ruang-pribadi/beranda',
     meta: { requiresAuth: true },
     children: [
       {
         path: 'ruang-pribadi',
         name: 'ruang-pribadi',
-        redirect: { name: 'ruang-pribadi.beranda' },
+        redirect: { name: 'ruang-pribadi.dashboard' },
         children: [...ruangPribadiRoutes]
       },
       {
@@ -41,7 +38,8 @@ const routes = [
   },
   {
     path: '/:pathMatch(.*)*',
-    redirect: '/'
+    name: 'not-found',
+    redirect: { name: 'ruang-pribadi.dashboard' }
   }
 ]
 
@@ -74,38 +72,64 @@ function getUserPermissions(): string[] {
   }
 }
 
-// Navigation Guard
+// Navigation Guard dengan logging lebih detail
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('auth_token')
   const requiresAuth = to.meta.requiresAuth !== false
 
-  // 1. Check authentication
+  console.log('🚦 Navigation Guard:', {
+    from: from.name || from.path,
+    to: to.name || to.path,
+    requiresAuth,
+    hasToken: !!token,
+    meta: to.meta,
+    matched: to.matched.map((route) => ({
+      path: route.path,
+      name: route.name,
+      meta: route.meta
+    }))
+  })
+
+  // 1. Handle authentication for login page
+  if (to.path === '/login') {
+    if (token) {
+      console.log('🔁 Already authenticated, redirecting to dashboard')
+      return next({ name: 'ruang-pribadi.dashboard' })
+    }
+    return next()
+  }
+
+  // 2. Handle authentication for protected routes
   if (requiresAuth && !token) {
-    console.log('❌ Not authenticated, redirecting to login')
+    console.log('🔒 Not authenticated, redirecting to login')
     return next('/login')
   }
 
-  if (to.path === '/login' && token) {
-    console.log('✓ Already authenticated, redirecting to beranda')
-    return next('/dashboard-dws/ruang-pribadi/beranda')
-  }
-
-  // 2. Check permissions (if route has guard)
+  // 3. Check permissions (if route has guard)
   if (token && to.meta.guard) {
     const permissions = getUserPermissions()
     const requiredGuard = to.meta.guard as string
 
-    if (!permissions.includes(requiredGuard)) {
-      console.log('❌ Permission denied:', {
-        required: requiredGuard,
-        has: permissions
-      })
+    console.log('🔐 Permission Check:', {
+      required: requiredGuard,
+      userPermissions: permissions,
+      hasPermission: permissions.includes(requiredGuard)
+    })
 
-      // Redirect to beranda if no permission
-      return next('/dashboard-dws/ruang-pribadi/beranda')
+    if (!permissions.includes(requiredGuard)) {
+      console.log('⛔ Permission denied, redirecting to dashboard')
+      return next({ name: 'ruang-pribadi.dashboard' })
     }
   }
 
+  // 4. Special handling for root path
+  if (to.path === '/' && token) {
+    console.log('🏠 Root path with token, redirecting to dashboard')
+    return next({ name: 'ruang-pribadi.dashboard' })
+  }
+
+  // 5. Continue navigation
+  console.log('✅ Navigation allowed')
   next()
 })
 
