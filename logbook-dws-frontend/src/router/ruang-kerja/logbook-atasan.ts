@@ -5,7 +5,7 @@ export const logbookAtasanRoute = {
   name: 'ruang-kerja.logbook-atasan',
   component: LogbookAtasanView,
   meta: {
-    title: 'Logbook Atasan',
+    title: 'Logbook KA Unit Kerja',
     menu: true,
     guard: 'project.role.kerja.kaunit',
     icon: 'fa-duotone fa-book',

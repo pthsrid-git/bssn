@@ -1,8 +1,7 @@
-<template>
-  <router-view />
-</template>
-
-<script setup>
-// App.vue sekarang hanya berisi router-view
-// Semua logic dipindah ke MainLayout.vue
+<script setup lang="ts">
+import { RouterView } from 'vue-router'
 </script>
+
+<template>
+  <RouterView />
+</template>

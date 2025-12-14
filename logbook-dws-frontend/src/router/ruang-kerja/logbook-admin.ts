@@ -1,0 +1,14 @@
+import LogbookAdminView from '@/views/ruang-kerja/LogbookAdminView.vue'
+
+export const logbookAdminRoute = {
+  path: 'logbook-admin',
+  name: 'ruang-kerja.logbook-admin',
+  component: LogbookAdminView,
+  meta: {
+    title: 'Admin Logbook',
+    menu: true,
+    guard: 'project.role.kerja.admin',
+    icon: 'fa-duotone fa-book',
+    order: 2
+  }
+}

@@ -5,7 +5,7 @@ export const logbookKatimRoute = {
   name: 'ruang-kerja.logbook-katim',
   component: LogbookKatimView,
   meta: {
-    title: 'Logbook Ka. Tim',
+    title: 'Logbook Katim',
     menu: true,
     guard: 'project.role.kerja.katim',
     icon: 'fa-duotone fa-book',

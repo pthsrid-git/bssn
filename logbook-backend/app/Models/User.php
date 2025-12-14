@@ -123,6 +123,7 @@ class User extends Authenticatable implements JWTSubject
                 break;
 
             case 'admin':  // Admin - hanya ruang kerja
+                $permissions['ruangPribadi'][] = 'project.role.pribadi.dashboard';
                 $permissions['ruangKerja'][] = 'project.role.kerja.admin';
                 break;
 
