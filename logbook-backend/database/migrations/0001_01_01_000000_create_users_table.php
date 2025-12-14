@@ -13,32 +13,34 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+
+            // Required fields for frontend
             $table->string('guid')->unique();
-            $table->string('fpid');
-            $table->string('nama_pegawai');
+            $table->string('uuid')->unique();
             $table->string('name');
-            $table->string('role'); // ka-unit, pmk, pko, admin
-            $table->foreignId('parent_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->string('fullname');
             $table->string('email')->unique();
+            $table->string('fpid');
+            $table->string('nip')->unique();
+            $table->string('pangkat')->nullable();
+            $table->string('jabatan')->nullable();
             $table->string('password');
-            $table->string('nip_nrp');
-            $table->string('pangkat_golongan')->nullable();
-            $table->string('golongan')->nullable();
-            $table->string('kode_peta_jabatan')->nullable();
-            $table->string('nama_jabatan')->nullable();
-            $table->string('kelas')->nullable();
-            $table->string('kode_unit_organisasi')->nullable();
-            $table->string('nama_unit_organisasi')->nullable();
-            $table->text('nama_lengkap_peta_jabatan')->nullable();
             $table->rememberToken();
+
+            // Role & Hierarchy
+            $table->string('role'); // pko, pmk, ka-unit, admin
+            $table->foreignId('parent_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->string('kode_unit_organisasi')->nullable();
+
             $table->timestamps();
 
-            // Indexes untuk performance
-            $table->index('email');
             $table->index('guid');
-            $table->index('nip_nrp');
-            $table->index('parent_id');
+            $table->index('uuid');
+            $table->index('email');
+            $table->index('nip');
             $table->index('role');
+            $table->index('parent_id');
+            $table->index('kode_unit_organisasi');
         });
     }
 

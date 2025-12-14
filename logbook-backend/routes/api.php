@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\LogbookController;
 use App\Http\Controllers\Api\LogbookKatimController;
 use App\Http\Controllers\Api\LogbookAtasanController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -18,7 +19,11 @@ Route::middleware('auth:api')->group(function () {
     Route::prefix('auth')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
         Route::post('refresh', [AuthController::class, 'refresh']);
-        Route::get('profile', [AuthController::class, 'profile']);
+        Route::get('me', [AuthController::class, 'me']);
+    });
+
+    Route::prefix('users')->group(function () {
+        Route::get('{id}', [UserController::class, 'show']);
     });
 
     // Logbook routes (untuk pegawai/PKO)
