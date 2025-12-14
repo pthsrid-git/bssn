@@ -44,6 +44,8 @@ Route::middleware('auth:api')->group(function () {
         // Detail logbook
         Route::get('logs/{logId}', [LogbookKatimController::class, 'getLogDetail']);
 
+        Route::put('logs/{logId}/catatan', [LogbookKatimController::class, 'updateCatatanKatim']);
+
         // Approve & Reject (update catatan_katim + status)
         Route::post('logs/{logId}/approve', [LogbookKatimController::class, 'approveLog']);
         Route::post('logs/{logId}/reject', [LogbookKatimController::class, 'rejectLog']);

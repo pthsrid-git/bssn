@@ -1,8 +1,8 @@
 <template>
   <ModalDefault
     ref="modal"
-    label="Detail Logbook Anggota"
-    maxWidthClass="max-w-3xl"
+    label="Detail Logbook"
+    maxWidthClass="max-w-2xl"
   >
     <div class="space-y-6">
       <!-- Status Badge -->
@@ -13,7 +13,7 @@
         >
           {{ getStatusLabel(entry?.status) }}
         </span>
-        <p class="text-sm text-gray-500">Berikut adalah detail logbook anggota tim</p>
+        <p class="text-sm text-gray-500">Berikut adalah detail logbook anggota</p>
       </div>
 
       <!-- Tanggal & Waktu -->
@@ -25,7 +25,7 @@
           </div>
           <div class="flex gap-16">
             <label class="text-sm font-medium text-gray-700 w-20">Waktu</label>
-            <div class="text-sm text-gray-900 font-bold">{{ formatTime(entry?.jam_mulai) }} - {{ formatTime(entry?.jam_selesai) }}</div>
+            <div class="text-sm text-gray-900 font-bold">{{ entry?.jam_mulai }} - {{ entry?.jam_selesai }}</div>
           </div>
         </div>
         <div class="border-t border-gray-200"></div>
@@ -35,7 +35,7 @@
       <div>
         <label class="text-sm font-medium text-gray-900 block mb-2">Rencana Hasil Kinerja SKP</label>
         <div class="bg-white border border-gray-300 rounded-lg p-3 text-sm text-gray-900">
-          {{ entry?.rencana_hasil_kinerja_skp || '-' }}
+          {{ entry?.rencana_hasil_kinerja_skp }}
         </div>
       </div>
 
@@ -43,7 +43,7 @@
       <div>
         <label class="text-sm font-medium text-gray-900 block mb-2">Indikator Hasil Rencana Kerja</label>
         <div class="bg-white border border-gray-300 rounded-lg p-3 text-sm text-gray-900">
-          {{ entry?.indikator_hasil_rencana_kerja || '-' }}
+          {{ entry?.indikator_hasil_rencana_kerja }}
         </div>
       </div>
 
@@ -51,7 +51,7 @@
       <div>
         <label class="text-sm font-medium text-gray-900 block mb-2">Aktivitas / Kegiatan Harian</label>
         <div class="bg-white border border-gray-300 rounded-lg p-3 text-sm text-gray-900">
-          {{ entry?.aktivitas_kegiatan_harian || '-' }}
+          {{ entry?.aktivitas_kegiatan_harian || entry?.judul_kegiatan }}
         </div>
       </div>
 
@@ -59,14 +59,14 @@
       <div>
         <label class="text-sm font-medium text-gray-900 block mb-2">Keterangan</label>
         <div class="bg-white border border-gray-300 rounded-lg p-3 text-sm text-gray-900">
-          {{ entry?.keterangan || '-' }}
+          {{ entry?.keterangan || entry?.deskripsi || '-' }}
         </div>
       </div>
 
       <!-- Bukti Aktivitas Harian -->
       <div v-if="entry?.file_path || entry?.file_name">
         <label class="text-sm font-medium text-gray-900 block mb-2">Bukti Aktivitas Harian</label>
-        <div class="w-full md:w-[40%]">
+        <div class="w-[30%]">
           <div 
             @click="downloadFile"
             class="border border-gray-200 rounded-lg p-3 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer"
@@ -91,20 +91,18 @@
         </div>
       </div>
 
-      <!-- Catatan Ketua Tim -->
+      <!-- Catatan Katim (Editable) -->
       <div>
-        <label class="text-sm font-medium text-gray-900 block mb-2">Catatan Ketua Tim</label>
-        <textarea
+        <label class="text-sm font-medium text-gray-900 block mb-2">Catatan Katim</label>
+        <input 
           v-model="catatanKatim"
-          rows="4"
-          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent text-sm"
-          placeholder="Masukkan catatan Anda untuk logbook ini..."
-          :disabled="isSubmitting"
-        ></textarea>
-        <p class="text-xs text-gray-500 mt-1">* Catatan wajib diisi untuk menolak logbook</p>
+          type="text"
+          placeholder="-"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-warning-500 focus:border-warning-500"
+        />
       </div>
 
-      <!-- Catatan Atasan (Read-only) -->
+      <!-- Catatan Atasan (Read Only) -->
       <div>
         <label class="text-sm font-medium text-gray-900 block mb-2">Catatan Atasan</label>
         <div class="bg-white border border-gray-300 rounded-lg p-3 text-sm text-gray-900">
@@ -113,73 +111,41 @@
       </div>
 
       <!-- Action Buttons -->
-      <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
-        <button
-          @click="close"
-          class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-          :disabled="isSubmitting"
+      <div class="flex justify-end pt-4">
+        <button 
+          @click="handleSave"
+          :disabled="saving"
+          class="px-6 py-2 bg-warning-500 text-black rounded-lg hover:bg-warning-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Tutup
-        </button>
-
-        <!-- Tombol Simpan Catatan (hanya jika catatan berubah) -->
-        <button
-          v-if="catatanKatim !== (entry?.catatan_katim || '') && entry?.status !== 'Ditolak'"
-          @click="handleSaveCatatan"
-          class="px-4 py-2 text-sm font-medium text-white bg-warning-600 rounded-lg hover:bg-warning-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          :disabled="isSubmitting"
-        >
-          {{ isSubmitting && actionType === 'save' ? 'Menyimpan...' : 'Simpan Catatan' }}
-        </button>
-
-        <!-- Tombol Tolak (tidak tampil jika sudah ditolak) -->
-        <button
-          v-if="entry?.status !== 'Ditolak' && entry?.status !== 'Disetujui'"
-          @click="handleReject"
-          class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          :disabled="isSubmitting || !catatanKatim.trim()"
-        >
-          {{ isSubmitting && actionType === 'reject' ? 'Menolak...' : 'Tolak' }}
-        </button>
-
-        <!-- Tombol Setujui (tidak tampil jika sudah disetujui) -->
-        <button
-          v-if="entry?.status !== 'Disetujui' && entry?.status !== 'Ditolak'"
-          @click="handleApprove"
-          class="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          :disabled="isSubmitting"
-        >
-          {{ isSubmitting && actionType === 'approve' ? 'Menyetujui...' : 'Setujui' }}
+          {{ saving ? 'Menyimpan...' : 'Simpan' }}
         </button>
       </div>
     </div>
   </ModalDefault>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from 'vue'
 import ModalDefault from '@/components/modal/ModalDefault.vue'
-import { logbookKatimService } from '@/services/logbookKatimService'
+import { LogbookKatimService } from '@/services/logbookKatimService'
 
 const props = defineProps({
   entry: Object
 })
 
-const emit = defineEmits(['saved'])
+const emit = defineEmits(['success'])
 
 const modal = ref()
 const catatanKatim = ref('')
-const isSubmitting = ref(false)
-const actionType = ref(null)
+const saving = ref(false)
 
-// Watch entry changes
 watch(() => props.entry, (newEntry) => {
   if (newEntry) {
     catatanKatim.value = newEntry.catatan_katim || ''
   }
 }, { immediate: true })
 
-const formatDate = (dateString) => {
+const formatDate = (dateString: string) => {
   if (!dateString) return '-'
   
   const date = new Date(dateString)
@@ -195,22 +161,24 @@ const formatDate = (dateString) => {
   return `${day} ${month} ${year}`
 }
 
-const formatTime = (timeStr) => {
-  if (!timeStr) return '00:00'
-  return timeStr.substring(0, 5)
-}
-
-const getStatusClass = (status) => {
-  const classes = {
+const getStatusClass = (status: string) => {
+  const classes: Record<string, string> = {
     'Disetujui': 'bg-primary-100 text-primary-700',
     'Disubmit': 'bg-warning-100 text-warning-700',
-    'Ditolak': 'bg-red-100 text-red-700'
+    'Ditolak': 'bg-red-100 text-red-700',
+    'pending': 'bg-warning-100 text-warning-700'
   }
   return classes[status] || 'bg-gray-100 text-gray-700'
 }
 
-const getStatusLabel = (status) => {
-  return status || 'Draft'
+const getStatusLabel = (status: string) => {
+  const labels: Record<string, string> = {
+    'Disetujui': 'Disetujui',
+    'Disubmit': 'Disubmit',
+    'Ditolak': 'Ditolak',
+    'pending': 'Disubmit'
+  }
+  return labels[status] || 'Disubmit'
 }
 
 const getFileName = () => {
@@ -229,8 +197,8 @@ const getFileName = () => {
   return 'File.pdf'
 }
 
-const formatFileSize = (bytes) => {
-  if (!bytes || bytes === 0) return '0 KB'
+const formatFileSize = (bytes: any) => {
+  if (!bytes || bytes === 0) return '2 Mb'
   
   const size = typeof bytes === 'string' ? parseInt(bytes) : bytes
   
@@ -250,11 +218,9 @@ const downloadFile = () => {
     return
   }
 
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
   const cleanBaseUrl = baseUrl.replace(/\/api$/, '')
   const fileUrl = `${cleanBaseUrl}/storage/${props.entry.file_path}`
-  
-  console.log('Downloading file from:', fileUrl)
   
   const link = document.createElement('a')
   link.href = fileUrl
@@ -265,101 +231,24 @@ const downloadFile = () => {
   document.body.removeChild(link)
 }
 
-const handleApprove = async () => {
-  if (!props.entry?.id) return
-  
-  if (!confirm('Apakah Anda yakin ingin menyetujui logbook ini?')) return
-  
-  isSubmitting.value = true
-  actionType.value = 'approve'
-  
-  try {
-    const response = await logbookKatimService.approveLog(
-      props.entry.id,
-      catatanKatim.value.trim() || undefined
-    )
-    
-    if (response.success) {
-      alert('Logbook berhasil disetujui')
-      emit('saved')
-      close()
-    } else {
-      alert(response.message || 'Gagal menyetujui logbook')
-    }
-  } catch (error) {
-    console.error('Error approving log:', error)
-    alert('Terjadi kesalahan saat menyetujui logbook')
-  } finally {
-    isSubmitting.value = false
-    actionType.value = null
-  }
-}
-
-const handleReject = async () => {
-  if (!props.entry?.id) return
-  
-  if (!catatanKatim.value.trim()) {
-    alert('Catatan wajib diisi untuk menolak logbook')
+const handleSave = async () => {
+  if (!props.entry?.id) {
     return
   }
-  
-  if (!confirm('Apakah Anda yakin ingin menolak logbook ini?')) return
-  
-  isSubmitting.value = true
-  actionType.value = 'reject'
-  
-  try {
-    const response = await logbookKatimService.rejectLog(
-      props.entry.id,
-      catatanKatim.value.trim()
-    )
-    
-    if (response.success) {
-      alert('Logbook berhasil ditolak')
-      emit('saved')
-      close()
-    } else {
-      alert(response.message || 'Gagal menolak logbook')
-    }
-  } catch (error) {
-    console.error('Error rejecting log:', error)
-    alert('Terjadi kesalahan saat menolak logbook')
-  } finally {
-    isSubmitting.value = false
-    actionType.value = null
-  }
-}
 
-const handleSaveCatatan = async () => {
-  if (!props.entry?.id) return
-  
-  if (!catatanKatim.value.trim()) {
-    alert('Catatan tidak boleh kosong')
-    return
-  }
-  
-  isSubmitting.value = true
-  actionType.value = 'save'
-  
+  saving.value = true
   try {
-    const response = await logbookKatimService.updateCatatanKatim(
+    await LogbookKatimService.updateCatatanKatim(
       props.entry.id,
-      catatanKatim.value.trim()
+      catatanKatim.value
     )
-    
-    if (response.success) {
-      alert('Catatan berhasil disimpan')
-      emit('saved')
-      close()
-    } else {
-      alert(response.message || 'Gagal menyimpan catatan')
-    }
+
+    modal.value?.close()
+    emit('success')
   } catch (error) {
     console.error('Error saving catatan:', error)
-    alert('Terjadi kesalahan saat menyimpan catatan')
   } finally {
-    isSubmitting.value = false
-    actionType.value = null
+    saving.value = false
   }
 }
 
@@ -369,12 +258,6 @@ const open = () => {
 
 const close = () => {
   modal.value?.close()
-  // Reset state setelah close
-  setTimeout(() => {
-    catatanKatim.value = props.entry?.catatan_katim || ''
-    isSubmitting.value = false
-    actionType.value = null
-  }, 300)
 }
 
 defineExpose({
