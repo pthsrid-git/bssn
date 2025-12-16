@@ -91,7 +91,27 @@
         <!-- Daftar Laporan Unit Kerja Card -->
         <Card>
           <div class="space-y-4">
-            <h2 class="text-lg font-semibold text-gray-900">TABEL FINAL OUTCOME</h2>
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+              <h2 class="text-lg font-semibold text-gray-900">TABEL PENERJAMAH INTERMEDIATE OUTCOME LV3</h2>
+
+              <div class="flex flex-wrap items-center gap-3">
+                <div class="flex items-center gap-2">
+                  <label class="text-sm text-gray-600 whitespace-nowrap">PERIODE</label>
+                  <select v-model="filterTahun" class="border rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500" >
+                    <option value="2025-2029">2025-2029</option>
+                    <option value="2030-2034">2030-2034</option>
+                  </select>
+                </div>
+
+                <!-- SEARCH -->
+                <div class="relative">
+                  <input v-model="search" type="text" placeholder="search" class="border rounded-md pl-9 pr-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500" />
+                  <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
 
             <!-- Table -->
             <TableDefault>
@@ -192,7 +212,27 @@
         <!-- Daftar Laporan Unit Kerja Card -->
         <Card>
           <div class="space-y-4">
-            <h2 class="text-lg font-semibold text-gray-900">TABEL INTERMEDIATE OUTCOME LV1</h2>
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+              <h2 class="text-lg font-semibold text-gray-900">TABEL INTERMEDIATE OUTCOME LV1</h2>
+
+              <div class="flex flex-wrap items-center gap-3">
+                <div class="flex items-center gap-2">
+                  <label class="text-sm text-gray-600 whitespace-nowrap">PERIODE</label>
+                  <select v-model="filterTahun" class="border rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500" >
+                    <option value="2025-2029">2025-2029</option>
+                    <option value="2030-2034">2030-2034</option>
+                  </select>
+                </div>
+
+                <!-- SEARCH -->
+                <div class="relative">
+                  <input v-model="search" type="text" placeholder="search" class="border rounded-md pl-9 pr-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500" />
+                  <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
 
             <!-- Table -->
             <TableDefault>
@@ -307,7 +347,28 @@
         <!-- Daftar Laporan Unit Kerja Card -->
         <Card>
           <div class="space-y-4">
-            <h2 class="text-lg font-semibold text-gray-900">TABEL INTERMEDIATE OUTCOME LV2</h2>
+            
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+              <h2 class="text-lg font-semibold text-gray-900">TABEL INTERMEDIATE OUTCOME LV2</h2>
+
+              <div class="flex flex-wrap items-center gap-3">
+                <div class="flex items-center gap-2">
+                  <label class="text-sm text-gray-600 whitespace-nowrap">PERIODE</label>
+                  <select v-model="filterTahun" class="border rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500" >
+                    <option value="2025-2029">2025-2029</option>
+                    <option value="2030-2034">2030-2034</option>
+                  </select>
+                </div>
+
+                <!-- SEARCH -->
+                <div class="relative">
+                  <input v-model="search" type="text" placeholder="search" class="border rounded-md pl-9 pr-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500" />
+                  <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
 
             <!-- Table -->
             <TableDefault>
@@ -426,7 +487,28 @@
         <!-- Daftar Laporan Unit Kerja Card -->
         <Card>
           <div class="space-y-4">
-            <h2 class="text-lg font-semibold text-gray-900">TABEL INTERMEDIATE OUTCOME LV3</h2>
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+              <h2 class="text-lg font-semibold text-gray-900">TABEL INTERMEDIATE OUTCOME LV3</h2>
+
+              <div class="flex flex-wrap items-center gap-3">
+                <div class="flex items-center gap-2">
+                  <label class="text-sm text-gray-600 whitespace-nowrap">PERIODE</label>
+                  <select v-model="filterTahun" class="border rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500" >
+                    <option value="2025-2029">2025-2029</option>
+                    <option value="2030-2034">2030-2034</option>
+                  </select>
+                </div>
+
+                <!-- SEARCH -->
+                <div class="relative">
+                  <input v-model="search" type="text" placeholder="search" class="border rounded-md pl-9 pr-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500" />
+                  <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
             <!-- Table -->
             <TableDefault>
               <template #header>
@@ -556,7 +638,27 @@
         <!-- Daftar Laporan Unit Kerja Card -->
         <Card>
           <div class="space-y-4">
-            <h2 class="text-lg font-semibold text-gray-900">TABEL OUTPUT</h2>
+            
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+              <h2 class="text-lg font-semibold text-gray-900">TABEL OUTPUT</h2>
+              <div class="flex flex-wrap items-center gap-3">
+                <div class="flex items-center gap-2">
+                  <label class="text-sm text-gray-600 whitespace-nowrap">PERIODE</label>
+                  <select v-model="filterTahun" class="border rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500" >
+                    <option value="2025-2029">2025-2029</option>
+                    <option value="2030-2034">2030-2034</option>
+                  </select>
+                </div>
+
+                <!-- SEARCH -->
+                <div class="relative">
+                  <input v-model="search" type="text" placeholder="search" class="border rounded-md pl-9 pr-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500" />
+                  <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
             <!-- Table -->
             <TableDefault>
               <template #header>
@@ -691,7 +793,36 @@
         <!-- Daftar Laporan Unit Kerja Card -->
         <Card>
           <div class="space-y-4">
-            <h2 class="text-lg font-semibold text-gray-900">TABEL PENERJAMAH INTERMEDIATE OUTCOME LV2</h2>
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+              <h2 class="text-lg font-semibold text-gray-900">TABEL PENERJAMAH INTERMEDIATE OUTCOME LV3</h2>
+
+              <div class="flex flex-wrap items-center gap-3">
+                <div class="flex items-center gap-2">
+                  <label class="text-sm text-gray-600 whitespace-nowrap">UNIT KERJA</label>
+                  <select v-model="filterUnitKerja" class="border rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500" >
+                    <option value="">ALL</option>
+                    <option value="UO 1">UO 1</option>
+                    <option value="UO 2">UO 2</option>
+                  </select>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <label class="text-sm text-gray-600 whitespace-nowrap">TAHUN</label>
+                  <select v-model="filterTahun" class="border rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500" >
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                  </select>
+                </div>
+
+                <!-- SEARCH -->
+                <div class="relative">
+                  <input v-model="search" type="text" placeholder="search" class="border rounded-md pl-9 pr-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500" />
+                  <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
             <!-- Table -->
             <TableDefault>
               <template #header>
