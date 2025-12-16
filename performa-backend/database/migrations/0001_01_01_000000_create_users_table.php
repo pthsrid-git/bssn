@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('fpid');
             $table->string('nip')->unique();
             $table->string('pangkat')->nullable();
+            $table->string('unit_kerja')->nullable();
             $table->string('jabatan')->nullable();
             $table->string('password');
             $table->rememberToken();

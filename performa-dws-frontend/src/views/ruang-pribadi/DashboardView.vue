@@ -5,7 +5,7 @@
         Selamat Datang
       </h1>
       <p class="text-lg text-gray-600">
-        di Sistem Logbook DWS - BSSN
+        di Sistem Performa DWS - BSSN
       </p>
     </div>
   </div>

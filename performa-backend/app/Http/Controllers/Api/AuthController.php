@@ -12,7 +12,6 @@ use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-
     public function register(Request $request)
     {
         $request->validate([
@@ -33,21 +32,17 @@ class AuthController extends Controller
             'name'      => $request->name,
             'fullname'  => $request->fullname,
             'email'     => $request->email,
-            'fpid'      => $request->nip, // asumsi FPID = NIP
+            'fpid'      => $request->nip,
             'nip'       => $request->nip,
+            'unit_kerja' => $request->unit_kerja,
             'pangkat'   => $request->pangkat,
             'jabatan'   => $request->jabatan,
             'password'  => Hash::make($request->password),
-
-            // default role
             'role'      => $request->role,
-
-            // hierarchy
             'parent_id'            => $request->parent_id,
             'kode_unit_organisasi' => $request->kode_unit_organisasi,
         ]);
 
-        // Auto login (JWT)
         $token = auth('api')->login($user);
 
         return response()->json([

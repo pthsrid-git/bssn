@@ -13,7 +13,7 @@
               @error="handleImageError"
             />
           </div>
-          <h1 class="text-2xl font-bold text-gray-900 mb-2">Logbook DWS</h1>
+          <h1 class="text-2xl font-bold text-gray-900 mb-2">Performa DWS</h1>
           <p class="text-sm text-gray-600">Badan Siber dan Sandi Negara</p>
         </div>
 
