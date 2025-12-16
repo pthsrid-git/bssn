@@ -5,7 +5,7 @@ export const logbookAdminRoute = {
   name: 'ruang-kerja.logbook-admin',
   component: LogbookAdminView,
   meta: {
-    title: 'Admin Logbook',
+    title: 'Pohon Kinerja',
     menu: true,
     guard: 'project.role.kerja.admin',
     icon: 'fa-duotone fa-book',
