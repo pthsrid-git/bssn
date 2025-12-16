@@ -590,7 +590,7 @@ const openDrawer = (tabName: string) => {
             nama: selectedName.value
           })
           
-          // Add your save logic here
+          // Add save logic here
           
           pageDefault.value?.closeDrawerDefault()
         }

@@ -114,12 +114,7 @@ class User extends Authenticatable implements JWTSubject
 
             case 'pmk':  // Katim - hanya dashboard di ruang pribadi
                 $permissions['ruangPribadi'][] = 'project.role.pribadi.dashboard';
-                $permissions['ruangKerja'][] = 'project.role.kerja.katim';
-                break;
-
-            case 'ka-unit':  // Ka-unit - hanya dashboard di ruang pribadi
-                $permissions['ruangPribadi'][] = 'project.role.pribadi.dashboard';
-                $permissions['ruangKerja'][] = 'project.role.kerja.kaunit';
+                $permissions['ruangKerja'][] = 'project.role.kerja.pko';
                 break;
 
             case 'admin':  // Admin - hanya ruang kerja
