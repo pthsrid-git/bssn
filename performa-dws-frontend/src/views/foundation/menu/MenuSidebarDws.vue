@@ -5,7 +5,7 @@
       <template v-for="(menu, index) in ruangPribadiItems" :key="index">
         <ButtonMenuSidebar
           :route="menu"
-          v-if="menu.meta.guard && userDwsStore.isRuangPribadiAuthorized(menu.meta.guard)"
+          v-if="!menu.meta.guard || userDwsStore.isRuangPribadiAuthorized(menu.meta.guard)"
         />
       </template>
     </ul>
@@ -14,7 +14,7 @@
       <template v-for="(menu, index) in ruangKerjaItems" :key="index">
         <ButtonMenuSidebar
           :route="menu"
-          v-if="menu.meta.guard && userDwsStore.isRuangKerjaAuthorized(menu.meta.guard)"
+          v-if="!menu.meta.guard || userDwsStore.isRuangKerjaAuthorized(menu.meta.guard)"
         />
       </template>
     </ul>
@@ -22,6 +22,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { RouteRecordRaw } from 'vue-router'
 
 import ButtonMenuSidebar from './ButtonMenuSidebar.vue'
@@ -40,15 +41,17 @@ const isMenuRoute = (route: RouteRecordRaw): route is MenuRoute => {
   return !!route.meta && route.meta.menu === true
 }
 
-const ruangPribadiItems =
+const ruangPribadiItems = computed(() => 
   router
     .getRoutes()
     .find((route) => route.name === 'ruang-pribadi')
     ?.children?.filter(isMenuRoute) ?? []
+)
 
-const ruangKerjaItems =
+const ruangKerjaItems = computed(() =>
   router
     .getRoutes()
     .find((route) => route.name === 'ruang-kerja')
     ?.children?.filter(isMenuRoute) ?? []
+)
 </script>

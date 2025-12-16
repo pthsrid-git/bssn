@@ -1,5 +1,4 @@
-import { componentRoute } from './component'
-import { helperRoute } from './helper'
-import { modelRoute } from './model'
+import { dashboardRoute } from './dashboard'
+import { logbookRoute } from './logbook'
 
-export const ruangPribadiRoutes = [componentRoute, helperRoute, modelRoute]
+export const ruangPribadiRoutes = [dashboardRoute, logbookRoute]

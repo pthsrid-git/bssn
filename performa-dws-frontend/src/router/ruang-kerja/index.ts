@@ -1,5 +1,5 @@
-import { componentRoute } from './component'
-import { helperRoute } from './helper'
-import { modelRoute } from './model'
+import { logbookKatimRoute } from './logbook-katim'
+import { logbookAtasanRoute } from './logbook-atasan'
+import { logbookAdminRoute } from './logbook-admin'
 
-export const ruangKerjaRoutes = [componentRoute, helperRoute, modelRoute]
+export const ruangKerjaRoutes = [logbookKatimRoute, logbookAtasanRoute, logbookAdminRoute]

@@ -399,6 +399,7 @@ export interface UserDwsData {
   nip: string
   pangkat: string
   jabatan: string
+  unit_kerja: string
   roles: string[]
   permissions: PermissionDwsData
 }
@@ -413,6 +414,7 @@ export const userDwsDataFromJson = (json: any): UserDwsData => {
     nip: json.nip,
     pangkat: json.pangkat,
     jabatan: json.jabatan,
+    unit_kerja: json.unit_kerja,
     roles: json.roles ?? [],
     permissions: permissionDwsDataFromJson(json.permissions, json.roles)
   }

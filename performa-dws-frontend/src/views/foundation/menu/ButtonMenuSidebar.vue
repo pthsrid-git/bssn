@@ -14,7 +14,7 @@
         <div class="flex items-center overflow-hidden">
           <div class="flex items-center flex-1 gap-2 overflow-hidden flex-nowrap">
             <font-awesome-icon v-if="!!route.meta?.icon" class="w-4 h-4" :icon="route.meta?.icon" />
-            <span class="truncate text-start text-nowrap"> {{ route.meta?.title }}</span>
+            <span class="truncate text-start text-nowrap">{{ route.meta?.title }}</span>
           </div>
           <div
             v-if="getBadge(route.name as string) > 0"

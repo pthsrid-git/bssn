@@ -16,6 +16,7 @@ import {
 } from './index.ts'
 import router from './router'
 import { useMenuBadgeStore } from './stores/menuBadgeStore.ts'
+import { useApiStore } from './stores/apiStore.ts'
 
 const app = createApp(App)
 
@@ -34,3 +35,7 @@ initMenuBadge(menuBadgeStore)
 callBadgeDropdownUiKitFrontend()
 
 app.mount('#app')
+
+const apiStore = useApiStore()
+const token = localStorage.getItem('auth_token')
+if (token) apiStore.setToken(token)

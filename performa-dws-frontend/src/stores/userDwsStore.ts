@@ -11,20 +11,30 @@ export const useUserDwsStore = defineStore(userDwsStore, {
   },
   getters: {
     isRuangPribadiAuthorized: (state) => (permission: string) => {
-      if (state.user) {
-        return state.user.permissions.ruangPribadi.includes(permission)
+      if (!state.user || !state.user.permissions) {
+        return false
       }
+
+      // Get permissions array
+      const permissions = state.user.permissions.ruangPribadi || []
+      return permissions.includes(permission)
     },
+
     isRuangKerjaAuthorized: (state) => (permission: string) => {
-      if (state.user) {
-        return state.user.permissions.ruangKerja.includes(permission)
+      if (!state.user || !state.user.permissions) {
+        return false
       }
+
+      // Get permissions array
+      const permissions = state.user.permissions.ruangKerja || []
+      return permissions.includes(permission)
     }
   },
   actions: {
     setUser(user: UserDwsData) {
       this.user = user
     },
+
     removeUser() {
       this.user = null
     }
