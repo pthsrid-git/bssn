@@ -1,4 +1,4 @@
-import LogbookAdminView from '@/views/ruang-kerja/LogbookAdminView.vue'
+import LogbookAdminView from '@/views/ruang-kerja/ProformaAdminView.vue'
 
 export const logbookAdminRoute = {
   path: 'logbook-admin',

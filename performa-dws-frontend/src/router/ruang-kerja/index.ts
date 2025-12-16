@@ -1,5 +1,4 @@
-import { logbookKatimRoute } from './logbook-katim'
-import { logbookAtasanRoute } from './logbook-atasan'
-import { logbookAdminRoute } from './logbook-admin'
+import type { RouteRecordRaw } from 'vue-router'
+import { adminRoute } from './admin'
 
-export const ruangKerjaRoutes = [logbookKatimRoute, logbookAtasanRoute, logbookAdminRoute]
+export const ruangKerjaRoutes: RouteRecordRaw[] = [adminRoute]
