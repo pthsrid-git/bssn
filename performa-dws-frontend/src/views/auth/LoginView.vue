@@ -126,7 +126,6 @@
         <div class="space-y-1 text-xs text-yellow-700">
           <p><strong>PKO:</strong> nip: 482716594203857194 / password: password</p>
           <p><strong>PMK:</strong> nip: 482716594203857195 / password: password</p>
-          <p><strong>Ka-unit:</strong> nip: 482716594203857196 / password: password</p>
           <p><strong>Admin:</strong> nip: 482716594203857197 / password: password</p>
         </div>
       </div>

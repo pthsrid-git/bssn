@@ -107,14 +107,14 @@ class User extends Authenticatable implements JWTSubject
 
         // Add permissions based on role
         switch ($this->role) {
-            case 'pmo':  // PMO
+            case 'pko':  // PMO
                 $permissions['ruangPribadi'][] = 'project.role.pribadi.dashboard';
-                $permissions['ruangPribadi'][] = 'project.role.pribadi.logbook';
+                $permissions['ruangKerja'][] = 'project.role.kerja.pko';
                 break;
 
             case 'pmk':  // Katim - hanya dashboard di ruang pribadi
                 $permissions['ruangPribadi'][] = 'project.role.pribadi.dashboard';
-                $permissions['ruangKerja'][] = 'project.role.kerja.pko';
+                $permissions['ruangKerja'][] = 'project.role.kerja.pmk';
                 break;
 
             case 'admin':  // Admin - hanya ruang kerja

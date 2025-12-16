@@ -19,7 +19,7 @@ export const pkoRoute: RouteRecordRaw = {
   },
   children: [
     {
-      path: 'kinerja', // ✅ Path relatif tanpa slash
+      path: 'kinerja',
       name: 'ruang-kerja.pko.kinerja',
       component: ProformaPKOView,
       meta: {
@@ -27,19 +27,19 @@ export const pkoRoute: RouteRecordRaw = {
         menu: true, // ✅ Pastikan menu: true
         guard: 'project.role.kerja.pko',
         icon: 'fa-duotone fa-book',
-        parent: 'ruang-kerja.pko' // ✅ Parent harus sesuai dengan name parent
+        parent: 'ruang-kerja.pko'
       }
     },
     {
-      path: 'realisasi', // ✅ Path relatif tanpa slash
+      path: 'realisasi',
       name: 'ruang-kerja.pko.realisasi',
       component: ProformaPKORealisasiView,
       meta: {
         title: 'REALISASI',
-        menu: true, // ✅ Pastikan menu: true
+        menu: true,
         guard: 'project.role.kerja.pko',
         icon: 'fa-duotone fa-chart-line',
-        parent: 'ruang-kerja.pko' // ✅ Parent harus sesuai dengan name parent
+        parent: 'ruang-kerja.pko'
       }
     }
   ]
