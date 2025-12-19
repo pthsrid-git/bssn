@@ -281,9 +281,40 @@
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
                           {{ Array.isArray(item.capaian_akhir) ? item.capaian_akhir[i] : item.capaian_akhir }}
-                        </td>                        
+                        </td>                     
+                      </tr>
+                      <tr>
+                        <td></td>
                       </tr>
                     </template>
+                    <!-- Summary Rows - 3 baris terpisah di paling bawah -->
+                    <tr class="border-t-2 border-gray-500">
+                      <td colspan="12" class="border-0 bg-white"></td>
+                      <td class="px-4 py-2 border-b border-l border-r border-gray-300 text-sm ">
+                        Total Capaian PK
+                      </td>
+                      <td class="px-4 py-2 border-b border-gray-300 text-sm font-bold">
+                        {{ tableSummary?.totalCapaianPK }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="12" class="border-0 bg-white"></td>
+                      <td class="px-4 py-2 border-b border-l border-r border-gray-300 text-sm ">
+                        Nilai Kinerja Organisasi (NKO) atau rata-rata capaian PK
+                      </td>
+                      <td class="px-4 py-2 border-b border-gray-300 text-sm font-bold">
+                        {{ tableSummary?.nkoOrganisasi }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="12" class="border-0 bg-white"></td>
+                      <td class="px-4 py-2 border-l border-r border-gray-300 text-sm ">
+                        Predikat PKO
+                      </td>
+                      <td class="px-4 py-2 text-sm font-bold">
+                        {{ tableSummary?.predikatPKO }}
+                      </td>
+                    </tr>
                   </template>
                 </tbody>
               </table>
@@ -341,7 +372,7 @@
           </div>
 
           <!-- Intermediate Outcome LV1 Triwilan Tab -->
-          <div v-if="activeTab === 'intermediateoutcomelv1triwulan'" class="space-y-4">
+          <div v-if="activeTab === 'intermediateoutcomelv1triwulanan'" class="space-y-4">
             <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
               <h2 class="text-lg font-semibold text-gray-900">TABEL INTERMEDIATE OUTCOME LV 1 - TRIWULAN</h2>
               <div class="flex flex-wrap items-center gap-3">
@@ -394,14 +425,13 @@
                     <th class="px-4 py-3 border-b border-r border-gray-300">KODE Int.O LV1</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">CRITICAL SUCCESS FACTOR</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">IKSP</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">TAHUN</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">PENGAMPUH</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">TARGET TW1</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">REALISASI TW1</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">CAPAIAN TW1</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">NORMALISASI TW1</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">KOREKSI NORMALISASI TW1</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">CAPAIAN AKHIR TW1</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">TAHUN PENGAMPUH</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">TARGET {{ triwulanCode }}</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">REALISASI {{ triwulanCode }}</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">CAPAIAN {{ triwulanCode }}</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">NORMALISASI {{ triwulanCode }}</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">KOREKSI NORMALISASI {{ triwulanCode }}</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">CAPAIAN AKHIR {{ triwulanCode }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -436,9 +466,6 @@
                           {{ item.kode_int_lv1 }}
                         </td>
                         <td v-if="i === 0" :rowspan="Array.isArray(item.indikator_kinerja) ? item.indikator_kinerja.length : 1" class="px-4 py-3 align-top border-b border-r border-gray-300">
-                          {{ item.kode_int_lv2 }}
-                        </td>
-                        <td v-if="i === 0" :rowspan="Array.isArray(item.indikator_kinerja) ? item.indikator_kinerja.length : 1" class="px-4 py-3 align-top border-b border-r border-gray-300">
                           {{ item.sasaran }}
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">{{ indikator }}</td>
@@ -446,16 +473,53 @@
                           {{ Array.isArray(item.tahun) ? item.tahun[i] : item.tahun }}
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
-                          {{ Array.isArray(item.target) ? item.target[i] : item.target }}
+                          {{ Array.isArray(getTriwulanField(item, 'target')) ? getTriwulanField(item, 'target')[i] : getTriwulanField(item, 'target') }}
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
-                          {{ Array.isArray(item.realisasi) ? item.realisasi[i] : item.realisasi }}
+                          {{ Array.isArray(getTriwulanField(item, 'realisasi')) ? getTriwulanField(item, 'realisasi')[i] : getTriwulanField(item, 'realisasi') }}
                         </td>
-                        <td class="px-4 py-3 border-b border-gray-300">
-                          {{ Array.isArray(item.pengampu) ? item.pengampu[i] : item.pengampu }}
+                        <td class="px-4 py-3 border-b border-r border-gray-300">
+                          {{ Array.isArray(getTriwulanField(item, 'capaian')) ? getTriwulanField(item, 'capaian')[i] : getTriwulanField(item, 'capaian') }}
+                        </td>
+                        <td class="px-4 py-3 border-b border-r border-gray-300">
+                          {{ Array.isArray(getTriwulanField(item, 'normalisasi')) ? getTriwulanField(item, 'normalisasi')[i] : getTriwulanField(item, 'normalisasi') }}
+                        </td>
+                        <td class="px-4 py-3 border-b border-r border-gray-300">
+                          {{ Array.isArray(getTriwulanField(item, 'koreksi_normalisasi')) ? getTriwulanField(item, 'koreksi_normalisasi')[i] : getTriwulanField(item, 'koreksi_normalisasi') }}
+                        </td>
+                        <td class="px-4 py-3 border-b border-r border-gray-300">
+                          {{ Array.isArray(getTriwulanField(item, 'capaian_akhir')) ? getTriwulanField(item, 'capaian_akhir')[i] : getTriwulanField(item, 'capaian_akhir') }}
                         </td>
                       </tr>
                     </template>
+                    <!-- Summary Rows - 3 baris terpisah di paling bawah -->
+                    <tr class="border-t-2 border-gray-500">
+                      <td colspan="10" class="border-0 bg-white"></td>
+                      <td class="px-4 py-2 border-b border-l border-r border-gray-300 text-sm ">
+                        Total Capaian PK
+                      </td>
+                      <td class="px-4 py-2 border-b border-gray-300 text-sm font-bold">
+                        {{ tableSummary?.totalCapaianPK }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="10" class="border-0 bg-white"></td>
+                      <td class="px-4 py-2 border-b border-l border-r border-gray-300 text-sm ">
+                        Nilai Kinerja Organisasi (NKO) atau rata-rata capaian PK
+                      </td>
+                      <td class="px-4 py-2 border-b border-gray-300 text-sm font-bold">
+                        {{ tableSummary?.nkoOrganisasi }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="10" class="border-0 bg-white"></td>
+                      <td class="px-4 py-2 border-l border-r border-gray-300 text-sm ">
+                        Predikat PKO
+                      </td>
+                      <td class="px-4 py-2 text-sm font-bold">
+                        {{ tableSummary?.predikatPKO }}
+                      </td>
+                    </tr>
                   </template>
                 </tbody>
               </table>
@@ -556,12 +620,16 @@
                     <th class="px-4 py-3 border-b border-r border-gray-300">KODE UO</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">KODE Int.O LV1</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">KODE Int.O LV2</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">SASARAN PROGRAM</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">CRITICAL SUCCESS FACTOR</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">IKSP</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">TAHUN</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">PENGAMPU</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">TARGET</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">REALISASI</th>
-                    <th class="px-4 py-3 border-b border-gray-300">PENGAMPU</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">CAPAIAN</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">NORMALISASI</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">KOREKSI NORMALISASI</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">CAPAIAN AKHIR</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -605,17 +673,57 @@
                         <td class="px-4 py-3 border-b border-r border-gray-300">
                           {{ Array.isArray(item.tahun) ? item.tahun[i] : item.tahun }}
                         </td>
+                        <td class="px-4 py-3 border-b border-gray-300">
+                          {{ Array.isArray(item.pengampu) ? item.pengampu[i] : item.pengampu }}
+                        </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
                           {{ Array.isArray(item.target) ? item.target[i] : item.target }}
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
                           {{ Array.isArray(item.realisasi) ? item.realisasi[i] : item.realisasi }}
                         </td>
-                        <td class="px-4 py-3 border-b border-gray-300">
-                          {{ Array.isArray(item.pengampu) ? item.pengampu[i] : item.pengampu }}
+                        <td class="px-4 py-3 border-b border-r border-gray-300">
+                          {{ Array.isArray(item.capaian) ? item.capaian[i] : item.capaian }}
                         </td>
+                        <td class="px-4 py-3 border-b border-r border-gray-300">
+                          {{ Array.isArray(item.normalisasi) ? item.normalisasi[i] : item.normalisasi }}
+                        </td>
+                        <td class="px-4 py-3 border-b border-r border-gray-300">
+                          {{ Array.isArray(item.koreksi_normalisasi) ? item.koreksi_normalisasi[i] : item.koreksi_normalisasi }}
+                        </td>
+                        <td class="px-4 py-3 border-b border-r border-gray-300">
+                          {{ Array.isArray(item.capaian_akhir) ? item.capaian_akhir[i] : item.capaian_akhir }}
+                        </td>                        
                       </tr>
                     </template>
+                    <!-- Summary Rows - 3 baris terpisah di paling bawah -->
+                    <tr class="border-t-2 border-gray-500">
+                      <td colspan="12" class="border-0 bg-white"></td>
+                      <td class="px-4 py-2 border-b border-l border-r border-gray-300 text-sm ">
+                        Total Capaian PK
+                      </td>
+                      <td class="px-4 py-2 border-b border-gray-300 text-sm font-bold">
+                        {{ tableSummary?.totalCapaianPK }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="12" class="border-0 bg-white"></td>
+                      <td class="px-4 py-2 border-b border-l border-r border-gray-300 text-sm ">
+                        Nilai Kinerja Organisasi (NKO) atau rata-rata capaian PK
+                      </td>
+                      <td class="px-4 py-2 border-b border-gray-300 text-sm font-bold">
+                        {{ tableSummary?.nkoOrganisasi }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="12" class="border-0 bg-white"></td>
+                      <td class="px-4 py-2 border-l border-r border-gray-300 text-sm ">
+                        Predikat PKO
+                      </td>
+                      <td class="px-4 py-2 text-sm font-bold">
+                        {{ tableSummary?.predikatPKO }}
+                      </td>
+                    </tr>
                   </template>
                 </tbody>
               </table>
@@ -675,7 +783,7 @@
           <!-- IIntermediate Outcome LV2 Triwulan Tab -->
           <div v-if="activeTab === 'intermediateoutcomelv2triwulanan'" class="space-y-4">
             <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
-              <h2 class="text-lg font-semibold text-gray-900">TABEL INTERMEDIATE OUTCOME LV 2 - TAHUNAN</h2>
+              <h2 class="text-lg font-semibold text-gray-900">TABEL INTERMEDIATE OUTCOME LV 2 - TRIWULAN</h2>
               <div class="flex flex-wrap items-center gap-3">
                 <div class="flex items-center gap-2">
                   <label class="text-sm text-gray-600 whitespace-nowrap">UNIT KERJA</label>
@@ -699,6 +807,15 @@
                     <option value="2020">2020</option>
                   </select>
                 </div>
+                <div class="flex items-center gap-2">
+                  <label class="text-sm text-gray-600 whitespace-nowrap">TRIWULAN</label>
+                  <select v-model="filterTriwulan" class="border rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-yellow-500">
+                    <option value="I">I</option>
+                    <option value="II">II</option>
+                    <option value="III">III</option>
+                    <option value="IV">IV</option>
+                  </select>
+                </div>
                 <div class="relative">
                   <input v-model="search" type="text" placeholder="search" class="border rounded-md pl-9 pr-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-yellow-500" />
                   <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -716,16 +833,15 @@
                     <th class="px-4 py-3 border-b border-r border-gray-300">KODE UO</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">KODE Int.O LV1</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">KODE Int.O LV2</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">SASARAN PROGRAM</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">CRITICAL SUCCESS FACTOR</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">IKSP</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">TAHUN</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">TARGET TW1</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">REALISASI TW1</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">TARGET TW2</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">REALISASI TW2</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">TARGET TW3</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">REALISASI TW3</th>
-                    <th class="px-4 py-3 border-b border-gray-300">PENGAMPU</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">TAHUN PENGAMPUH</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">TARGET {{ triwulanCode }}</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">REALISASI {{ triwulanCode }}</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">CAPAIAN {{ triwulanCode }}</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">NORMALISASI {{ triwulanCode }}</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">KOREKSI NORMALISASI {{ triwulanCode }}</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">CAPAIAN AKHIR {{ triwulanCode }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -770,28 +886,53 @@
                           {{ Array.isArray(item.tahun) ? item.tahun[i] : item.tahun }}
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
-                          {{ Array.isArray(item.target) ? item.target[i] : item.target }}
+                          {{ Array.isArray(getTriwulanField(item, 'target')) ? getTriwulanField(item, 'target')[i] : getTriwulanField(item, 'target') }}
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
-                          {{ Array.isArray(item.realisasi) ? item.realisasi[i] : item.realisasi }}
+                          {{ Array.isArray(getTriwulanField(item, 'realisasi')) ? getTriwulanField(item, 'realisasi')[i] : getTriwulanField(item, 'realisasi') }}
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
-                          {{ Array.isArray(item.target2) ? item.target2[i] : item.target2 }}
+                          {{ Array.isArray(getTriwulanField(item, 'capaian')) ? getTriwulanField(item, 'capaian')[i] : getTriwulanField(item, 'capaian') }}
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
-                          {{ Array.isArray(item.realisasi2) ? item.realisasi2[i] : item.realisasi2 }}
+                          {{ Array.isArray(getTriwulanField(item, 'normalisasi')) ? getTriwulanField(item, 'normalisasi')[i] : getTriwulanField(item, 'normalisasi') }}
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
-                          {{ Array.isArray(item.target3) ? item.target3[i] : item.target3 }}
+                          {{ Array.isArray(getTriwulanField(item, 'koreksi_normalisasi')) ? getTriwulanField(item, 'koreksi_normalisasi')[i] : getTriwulanField(item, 'koreksi_normalisasi') }}
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
-                          {{ Array.isArray(item.realisasi3) ? item.realisasi3[i] : item.realisasi3 }}
-                        </td>
-                        <td class="px-4 py-3 border-b border-gray-300">
-                          {{ Array.isArray(item.pengampu) ? item.pengampu[i] : item.pengampu }}
+                          {{ Array.isArray(getTriwulanField(item, 'capaian_akhir')) ? getTriwulanField(item, 'capaian_akhir')[i] : getTriwulanField(item, 'capaian_akhir') }}
                         </td>
                       </tr>
                     </template>
+                    <!-- Summary Rows - 3 baris terpisah di paling bawah -->
+                    <tr class="border-t-2 border-gray-500">
+                      <td colspan="11" class="border-0 bg-white"></td>
+                      <td class="px-4 py-2 border-b border-l border-r border-gray-300 text-sm ">
+                        Total Capaian PK
+                      </td>
+                      <td class="px-4 py-2 border-b border-gray-300 text-sm font-bold">
+                        {{ tableSummary?.totalCapaianPK }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="11" class="border-0 bg-white"></td>
+                      <td class="px-4 py-2 border-b border-l border-r border-gray-300 text-sm ">
+                        Nilai Kinerja Organisasi (NKO) atau rata-rata capaian PK
+                      </td>
+                      <td class="px-4 py-2 border-b border-gray-300 text-sm font-bold">
+                        {{ tableSummary?.nkoOrganisasi }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="11" class="border-0 bg-white"></td>
+                      <td class="px-4 py-2 border-l border-r border-gray-300 text-sm ">
+                        Predikat PKO
+                      </td>
+                      <td class="px-4 py-2 text-sm font-bold">
+                        {{ tableSummary?.predikatPKO }}
+                      </td>
+                    </tr>
                   </template>
                 </tbody>
               </table>
@@ -892,12 +1033,16 @@
                     <th class="px-4 py-3 border-b border-r border-gray-300">KODE UO</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">KODE Int.O LV1</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">KODE Int.O LV2</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">SASARAN PROGRAM</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">CRITICAL SUCCESS FACTOR</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">IKSP</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">TAHUN</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">PENGAMPU</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">TARGET</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">REALISASI</th>
-                    <th class="px-4 py-3 border-b border-gray-300">PENGAMPU</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">CAPAIAN</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">NORMALISASI</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">KOREKSI NORMALISASI</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">CAPAIAN AKHIR</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -941,17 +1086,57 @@
                         <td class="px-4 py-3 border-b border-r border-gray-300">
                           {{ Array.isArray(item.tahun) ? item.tahun[i] : item.tahun }}
                         </td>
+                        <td class="px-4 py-3 border-b border-gray-300">
+                          {{ Array.isArray(item.pengampu) ? item.pengampu[i] : item.pengampu }}
+                        </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
                           {{ Array.isArray(item.target) ? item.target[i] : item.target }}
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
                           {{ Array.isArray(item.realisasi) ? item.realisasi[i] : item.realisasi }}
                         </td>
-                        <td class="px-4 py-3 border-b border-gray-300">
-                          {{ Array.isArray(item.pengampu) ? item.pengampu[i] : item.pengampu }}
+                        <td class="px-4 py-3 border-b border-r border-gray-300">
+                          {{ Array.isArray(item.capaian) ? item.capaian[i] : item.capaian }}
                         </td>
+                        <td class="px-4 py-3 border-b border-r border-gray-300">
+                          {{ Array.isArray(item.normalisasi) ? item.normalisasi[i] : item.normalisasi }}
+                        </td>
+                        <td class="px-4 py-3 border-b border-r border-gray-300">
+                          {{ Array.isArray(item.koreksi_normalisasi) ? item.koreksi_normalisasi[i] : item.koreksi_normalisasi }}
+                        </td>
+                        <td class="px-4 py-3 border-b border-r border-gray-300">
+                          {{ Array.isArray(item.capaian_akhir) ? item.capaian_akhir[i] : item.capaian_akhir }}
+                        </td>                        
                       </tr>
                     </template>
+                    <!-- Summary Rows - 3 baris terpisah di paling bawah -->
+                    <tr class="border-t-2 border-gray-500">
+                      <td colspan="12" class="border-0 bg-white"></td>
+                      <td class="px-4 py-2 border-b border-l border-r border-gray-300 text-sm ">
+                        Total Capaian PK
+                      </td>
+                      <td class="px-4 py-2 border-b border-gray-300 text-sm font-bold">
+                        {{ tableSummary?.totalCapaianPK }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="12" class="border-0 bg-white"></td>
+                      <td class="px-4 py-2 border-b border-l border-r border-gray-300 text-sm ">
+                        Nilai Kinerja Organisasi (NKO) atau rata-rata capaian PK
+                      </td>
+                      <td class="px-4 py-2 border-b border-gray-300 text-sm font-bold">
+                        {{ tableSummary?.nkoOrganisasi }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="12" class="border-0 bg-white"></td>
+                      <td class="px-4 py-2 border-l border-r border-gray-300 text-sm ">
+                        Predikat PKO
+                      </td>
+                      <td class="px-4 py-2 text-sm font-bold">
+                        {{ tableSummary?.predikatPKO }}
+                      </td>
+                    </tr>
                   </template>
                 </tbody>
               </table>
@@ -1011,7 +1196,7 @@
           <!-- IIntermediate Outcome LV3 Triwulan Tab -->
           <div v-if="activeTab === 'intermediateoutcomelv3triwulanan'" class="space-y-4">
             <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
-              <h2 class="text-lg font-semibold text-gray-900">TABEL INTERMEDIATE OUTCOME LV 2 - TAHUNAN</h2>
+              <h2 class="text-lg font-semibold text-gray-900">TABEL INTERMEDIATE OUTCOME LV 3 - TRIWULAN</h2>
               <div class="flex flex-wrap items-center gap-3">
                 <div class="flex items-center gap-2">
                   <label class="text-sm text-gray-600 whitespace-nowrap">UNIT KERJA</label>
@@ -1035,6 +1220,15 @@
                     <option value="2020">2020</option>
                   </select>
                 </div>
+                <div class="flex items-center gap-2">
+                  <label class="text-sm text-gray-600 whitespace-nowrap">TRIWULAN</label>
+                  <select v-model="filterTriwulan" class="border rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-yellow-500">
+                    <option value="I">I</option>
+                    <option value="II">II</option>
+                    <option value="III">III</option>
+                    <option value="IV">IV</option>
+                  </select>
+                </div>
                 <div class="relative">
                   <input v-model="search" type="text" placeholder="search" class="border rounded-md pl-9 pr-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-yellow-500" />
                   <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1052,16 +1246,16 @@
                     <th class="px-4 py-3 border-b border-r border-gray-300">KODE UO</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">KODE Int.O LV1</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">KODE Int.O LV2</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">SASARAN PROGRAM</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">KODE Imm.O LV3</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">CRITICAL SUCCESS FACTOR</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">IKSP</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">TAHUN</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">TARGET TW1</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">REALISASI TW1</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">TARGET TW2</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">REALISASI TW2</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">TARGET TW3</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">REALISASI TW3</th>
-                    <th class="px-4 py-3 border-b border-gray-300">PENGAMPU</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">TAHUN PENGAMPUH</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">TARGET {{ triwulanCode }}</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">REALISASI {{ triwulanCode }}</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">CAPAIAN {{ triwulanCode }}</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">NORMALISASI {{ triwulanCode }}</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">KOREKSI NORMALISASI {{ triwulanCode }}</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">CAPAIAN AKHIR {{ triwulanCode }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1099,6 +1293,9 @@
                           {{ item.kode_int_lv2 }}
                         </td>
                         <td v-if="i === 0" :rowspan="Array.isArray(item.indikator_kinerja) ? item.indikator_kinerja.length : 1" class="px-4 py-3 align-top border-b border-r border-gray-300">
+                          {{ item.kode_int_lv3 }}
+                        </td>
+                        <td v-if="i === 0" :rowspan="Array.isArray(item.indikator_kinerja) ? item.indikator_kinerja.length : 1" class="px-4 py-3 align-top border-b border-r border-gray-300">
                           {{ item.sasaran }}
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">{{ indikator }}</td>
@@ -1106,28 +1303,53 @@
                           {{ Array.isArray(item.tahun) ? item.tahun[i] : item.tahun }}
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
-                          {{ Array.isArray(item.target) ? item.target[i] : item.target }}
+                          {{ Array.isArray(getTriwulanField(item, 'target')) ? getTriwulanField(item, 'target')[i] : getTriwulanField(item, 'target') }}
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
-                          {{ Array.isArray(item.realisasi) ? item.realisasi[i] : item.realisasi }}
+                          {{ Array.isArray(getTriwulanField(item, 'realisasi')) ? getTriwulanField(item, 'realisasi')[i] : getTriwulanField(item, 'realisasi') }}
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
-                          {{ Array.isArray(item.target2) ? item.target2[i] : item.target2 }}
+                          {{ Array.isArray(getTriwulanField(item, 'capaian')) ? getTriwulanField(item, 'capaian')[i] : getTriwulanField(item, 'capaian') }}
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
-                          {{ Array.isArray(item.realisasi2) ? item.realisasi2[i] : item.realisasi2 }}
+                          {{ Array.isArray(getTriwulanField(item, 'normalisasi')) ? getTriwulanField(item, 'normalisasi')[i] : getTriwulanField(item, 'normalisasi') }}
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
-                          {{ Array.isArray(item.target3) ? item.target3[i] : item.target3 }}
+                          {{ Array.isArray(getTriwulanField(item, 'koreksi_normalisasi')) ? getTriwulanField(item, 'koreksi_normalisasi')[i] : getTriwulanField(item, 'koreksi_normalisasi') }}
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
-                          {{ Array.isArray(item.realisasi3) ? item.realisasi3[i] : item.realisasi3 }}
-                        </td>
-                        <td class="px-4 py-3 border-b border-gray-300">
-                          {{ Array.isArray(item.pengampu) ? item.pengampu[i] : item.pengampu }}
+                          {{ Array.isArray(getTriwulanField(item, 'capaian_akhir')) ? getTriwulanField(item, 'capaian_akhir')[i] : getTriwulanField(item, 'capaian_akhir') }}
                         </td>
                       </tr>
                     </template>
+                    <!-- Summary Rows - 3 baris terpisah di paling bawah -->
+                    <tr class="border-t-2 border-gray-500">
+                      <td colspan="12" class="border-0 bg-white"></td>
+                      <td class="px-4 py-2 border-b border-l border-r border-gray-300 text-sm ">
+                        Total Capaian PK
+                      </td>
+                      <td class="px-4 py-2 border-b border-gray-300 text-sm font-bold">
+                        {{ tableSummary?.totalCapaianPK }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="12" class="border-0 bg-white"></td>
+                      <td class="px-4 py-2 border-b border-l border-r border-gray-300 text-sm ">
+                        Nilai Kinerja Organisasi (NKO) atau rata-rata capaian PK
+                      </td>
+                      <td class="px-4 py-2 border-b border-gray-300 text-sm font-bold">
+                        {{ tableSummary?.nkoOrganisasi }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="12" class="border-0 bg-white"></td>
+                      <td class="px-4 py-2 border-l border-r border-gray-300 text-sm ">
+                        Predikat PKO
+                      </td>
+                      <td class="px-4 py-2 text-sm font-bold">
+                        {{ tableSummary?.predikatPKO }}
+                      </td>
+                    </tr>
                   </template>
                 </tbody>
               </table>
@@ -1404,7 +1626,55 @@ const filterUnitKerja = ref('SU')
 const currentPage = ref(1)
 const itemsPerPage = ref(5)
 
-const intermediateoutcomelv2tahunan = ref([
+const filterTriwulan = ref('I')
+
+const getTriwulanField = (item: any, field: string) => {
+  const triwulanMap: Record<string, string> = {
+    'I': '_tw1',
+    'II': '_tw2',
+    'III': '_tw3',
+    'IV': '_tw4'
+  }
+  
+  const suffix = triwulanMap[filterTriwulan.value] || '_tw1'
+  const fieldName = field + suffix
+  
+  return item[fieldName]
+}
+
+// Helper function untuk menghitung total rows di paginated data
+const getTotalRows = () => {
+  let totalRows = 0
+  paginated.value.forEach(item => {
+    const indikatorCount = Array.isArray(item.indikator_kinerja) 
+      ? item.indikator_kinerja.length 
+      : 1
+    totalRows += indikatorCount
+  })
+  return totalRows
+}
+
+const triwulanCode = computed(() => {
+  const mapping: Record<string, string> = {
+    'I': 'TW1',
+    'II': 'TW2',
+    'III': 'TW3',
+    'IV': 'TW4'
+  }
+  return mapping[filterTriwulan.value] || 'TW1'
+})
+
+const tableSummary = computed(() => {
+  if (paginated.value.length === 0) return null
+
+  return {
+    totalCapaianPK: '126.05%',
+    nkoOrganisasi: '71.01%',
+    predikatPKO: 'Perlu Perbaikan'
+  }
+})
+
+const intermediateoutcomelv1tahunan = ref([
   {
     id: 1,
     kode_uo: 'UO 1',
@@ -1418,10 +1688,10 @@ const intermediateoutcomelv2tahunan = ref([
     tahun: '2026',
     target: '100%',
     realisasi: '100%',
-    target2: '100%',
-    realisasi2: '100%',
-    target3: '100%',
-    realisasi3: '100%',
+    capaian: '100%',
+    normalisasi: '100%',
+    koreksi_normalisasi: '100%',
+    capaian_akhir: '100%',
     pengampu: 'D3'
   },
   {
@@ -1437,10 +1707,10 @@ const intermediateoutcomelv2tahunan = ref([
     tahun: '2026',
     target: '100%',
     realisasi: '100%',
-    target2: '100%',
-    realisasi2: '100%',
-    target3: '100%',
-    realisasi3: '100%',
+    capaian: '100%',
+    normalisasi: '100%',
+    koreksi_normalisasi: '100%',
+    capaian_akhir: '100%',
     pengampu: 'D3'
   },
   {
@@ -1456,10 +1726,10 @@ const intermediateoutcomelv2tahunan = ref([
     tahun: '2026',
     target: '100%',
     realisasi: '100%',
-    target2: '100%',
-    realisasi2: '100%',
-    target3: '100%',
-    realisasi3: '100%',
+    capaian: '100%',
+    normalisasi: '100%',
+    koreksi_normalisasi: '100%',
+    capaian_akhir: '100%',
     pengampu: 'D3'
   },
   {
@@ -1475,10 +1745,10 @@ const intermediateoutcomelv2tahunan = ref([
     tahun: '2026',
     target: '100%',
     realisasi: '100%',
-    target2: '100%',
-    realisasi2: '100%',
-    target3: '100%',
-    realisasi3: '100%',
+    capaian: '100%',
+    normalisasi: '100%',
+    koreksi_normalisasi: '100%',
+    capaian_akhir: '100%',
     pengampu: 'D3'
   },
   {
@@ -1494,74 +1764,225 @@ const intermediateoutcomelv2tahunan = ref([
     tahun: '2026',
     target: '100%',
     realisasi: '100%',
-    target2: '100%',
-    realisasi2: '100%',
-    target3: '100%',
-    realisasi3: '100%',
+    capaian: '100%',
+    normalisasi: '100%',
+    koreksi_normalisasi: '100%',
+    capaian_akhir: '100%',
     pengampu: 'D3'
   },
 ])
 
-const intermediateoutcomelv3tahunan = ref([
+const intermediateoutcomelv1triwulanan = ref([
   {
     id: 1,
-    kode_uo: 'UO 1',
+    kode_uo: 'SU',
     kode_int_lv1: 'Int.0.1',
     kode_int_lv2: 'Int.0.1.1',
     kode_int_lv3: 'Int.0.1.1.1',
-    sasaran: 'Meningkatnya kematangan penyelenggaraan keamanan siber dan sandi',
+    sasaran: 'Meningkatnya kematangan keamanan siber dan sandi PSE dan penyelenggara persandian',
     indikator_kinerja: [
-      'Nilai kematangan keamanan siber PSE',
-      'Nilai kematangan penyelenggara persandian'
+      'Indeks keamanan dan ketahanan siber',
+      'Indeks keamanan informasi'
     ],
-    tahun: '2026',
-    target: '100%',
-    realisasi: '100%',
-    target2: '100%',
-    realisasi2: '100%',
-    target3: '100%',
-    realisasi3: '100%',
-    pengampu: 'D3'
+    tahun: ['2026', '2026'],
+    pengampu: ['D1', 'D1'],
+    // Data Triwulan 1
+    target_tw1: ['85%', '80%'],
+    realisasi_tw1: ['87%', '82%'],
+    capaian_tw1: ['102.35%', '102.50%'],
+    normalisasi_tw1: ['100%', '100%'],
+    koreksi_normalisasi_tw1: ['100%', '100%'],
+    capaian_akhir_tw1: ['100%', '100%'],
+    // Data Triwulan 2
+    target_tw2: ['87%', '83%'],
+    realisasi_tw2: ['89%', '85%'],
+    capaian_tw2: ['102.30%', '102.41%'],
+    normalisasi_tw2: ['100%', '100%'],
+    koreksi_normalisasi_tw2: ['100%', '100%'],
+    capaian_akhir_tw2: ['100%', '100%'],
+    // Data Triwulan 3
+    target_tw3: ['90%', '86%'],
+    realisasi_tw3: ['92%', '88%'],
+    capaian_tw3: ['102.22%', '102.33%'],
+    normalisasi_tw3: ['100%', '100%'],
+    koreksi_normalisasi_tw3: ['100%', '100%'],
+    capaian_akhir_tw3: ['100%', '100%'],
+    // Data Triwulan 4
+    target_tw4: ['93%', '89%'],
+    realisasi_tw4: ['95%', '91%'],
+    capaian_tw4: ['102.15%', '102.25%'],
+    normalisasi_tw4: ['100%', '100%'],
+    koreksi_normalisasi_tw4: ['100%', '100%'],
+    capaian_akhir_tw4: ['100%', '100%']
   },
   {
     id: 2,
-    kode_uo: 'UO 1',
+    kode_uo: 'DEPUTI I',
     kode_int_lv1: 'Int.0.2',
     kode_int_lv2: 'Int.0.2.1',
-    kode_int_lv3: 'Int.0.1.2.1',
-    sasaran: 'Meningkatnya implementasi kebijakan siber dan sandi nasional',
+    kode_int_lv3: 'Int.0.2.1.1',
+    sasaran: 'Meningkatnya manfaat kebijakan dan kerja sama keamanan siber dan sandi',
     indikator_kinerja: [
-      'Persentase kebijakan yang diterapkan terhadap total kebijakan yang ditetapkan'
+      'Persentase kebijakan yang diterapkan',
+      'Tingkat kepuasan stakeholder'
     ],
-    tahun: '2026',
-    target: '100%',
-    realisasi: '100%',
-    target2: '100%',
-    realisasi2: '100%',
-    target3: '100%',
-    realisasi3: '100%',
-    pengampu: 'D3'
+    tahun: ['2026', '2026'],
+    pengampu: ['D2', 'D2'],
+    // Triwulan 1
+    target_tw1: ['75%', '78%'],
+    realisasi_tw1: ['78%', '80%'],
+    capaian_tw1: ['104.00%', '102.56%'],
+    normalisasi_tw1: ['100%', '100%'],
+    koreksi_normalisasi_tw1: ['100%', '100%'],
+    capaian_akhir_tw1: ['100%', '100%'],
+    // Triwulan 2
+    target_tw2: ['78%', '81%'],
+    realisasi_tw2: ['80%', '83%'],
+    capaian_tw2: ['102.56%', '102.47%'],
+    normalisasi_tw2: ['100%', '100%'],
+    koreksi_normalisasi_tw2: ['100%', '100%'],
+    capaian_akhir_tw2: ['100%', '100%'],
+    // Triwulan 3
+    target_tw3: ['82%', '84%'],
+    realisasi_tw3: ['85%', '87%'],
+    capaian_tw3: ['103.66%', '103.57%'],
+    normalisasi_tw3: ['100%', '100%'],
+    koreksi_normalisasi_tw3: ['100%', '100%'],
+    capaian_akhir_tw3: ['100%', '100%'],
+    // Triwulan 4
+    target_tw4: ['86%', '88%'],
+    realisasi_tw4: ['89%', '91%'],
+    capaian_tw4: ['103.49%', '103.41%'],
+    normalisasi_tw4: ['100%', '100%'],
+    koreksi_normalisasi_tw4: ['100%', '100%'],
+    capaian_akhir_tw4: ['100%', '100%']
   },
   {
     id: 3,
-    kode_uo: 'UO 1',
-    kode_int_lv1: 'Int.0.2',
-    kode_int_lv2: 'Int.0.2.2',
-    kode_int_lv3: 'Int.0.1.1.1',
-    sasaran: 'Meningkatnya kualitas kerjasama keamanan siber dan sandi',
+    kode_uo: 'DEPUTI II',
+    kode_int_lv1: 'Int.0.3',
+    kode_int_lv2: 'Int.0.3.1',
+    kode_int_lv3: 'Int.0.3.1.1',
+    sasaran: 'Meningkatnya kesadaran masyarakat terhadap keamanan siber',
     indikator_kinerja: [
-      'Persentase kerjasama keamanan siber dan sandi yang ditindaklanjuti',
-      'Persentase peran aktif BSSN dalam forum keamanan siber dan sandi'
+      'Indeks literasi keamanan siber',
+      'Jumlah peserta sosialisasi'
     ],
-    tahun: '2026',
-    target: '100%',
-    realisasi: '100%',
-    target2: '100%',
-    realisasi2: '100%',
-    target3: '100%',
-    realisasi3: '100%',
-    pengampu: 'D3'
+    tahun: ['2026', '2026'],
+    pengampu: ['D3', 'D3'],
+    // Triwulan 1
+    target_tw1: ['70%', '5000'],
+    realisasi_tw1: ['73%', '5200'],
+    capaian_tw1: ['104.29%', '104.00%'],
+    normalisasi_tw1: ['100%', '100%'],
+    koreksi_normalisasi_tw1: ['100%', '100%'],
+    capaian_akhir_tw1: ['100%', '100%'],
+    // Triwulan 2
+    target_tw2: ['74%', '10000'],
+    realisasi_tw2: ['77%', '10500'],
+    capaian_tw2: ['104.05%', '105.00%'],
+    normalisasi_tw2: ['100%', '100%'],
+    koreksi_normalisasi_tw2: ['100%', '100%'],
+    capaian_akhir_tw2: ['100%', '100%'],
+    // Triwulan 3
+    target_tw3: ['78%', '15000'],
+    realisasi_tw3: ['81%', '15800'],
+    capaian_tw3: ['103.85%', '105.33%'],
+    normalisasi_tw3: ['100%', '100%'],
+    koreksi_normalisasi_tw3: ['100%', '100%'],
+    capaian_akhir_tw3: ['100%', '100%'],
+    // Triwulan 4
+    target_tw4: ['82%', '20000'],
+    realisasi_tw4: ['85%', '21000'],
+    capaian_tw4: ['103.66%', '105.00%'],
+    normalisasi_tw4: ['100%', '100%'],
+    koreksi_normalisasi_tw4: ['100%', '100%'],
+    capaian_akhir_tw4: ['100%', '100%']
   },
+  {
+    id: 4,
+    kode_uo: 'DEPUTI IV',
+    kode_int_lv1: 'Int.0.4',
+    kode_int_lv2: 'Int.0.4.1',
+    kode_int_lv3: 'Int.0.4.1.1',
+    sasaran: 'Meningkatnya kesiapsiagaan dan ketahanan siber nasional',
+    indikator_kinerja: [
+      'Waktu respons insiden siber',
+      'Persentase insiden tertangani'
+    ],
+    tahun: ['2026', '2026'],
+    pengampu: ['D4', 'D4'],
+    // Triwulan 1
+    target_tw1: ['< 2 jam', '95%'],
+    realisasi_tw1: ['1.5 jam', '97%'],
+    capaian_tw1: ['125.00%', '102.11%'],
+    normalisasi_tw1: ['100%', '100%'],
+    koreksi_normalisasi_tw1: ['100%', '100%'],
+    capaian_akhir_tw1: ['100%', '100%'],
+    // Triwulan 2
+    target_tw2: ['< 1.8 jam', '96%'],
+    realisasi_tw2: ['1.4 jam', '98%'],
+    capaian_tw2: ['122.22%', '102.08%'],
+    normalisasi_tw2: ['100%', '100%'],
+    koreksi_normalisasi_tw2: ['100%', '100%'],
+    capaian_akhir_tw2: ['100%', '100%'],
+    // Triwulan 3
+    target_tw3: ['< 1.5 jam', '97%'],
+    realisasi_tw3: ['1.2 jam', '98.5%'],
+    capaian_tw3: ['120.00%', '101.55%'],
+    normalisasi_tw3: ['100%', '100%'],
+    koreksi_normalisasi_tw3: ['100%', '100%'],
+    capaian_akhir_tw3: ['100%', '100%'],
+    // Triwulan 4
+    target_tw4: ['< 1.2 jam', '98%'],
+    realisasi_tw4: ['1 jam', '99%'],
+    capaian_tw4: ['116.67%', '101.02%'],
+    normalisasi_tw4: ['100%', '100%'],
+    koreksi_normalisasi_tw4: ['100%', '100%'],
+    capaian_akhir_tw4: ['100%', '100%']
+  },
+  {
+    id: 5,
+    kode_uo: 'P1',
+    kode_int_lv1: 'Int.0.5',
+    kode_int_lv2: 'Int.0.5.1',
+    kode_int_lv3: 'Int.0.5.1.1',
+    sasaran: 'Terwujudnya penegakan hukum keamanan siber',
+    indikator_kinerja: [
+      'Jumlah kasus diselesaikan',
+      'Waktu rata-rata penyelesaian'
+    ],
+    tahun: ['2026', '2026'],
+    pengampu: ['P1', 'P1'],
+    // Triwulan 1
+    target_tw1: ['20', '30 hari'],
+    realisasi_tw1: ['22', '28 hari'],
+    capaian_tw1: ['110.00%', '107.14%'],
+    normalisasi_tw1: ['100%', '100%'],
+    koreksi_normalisasi_tw1: ['100%', '100%'],
+    capaian_akhir_tw1: ['100%', '100%'],
+    // Triwulan 2
+    target_tw2: ['40', '28 hari'],
+    realisasi_tw2: ['45', '26 hari'],
+    capaian_tw2: ['112.50%', '107.69%'],
+    normalisasi_tw2: ['100%', '100%'],
+    koreksi_normalisasi_tw2: ['100%', '100%'],
+    capaian_akhir_tw2: ['100%', '100%'],
+    // Triwulan 3
+    target_tw3: ['60', '26 hari'],
+    realisasi_tw3: ['68', '24 hari'],
+    capaian_tw3: ['113.33%', '108.33%'],
+    normalisasi_tw3: ['100%', '100%'],
+    koreksi_normalisasi_tw3: ['100%', '100%'],
+    capaian_akhir_tw3: ['100%', '100%'],
+    // Triwulan 4
+    target_tw4: ['80', '24 hari'],
+    realisasi_tw4: ['90', '22 hari'],
+    capaian_tw4: ['112.50%', '109.09%'],
+    normalisasi_tw4: ['100%', '100%'],
+    koreksi_normalisasi_tw4: ['100%', '100%'],
+    capaian_akhir_tw4: ['100%', '100%']
+  }
 ])
 
 const perkinnko = ref([
@@ -1591,10 +2012,12 @@ const perkinnko = ref([
 
 const activeData = computed(() => {
   const dataMap: Record<string, any[]> = {
-    'intermediateoutcomelv2tahunan': intermediateoutcomelv2tahunan.value,
-    'intermediateoutcomelv2triwulanan': intermediateoutcomelv2tahunan.value,
-    'intermediateoutcomelv3tahunan': intermediateoutcomelv3tahunan.value,
-    'intermediateoutcomelv3triwulanan': intermediateoutcomelv3tahunan.value,
+    'intermediateoutcomelv1tahunan': intermediateoutcomelv1tahunan.value,
+    'intermediateoutcomelv1triwulanan': intermediateoutcomelv1triwulanan.value,
+    'intermediateoutcomelv2tahunan': intermediateoutcomelv1tahunan.value,
+    'intermediateoutcomelv2triwulanan': intermediateoutcomelv1triwulanan.value,
+    'intermediateoutcomelv3tahunan': intermediateoutcomelv1tahunan.value,
+    'intermediateoutcomelv3triwulanan': intermediateoutcomelv1triwulanan.value,
     'perkinnko': perkinnko.value,
   }
   
