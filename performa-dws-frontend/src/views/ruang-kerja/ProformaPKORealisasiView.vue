@@ -93,14 +93,17 @@
                     <th class="px-4 py-3 border-b border-r border-gray-300">KODE UO</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">KODE Int.O LV1</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">KODE Int.O LV2</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">SASARAN PROGRAM</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">CRITICAL SUCCESS FACTOR</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">IKSP</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">TAHUN</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">TARGET</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">REALISASI</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">REALISASI PMK</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">CAPAIAN</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">NORMALISASI</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">KOREKSI NORMALISASI</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">NILAI AKHIR</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">DATDUK</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">STATUS</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">REALISASI PMK</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">CATATAN</th>
                     <th class="px-4 py-3 border-b border-gray-300">AKSI</th>
                   </tr>
@@ -147,16 +150,25 @@
                           {{ Array.isArray(item.target) ? item.target[i] : item.target }}
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
-                          {{ Array.isArray(item.realisasi) ? item.realisasi[i] : item.realisasi }}
+                          {{ Array.isArray(item.realisasi_pmk) ? item.realisasi_pmk[i] : item.realisasi_pmk }}
+                        </td>
+                        <td class="px-4 py-3 border-b border-r border-gray-300">
+                          {{ Array.isArray(item.capaian) ? item.capaian[i] : item.capaian }}
+                        </td>
+                        <td class="px-4 py-3 border-b border-r border-gray-300">
+                          {{ Array.isArray(item.normalisasi) ? item.normalisasi[i] : item.normalisasi }}
+                        </td>
+                        <td class="px-4 py-3 border-b border-r border-gray-300">
+                          {{ Array.isArray(item.koreksi_normalisasi) ? item.koreksi_normalisasi[i] : item.koreksi_normalisasi }}
+                        </td>
+                        <td class="px-4 py-3 border-b border-r border-gray-300">
+                          {{ Array.isArray(item.nilai_akhir) ? item.nilai_akhir[i] : item.nilai_akhir }}
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
                           <a :href="Array.isArray(item.datduk) ? item.datduk[i] : item.datduk" target="_blank" class="text-blue-500 hover:underline">Link</a>
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
                           {{ Array.isArray(item.status) ? item.status[i] : item.status }}
-                        </td>
-                        <td class="px-4 py-3 border-b border-r border-gray-300">
-                          {{ Array.isArray(item.realisasi_pmk) ? item.realisasi_pmk[i] : item.realisasi_pmk }}
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
                           {{ Array.isArray(item.catatan) ? item.catatan[i] : item.catatan }}
@@ -174,6 +186,34 @@
                         </td>
                       </tr>
                     </template>
+                    <!-- Summary Rows - 3 baris terpisah di paling bawah -->
+                    <tr class="border-t-2 border-gray-500">
+                      <td colspan="11" class="border-0 bg-white"></td>
+                      <td class="px-4 py-2 border-b border-l border-r border-gray-300 text-sm ">
+                        Total Capaian PK
+                      </td>
+                      <td class="px-4 py-2 border-b border-gray-300 text-sm font-bold border-r border-gray-300">
+                        {{ tableSummary?.totalCapaianPK }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="11" class="border-0 bg-white"></td>
+                      <td class="px-4 py-2 border-b border-l border-r border-gray-300 text-sm ">
+                        Nilai Kinerja Organisasi (NKO) atau rata-rata capaian PK
+                      </td>
+                      <td class="px-4 py-2 border-b border-gray-300 text-sm font-bold border-r border-gray-300">
+                        {{ tableSummary?.nkoOrganisasi }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="11" class="border-0 bg-white"></td>
+                      <td class="px-4 py-2 border-l border-r border-gray-300 text-sm ">
+                        Predikat PKO
+                      </td>
+                      <td class="px-4 py-2 text-sm font-bold border-r border-gray-300">
+                        {{ tableSummary?.predikatPKO }}
+                      </td>
+                    </tr>
                   </template>
                   <tr v-else>
                     <td colspan="14" class="px-4 py-8 text-center text-gray-500 border-b border-gray-300">Tidak ada data</td>
@@ -234,14 +274,17 @@
                     <th class="px-4 py-3 border-b border-r border-gray-300">KODE UO</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">KODE Int.O LV1</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">KODE Int.O LV2</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">SASARAN PROGRAM</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">CRITICAL SUCCESS FACTOR</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">IKSP</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">TAHUN</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">TARGET TW {{ triwulanRoman }}</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">REALISASI TW {{ triwulanRoman }}</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">REALISASI PMK TW {{ triwulanRoman }}</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">CAPAIAN TW {{ triwulanRoman }}</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">NORMALISASI TW {{ triwulanRoman }}</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">KOREKSI NORMALISASI TW {{ triwulanRoman }}</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">NILAI AKHIR TW {{ triwulanRoman }}</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">DATDUK</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">STATUS</th>
-                    <th class="px-4 py-3 border-b border-r border-gray-300">REALISASI TW {{ triwulanRoman }} PMK</th>
                     <th class="px-4 py-3 border-b border-r border-gray-300">CATATAN</th>
                     <th class="px-4 py-3 border-b border-gray-300">AKSI</th>
                   </tr>
@@ -291,13 +334,22 @@
                           {{ getTriwulanData(item, i, 'realisasi') }}
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
+                          {{ getTriwulanData(item, i, 'capaian') }}
+                        </td>
+                        <td class="px-4 py-3 border-b border-r border-gray-300">
+                          {{ getTriwulanData(item, i, 'normalisasi') }}
+                        </td>
+                        <td class="px-4 py-3 border-b border-r border-gray-300">
+                          {{ getTriwulanData(item, i, 'koreksi_normalisasi') }}
+                        </td>
+                        <td class="px-4 py-3 border-b border-r border-gray-300">
+                          {{ getTriwulanData(item, i, 'nilai_akhir') }}
+                        </td>
+                        <td class="px-4 py-3 border-b border-r border-gray-300">
                           <a :href="getTriwulanData(item, i, 'datduk')" target="_blank" class="text-blue-500 hover:underline">Link</a>
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
                           {{ getTriwulanData(item, i, 'status') }}
-                        </td>
-                        <td class="px-4 py-3 border-b border-r border-gray-300">
-                          {{ getTriwulanData(item, i, 'realisasi_pmk') }}
                         </td>
                         <td class="px-4 py-3 border-b border-r border-gray-300">
                           {{ getTriwulanData(item, i, 'catatan') }}
@@ -315,6 +367,34 @@
                         </td>
                       </tr>
                     </template>
+                    <!-- Summary Rows - 3 baris terpisah di paling bawah -->
+                    <tr class="border-t-2 border-gray-500">
+                      <td colspan="11" class="border-0 bg-white"></td>
+                      <td class="px-4 py-2 border-b border-l border-r border-gray-300 text-sm ">
+                        Total Capaian PK
+                      </td>
+                      <td class="px-4 py-2 border-b border-gray-300 text-sm font-bold border-r border-gray-300">
+                        {{ tableSummary?.totalCapaianPK }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="11" class="border-0 bg-white"></td>
+                      <td class="px-4 py-2 border-b border-l border-r border-gray-300 text-sm ">
+                        Nilai Kinerja Organisasi (NKO) atau rata-rata capaian PK
+                      </td>
+                      <td class="px-4 py-2 border-b border-gray-300 text-sm font-bold border-r border-gray-300">
+                        {{ tableSummary?.nkoOrganisasi }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="11" class="border-0 bg-white"></td>
+                      <td class="px-4 py-2 border-l border-r border-gray-300 text-sm ">
+                        Predikat PKO
+                      </td>
+                      <td class="px-4 py-2 text-sm font-bold border-r border-gray-300">
+                        {{ tableSummary?.predikatPKO }}
+                      </td>
+                    </tr>
                   </template>
                   <tr v-else>
                     <td colspan="14" class="px-4 py-8 text-center text-gray-500 border-b border-gray-300">Tidak ada data</td>
@@ -454,6 +534,16 @@ const itemsPerPage = ref(5)
 const selectedFile = ref<File | null>(null)
 const uploadFileName = ref('')
 
+const tableSummary = computed(() => {
+  if (paginated.value.length === 0) return null
+
+  return {
+    totalCapaianPK: '126.05%',
+    nkoOrganisasi: '71.01%',
+    predikatPKO: 'Perlu Perbaikan'
+  }
+})
+
 const realisasitahunan = ref([
   {
     id: 1,
@@ -467,7 +557,10 @@ const realisasitahunan = ref([
     ],
     periode: ['2026', '2026'],
     target: ['100%', '100%'],
-    realisasi: ['100%', '80%'],
+    capaian: ['100%', '80%'],
+    normalisasi: ['100%', '80%'],
+    koreksi_normalisasi: ['100%', '80%'],
+    nilai_akhir: ['100%', '80%'],
     datduk: ['https://drive.bssn.go.id/dokuk1', 'https://drive.bssn.go.id/dokuk2'],
     status: ['SESUAI', 'PERLU PERBAIKAN'],
     realisasi_pmk: ['80%', '70%'],
@@ -494,6 +587,22 @@ const realisasitriwulan = ref([
     realisasi2: ['70%'],
     realisasi3: ['85%'],
     realisasi4: ['100%'],
+    capaian1: ['50%'],
+    capaian2: ['70%'],
+    capaian3: ['85%'],
+    capaian4: ['100%'],
+    normalisasi1: ['50%'],
+    normalisasi2: ['70%'],
+    normalisasi3: ['85%'],
+    normalisasi4: ['100%'],
+    koreksi_normalisasi1: ['50%'],
+    koreksi_normalisasi2: ['70%'],
+    koreksi_normalisasi3: ['85%'],
+    koreksi_normalisasi4: ['100%'],
+    nilai_akhir1: ['50%'],
+    nilai_akhir2: ['70%'],
+    nilai_akhir3: ['85%'],
+    nilai_akhir4: ['100%'],
     datduk1: ['https://drive.bssn.go.id/tw1'],
     datduk2: ['https://drive.bssn.go.id/tw2'],
     datduk3: ['https://drive.bssn.go.id/tw3'],
@@ -502,10 +611,6 @@ const realisasitriwulan = ref([
     status2: ['SESUAI'],
     status3: ['PERLU PERBAIKAN'],
     status4: ['SESUAI'],
-    realisasi_pmk1: ['45%'],
-    realisasi_pmk2: ['65%'],
-    realisasi_pmk3: ['80%'],
-    realisasi_pmk4: ['95%'],
     catatan1: ['On track'],
     catatan2: ['Good progress'],
     catatan3: ['Need improvement'],
