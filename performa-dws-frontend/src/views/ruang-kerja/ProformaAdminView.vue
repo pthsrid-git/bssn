@@ -67,6 +67,17 @@
               OUTPUT
             </button>
             <button 
+              @click="activeTab = 'penerjemahintermediateoutcomelv1'"
+              :class="[
+                'py-4 px-4 text-sm font-semibold border-b-2 transition-colors uppercase tracking-wide whitespace-nowrap',
+                activeTab === 'penerjemahintermediateoutcomelv1' 
+                  ? 'border-yellow-500 text-gray-900' 
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              ]"
+            >
+              PENERJEMAH INTERMEDIATE OUTCOME LV1
+            </button>
+            <button 
               @click="activeTab = 'penerjemahintermediateoutcomelv2'"
               :class="[
                 'py-4 px-4 text-sm font-semibold border-b-2 transition-colors uppercase tracking-wide whitespace-nowrap',
@@ -726,6 +737,155 @@
             </div>
           </div>
 
+          <!-- Penerjemah Intermediate Outcome LV1 Tab -->
+          <div v-if="activeTab === 'penerjemahintermediateoutcomelv1'" class="space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+              <h2 class="text-lg font-semibold text-gray-900">TABEL PENERJEMAH INTERMEDIATE OUTCOME LV1</h2>
+              <div class="flex flex-wrap items-center gap-3">
+                <div class="flex items-center gap-2">
+                  <label class="text-sm text-gray-600 whitespace-nowrap">UNIT KERJA</label>
+                  <select v-model="filterTahun" class="border rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-yellow-500">
+                    <option value="D1">D1</option>
+                    <option value="D2">D2</option>
+                    <option value="D3">D3</option>
+                    <option value="D4">D4</option>
+                    <option value="D5">D5</option>
+                  </select>
+                </div>
+                <div class="flex items-center gap-2">
+                  <label class="text-sm text-gray-600 whitespace-nowrap">TAHUN</label>
+                  <select v-model="filterTahun" class="border rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-yellow-500">
+                    <option value="2016">2016</option>
+                    <option value="2017">2017</option>
+                    <option value="2018">2018</option>
+                    <option value="2019">2019</option>
+                    <option value="2020">2020</option>
+                  </select>
+                </div>
+                <div class="relative">
+                  <input v-model="search" type="text" placeholder="search" class="border rounded-md pl-9 pr-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-yellow-500" />
+                  <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-lg border border-gray-300">
+              <table class="w-full text-sm text-left border-collapse">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th class="px-4 py-3 text-center w-16 border-b border-r border-gray-300">NO</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">KODE UO</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">KODE Int.O LV1</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">CRITICAL SUCCESS FACTOR</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">IKSP</th>
+                    <th class="px-4 py-3 border-b border-r border-gray-300">TAHUN</th>
+                    <th class="px-4 py-3 border-b border-gray-300">PENGAMPU</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-if="loading">
+                    <td colspan="8" class="px-4 py-8 text-center">
+                      <div class="flex items-center justify-center">
+                        <svg class="animate-spin h-6 w-6 text-yellow-500 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span class="text-gray-600">Memuat data...</span>
+                      </div>
+                    </td>
+                  </tr>
+                  <template v-else-if="paginated.length > 0">
+                    <template v-for="(item, index) in paginated" :key="item.id">
+                      <tr 
+                        v-for="(indikator, i) in (Array.isArray(item.indikator_kinerja) ? item.indikator_kinerja : [item.indikator_kinerja])" 
+                        :key="item.id + '-' + i" 
+                        :class="[index % 2 === 0 ? 'bg-white' : 'bg-gray-50', 'hover:bg-gray-100']"
+                      >
+                        <td v-if="i === 0" :rowspan="Array.isArray(item.indikator_kinerja) ? item.indikator_kinerja.length : 1" class="px-4 py-3 text-center align-top border-b border-r border-gray-300">
+                          {{ (currentPage - 1) * itemsPerPage + index + 1 }}
+                        </td>
+                        <td v-if="i === 0" :rowspan="Array.isArray(item.indikator_kinerja) ? item.indikator_kinerja.length : 1" class="px-4 py-3 align-top border-b border-r border-gray-300">
+                          {{ item.kode_uo }}
+                        </td>
+                        <td v-if="i === 0" :rowspan="Array.isArray(item.indikator_kinerja) ? item.indikator_kinerja.length : 1" class="px-4 py-3 align-top border-b border-r border-gray-300">
+                          {{ item.kode_int_lv1 }}
+                        </td>
+                        <td v-if="i === 0" :rowspan="Array.isArray(item.indikator_kinerja) ? item.indikator_kinerja.length : 1" class="px-4 py-3 align-top border-b border-r border-gray-300">
+                          {{ item.critical_success_factor }}
+                        </td>
+                        <!-- IKSP - per row -->
+                        <td class="px-4 py-3 border-b border-r border-gray-300">{{ indikator }}</td>
+                        <!-- TAHUN - per row, ambil dari array periode -->
+                        <td class="px-4 py-3 border-b border-r border-gray-300">
+                          {{ Array.isArray(item.periode) ? item.periode[i] : item.periode }}
+                        </td>
+                        <!-- PENGAMPU - per row, ambil dari array pengampuh -->
+                        <td class="px-4 py-3 border-b border-gray-300">
+                          {{ Array.isArray(item.pengampuh) ? item.pengampuh[i] : item.pengampuh }}
+                        </td>
+                      </tr>
+                    </template>
+                  </template>
+                  <tr v-else>
+                    <td colspan="8" class="px-4 py-8 text-center text-gray-500 border-b border-gray-300">Tidak ada data</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="flex items-center justify-between pt-4">
+              <div class="flex items-center gap-2">
+                <button 
+                  @click="currentPage = 1"
+                  :disabled="currentPage === 1"
+                  class="px-3 py-1.5 border border-gray-300 rounded text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  &lt;&lt; First
+                </button>
+                <button 
+                  @click="currentPage--"
+                  :disabled="currentPage === 1"
+                  class="px-3 py-1.5 border border-gray-300 rounded text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  &lt; Previous
+                </button>
+
+                <template v-for="(page, idx) in visiblePages" :key="idx">
+                  <span v-if="page === '...'" class="px-3 py-1.5 text-sm text-gray-500">...</span>
+                  <button
+                    v-else
+                    @click="currentPage = page"
+                    :class="[
+                      'px-3 py-1.5 rounded text-sm transition-colors',
+                      currentPage === page 
+                        ? 'bg-yellow-500 text-white' 
+                        : 'border border-gray-300 hover:bg-gray-50'
+                    ]"
+                  >
+                    {{ page }}
+                  </button>
+                </template>
+
+                <button 
+                  @click="currentPage++"
+                  :disabled="currentPage === totalPages"
+                  class="px-3 py-1.5 border border-gray-300 rounded text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Next &gt;
+                </button>
+              </div>
+
+              <button
+                @click="openUploadDrawer('penerjemahintermediateoutcomelv1')"
+                class="px-4 py-2 bg-yellow-500 text-white rounded-md text-sm font-medium hover:bg-yellow-600 transition-colors"
+              >
+                Upload Penerjemah Intermediate Outcome LV1
+              </button>
+            </div>
+          </div>
+
           <!-- Penerjemah Intermediate Outcome LV2 Tab -->
           <div v-if="activeTab === 'penerjemahintermediateoutcomelv2'" class="space-y-4">
             <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
@@ -1136,6 +1296,20 @@ const outputList = ref([
     periode: '2025 - 2029'
   },
 ])
+const penerjemahintermediateoutcomelv1List = ref([
+  {
+    id: 1,
+    kode_uo: 'UO 1',
+    kode_int_lv1: 'Int.0.1',
+    kode_int_lv2: 'Int.0.1.1',
+    critical_success_factor: 'Meningkatnya kematangan PSE dan penyelenggara persandian sektor dalam menyelenggarakan keamanan siber dsan sandi',
+    indikator_kinerja: [
+      'Persentase PSE sektor Pemerintahan dan Pembangunan manusia dengan tingkat kematangan keamanan siber minimum level 3 (terdefinisi)',
+    ],
+    periode: ['2026'],
+    pengampuh: ['D3'],
+  }
+])
 
 const penerjemahintermediateoutcomelv2List = ref([
   {
@@ -1175,6 +1349,7 @@ const activeData = computed(() => {
     'intermediateoutcomelv2': intermediateOutcomeLv2List.value,
     'intermediateoutcomelv3': intermediateOutcomeLv3List.value,
     'output': outputList.value,
+    'penerjemahintermediateoutcomelv1': penerjemahintermediateoutcomelv1List.value,
     'penerjemahintermediateoutcomelv2': penerjemahintermediateoutcomelv2List.value,
     'penerjemahintermediateoutcomelv3': penerjemahintermediateoutcomelv3List.value,
   }
