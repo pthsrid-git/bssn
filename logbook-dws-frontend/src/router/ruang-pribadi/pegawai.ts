@@ -1,6 +1,4 @@
 import LogbookView from '@/views/pegawai/logbook/LogbookView.vue'
-import PendapatanView from '@/views/pegawai/pendapatan/PendapatanView.vue'
-import PengajuanView from '@/views/pegawai/pengajuan/PengajuanView.vue'
 
 export const keuanganRoute = {
   path: 'ruang-pribadi/keuangan',

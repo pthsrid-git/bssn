@@ -1,10 +1,15 @@
-import { composeErrorMessage, requestState, responseDataArrayFromJson } from '@bssn/ui-kit-frontend'
+import {
+  composeErrorMessage,
+  mapFormData,
+  requestState,
+  responseDataArrayFromJson
+} from '@bssn/ui-kit-frontend'
 import { defineStore } from 'pinia'
 
 import { pegawaiLogbookStore } from '@/const'
 import { recordsLogbookDummy } from '@/dummies/pegawai/logbook'
 import { log } from '@/helpers/custom'
-import { getRequest, postRequest } from '@/helpers/request'
+import { getRequest, postMultipartRequest } from '@/helpers/request'
 import { logbookDataFromJson, type LogbookData } from '@/models/pegawai/logbook'
 import { addLogbookUrl, recordsLogbookUrl } from '@/urls/pegawai/logbook'
 
@@ -57,11 +62,12 @@ export const useLogbookStore = defineStore(pegawaiLogbookStore, {
       log(`url: ${url} | values: ${JSON.stringify(data)}`)
       this.add.status = 'loading'
       this.add.errorMessage = null
+      const formData = mapFormData(new FormData(), data) as FormData
       try {
         if (dummy) {
           await new Promise((resolve) => setTimeout(resolve, 500))
         } else {
-          await postRequest(url, data)
+          await postMultipartRequest(url, formData)
         }
         this.add.status = 'success'
       } catch (error) {

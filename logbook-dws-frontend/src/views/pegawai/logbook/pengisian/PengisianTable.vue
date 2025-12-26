@@ -95,9 +95,9 @@
                                         </div>
 
                                         <div class="flex items-center justify-center">
-                                            <ButtonDefault variant="info" @click="viewClick(activity)">
+                                            <ButtonOutline variant="info" @click="viewClick(activity)">
                                                 Detail
-                                            </ButtonDefault>
+                                            </ButtonOutline>
                                         </div>
                                     </div>
                                 </div>
@@ -122,7 +122,7 @@
 </template>
 
 <script setup lang="ts">
-import { ButtonDefault, CardDefault, type RequestState } from '@bssn/ui-kit-frontend';
+import { ButtonDefault, ButtonOutline, CardDefault, type RequestState } from '@bssn/ui-kit-frontend';
 import { computed, type PropType } from 'vue';
 import { getLogbookStatusClass, getLogbookStatusLabel } from '@/helpers/custom';
 

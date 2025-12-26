@@ -58,6 +58,7 @@ export const getTestUserDwsData = () => {
         nip: '482716594203857194',
         pangkat: 'Penata Muda Tk. I (III/b)',
         jabatan: 'Pranata Komputer Pertama',
+        unitkerja: import.meta.env.VITE_TEST_USER_UNIT_KERJA,
         roles: [...import.meta.env.VITE_TEST_USER_ROLES.split(',')],
         permissions: {
           'ruang-pribadi': [...import.meta.env.VITE_TEST_USER_PERMISSIONS_RUANG_PRIBADI.split(',')],

@@ -77,7 +77,8 @@ const onViewClick = (record: LogbookData) => {
 const onAdd = () => {
     props.pageDefault?.openDrawerDefault(
         `Tambah Aktifitas Harian`,
-        PengisianAdd
+        PengisianAdd,
+        { onLoad: onLoad }
     )
 }
 
