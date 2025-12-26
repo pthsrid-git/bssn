@@ -1,7 +1,7 @@
+import type { UserDwsData } from '@bssn/ui-kit-frontend'
 import { defineStore } from 'pinia'
 
 import { userDwsStore } from '@/const'
-import type { UserDwsData } from '@/models'
 
 export const useUserDwsStore = defineStore(userDwsStore, {
   state: () => {
@@ -11,30 +11,20 @@ export const useUserDwsStore = defineStore(userDwsStore, {
   },
   getters: {
     isRuangPribadiAuthorized: (state) => (permission: string) => {
-      if (!state.user || !state.user.permissions) {
-        return false
+      if (state.user) {
+        return state.user.permissions.ruangPribadi.includes(permission)
       }
-
-      // Get permissions array
-      const permissions = state.user.permissions.ruangPribadi || []
-      return permissions.includes(permission)
     },
-
     isRuangKerjaAuthorized: (state) => (permission: string) => {
-      if (!state.user || !state.user.permissions) {
-        return false
+      if (state.user) {
+        return state.user.permissions.ruangKerja.includes(permission)
       }
-
-      // Get permissions array
-      const permissions = state.user.permissions.ruangKerja || []
-      return permissions.includes(permission)
     }
   },
   actions: {
     setUser(user: UserDwsData) {
       this.user = user
     },
-
     removeUser() {
       this.user = null
     }

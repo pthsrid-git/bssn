@@ -14,12 +14,8 @@
         <div class="flex items-center overflow-hidden">
           <div class="flex items-center flex-1 gap-2 overflow-hidden flex-nowrap">
             <font-awesome-icon v-if="!!route.meta?.icon" class="w-4 h-4" :icon="route.meta?.icon" />
-            <span class="truncate text-start text-nowrap">{{ route.meta?.title }}</span>
+            <span class="truncate text-start text-nowrap"> {{ route.meta?.title }}</span>
           </div>
-          <div
-            v-if="getBadge(route.name as string) > 0"
-            class="flex items-center justify-center w-1.5 h-1.5 ml-2 bg-danger-500 rounded-full"
-          ></div>
         </div>
         <font-awesome-icon
           v-if="hasChild && !isParentActive(route)"
@@ -57,11 +53,6 @@
               />
               <span class="truncate text-start text-nowrap"> {{ child.meta?.title }}</span>
             </div>
-            <BadgeNotification
-              v-if="getBadge(child.name as string) > 0"
-              :value="getBadge(child.name as string)"
-              variant="danger"
-            />
           </button>
         </router-link>
       </li>
@@ -70,15 +61,11 @@
 </template>
 
 <script setup lang="ts">
+import type { RouteMetaData } from '@bssn/ui-kit-frontend'
 import { initDropdowns } from 'flowbite'
-import { storeToRefs } from 'pinia'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, onMounted } from 'vue'
 import { useRouter, type RouteRecordName, type RouteRecordRaw } from 'vue-router'
-
-import BadgeNotification from '@/components/badge/BadgeNotification.vue'
-import type { RouteMetaData } from '@/models'
-import { useMenuBadgeStore } from '@/stores/menuBadgeStore'
 
 type MenuRoute = RouteRecordRaw & {
   meta: RouteMetaData
@@ -87,11 +74,6 @@ type MenuRoute = RouteRecordRaw & {
 const props = defineProps<{
   route: MenuRoute
 }>()
-
-const menuBadgeStore = useMenuBadgeStore()
-const { badge } = storeToRefs(menuBadgeStore)
-
-const getBadge = (name: string) => badge.value.find((b) => b.name === name)?.badge ?? 0
 
 const router = useRouter()
 

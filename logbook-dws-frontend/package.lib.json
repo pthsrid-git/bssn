@@ -1,27 +1,30 @@
 {
-  "name": "@bssn/ui-kit-frontend",
-  "version": "1.0.2",
+  "name": "@bssn/logbook-dws-frontend",
+  "version": "1.0.0",
   "description": "Module",
-  "style": "ui-kit-frontend.css",
-  "module": "ui-kit-frontend.es.js",
-  "main": "ui-kit-frontend.umd.js",
+  "style": "logbook-dws-frontend.css",
+  "module": "logbook-dws-frontend.es.js",
+  "main": "logbook-dws-frontend.umd.js",
   "types": "./type/index.d.ts",
-  "files": ["ui-kit-frontend.es.js", "ui-kit-frontend.umd.js", "ui-kit-frontend.css", "type"],
+  "files": [
+    "logbook-dws-frontend.es.js",
+    "logbook-dws-frontend.umd.js",
+    "logbook-dws-frontend.css",
+    "type"
+  ],
   "exports": {
     ".": {
-      "import": "./ui-kit-frontend.es.js",
-      "require": "./ui-kit-frontend.umd.js",
+      "import": "./logbook-dws-frontend.es.js",
+      "require": "./logbook-dws-frontend.umd.js",
       "types": "./type/index.d.ts"
     },
-    "./ui-kit-frontend.css": "./ui-kit-frontend.css"
+    "./logbook-dws-frontend.css": "./logbook-dws-frontend.css"
   },
   "peerDependencies": {
-    "@types/uuid": "^10.0.0",
     "axios": "^1.11.0",
     "flowbite": "^3.1.2",
     "pinia": "^3.0.3",
     "tailwindcss": "^4.1.11",
-    "uuid": "^11.1.0",
     "vee-validate": "^4.15.1",
     "vue": "^3.5.18",
     "vue-router": "^4.5.1",
@@ -31,10 +34,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/repospheres/ui-kit-frontend.git"
+    "url": "https://github.com/repospheres/logbook-dws-frontend.git"
   },
   "bugs": {
-    "url": "https://github.com/repospheres/ui-kit-frontend/issues"
+    "url": "https://github.com/repospheres/logbook-dws-frontend/issues"
   },
-  "homepage": "https://github.com/repospheres/ui-kit-frontend#readme"
+  "homepage": "https://github.com/repospheres/logbook-dws-frontend#readme"
 }

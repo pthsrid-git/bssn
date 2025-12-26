@@ -1,13 +1,15 @@
 // Project Const
 export default class ProjectConst {
-  static name = 'UiKitFrontend'
-  static slug = 'ui-kit-frontend'
+  static name = 'LogbookDwsFrontend'
+  static slug = 'logbook-dws-frontend'
 }
 
 // Store Definitions
 const storeEntities = [
-  ['Test', ['Logic']],
-  ['', ['Api', 'Dropdown', 'MenuBadge', 'Option', 'UserDefault', 'UserDws']]
+  ['Admin', ['Petugas', 'Pendapatan']],
+  ['Pegawai', ['Pengajuan', 'Pendapatan', 'Logbook']],
+  ['Pengolah', ['Pengajuan']],
+  ['', ['Api', 'Pegawai', 'Periode', 'UserDws']]
 ] as const
 
 const createStoreName = (role: string, entity: string) =>
@@ -25,11 +27,14 @@ const storeDefinitions = Object.fromEntries(
 ) as Record<string, string>
 
 export const {
-  testLogicStore,
+  adminPetugasStore,
+  adminPendapatanStore,
+  pegawaiPengajuanStore,
+  pegawaiPendapatanStore,
+  pengolahPengajuanStore,
+  pegawaiLogbookStore,
   apiStore,
-  dropdownStore,
-  menuBadgeStore,
-  optionStore,
-  userDefaultStore,
+  periodeStore,
+  pegawaiStore,
   userDwsStore
 } = storeDefinitions

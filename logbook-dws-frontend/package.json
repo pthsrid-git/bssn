@@ -1,12 +1,11 @@
 {
-  "name": "ui-kit-frontend",
-  "version": "1.0.2",
+  "name": "logbook-dws-frontend",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
     "dev": "vite",
-    "generate:components": "tsx scripts/generate-components-index.ts",
     "build": "run-p type-check \"build-only {@}\" --",
     "build:lib": "run-p type-check:lib \"build-only:lib {@}\" -- && npm run copy-package-lib && npm run copy-type",
     "preview": "vite preview",
@@ -20,18 +19,6 @@
     "type-check:lib": "vue-tsc --build tsconfig.lib.json --force",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/"
-  },
-  "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^7.1.0",
-    "@fortawesome/free-brands-svg-icons": "^7.1.0",
-    "@fortawesome/free-regular-svg-icons": "^7.1.0",
-    "@fortawesome/free-solid-svg-icons": "^7.1.0",
-    "@fortawesome/pro-duotone-svg-icons": "^7.1.0",
-    "@fortawesome/pro-regular-svg-icons": "^7.1.0",
-    "@fortawesome/pro-solid-svg-icons": "^7.1.0",
-    "@fortawesome/vue-fontawesome": "^3.1.2",
-    "apexcharts": "^5.3.2",
-    "lodash.debounce": "^4.0.8"
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",
@@ -70,5 +57,8 @@
     "vue-router": "^4.5.1",
     "vue-tsc": "^3.0.5",
     "yup": "^1.7.0"
+  },
+  "dependencies": {
+    "@bssn/ui-kit-frontend": "github:repospheres/bssn-ui-kit-frontend"
   }
 }

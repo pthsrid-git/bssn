@@ -1,6 +1,8 @@
+const modulePath = ['./node_modules/@bssn/**/*.{vue,js,ts,jsx,tsx}']
+
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
+  content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}', ...modulePath],
   important: true,
   safelist: [
     'max-w-xs',

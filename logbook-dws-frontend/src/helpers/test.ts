@@ -6,7 +6,7 @@ import {
   type AuthData,
   type UserDefaultData,
   type UserDwsData
-} from '@/models'
+} from '@bssn/ui-kit-frontend'
 
 // ================================================================================================
 // Get Test Auth Data
@@ -48,6 +48,7 @@ export const getTestUserDwsData = () => {
   return responseDataObjectFromJson<UserDwsData>(
     {
       data: {
+        id: import.meta.env.VITE_TEST_USER_ID,
         guid: import.meta.env.VITE_TEST_USER_GUID,
         name: import.meta.env.VITE_TEST_USER_NAME,
         fullname: import.meta.env.VITE_TEST_USER_FULLNAME,

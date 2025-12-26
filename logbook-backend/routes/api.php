@@ -1,66 +1,49 @@
 <?php
 
-use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\LogbookController;
 use App\Http\Controllers\Api\LogbookKatimController;
 use App\Http\Controllers\Api\LogbookAtasanController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
-// Public routes
-Route::prefix('auth')->group(function () {
-    Route::post('register', [AuthController::class, 'register']);
-    Route::post('login', [AuthController::class, 'login']);
+Route::prefix('users')->group(function () {
+    Route::get('{id}', [UserController::class, 'show']);
 });
 
-// Protected routes
-Route::middleware('auth:api')->group(function () {
-    // Auth routes
-    Route::prefix('auth')->group(function () {
-        Route::post('logout', [AuthController::class, 'logout']);
-        Route::post('refresh', [AuthController::class, 'refresh']);
-        Route::get('me', [AuthController::class, 'me']);
-    });
+// Logbook routes (untuk pegawai/PKO)
+Route::apiResource('logbook', LogbookController::class);
+Route::post('logbook/{id}/submit', [LogbookController::class, 'submit']);
 
-    Route::prefix('users')->group(function () {
-        Route::get('{id}', [UserController::class, 'show']);
-    });
+// Logbook Katim routes (untuk ketua tim)
+Route::prefix('logbook-katim')->group(function () {
+    // Get daftar anggota tim
+    Route::get('team-members', [LogbookKatimController::class, 'getTeamMembers']);
 
-    // Logbook routes (untuk pegawai/PKO)
-    Route::apiResource('logbooks', LogbookController::class);
-    Route::post('logbooks/{id}/submit', [LogbookController::class, 'submit']);
+    // Get summary/statistik
+    Route::get('summary', [LogbookKatimController::class, 'getTeamSummary']);
 
-    // Logbook Katim routes (untuk ketua tim)
-    Route::prefix('logbook-katim')->group(function () {
-        // Get daftar anggota tim
-        Route::get('team-members', [LogbookKatimController::class, 'getTeamMembers']);
+    // Get logbook anggota
+    Route::get('member/{memberId}/logs', [LogbookKatimController::class, 'getMemberLogs']);
 
-        // Get summary/statistik
-        Route::get('summary', [LogbookKatimController::class, 'getTeamSummary']);
+    // Detail logbook
+    Route::get('logs/{logId}', [LogbookKatimController::class, 'getLogDetail']);
 
-        // Get logbook anggota
-        Route::get('member/{memberId}/logs', [LogbookKatimController::class, 'getMemberLogs']);
+    Route::put('logs/{logId}/catatan', [LogbookKatimController::class, 'updateCatatanKatim']);
 
-        // Detail logbook
-        Route::get('logs/{logId}', [LogbookKatimController::class, 'getLogDetail']);
+    // Approve & Reject (update catatan_katim + status)
+    Route::post('logs/{logId}/approve', [LogbookKatimController::class, 'approveLog']);
+    Route::post('logs/{logId}/reject', [LogbookKatimController::class, 'rejectLog']);
+});
 
-        Route::put('logs/{logId}/catatan', [LogbookKatimController::class, 'updateCatatanKatim']);
+// Logbook Atasan routes
+Route::prefix('logbook-atasan')->group(function () {
+    Route::get('pegawai', [LogbookAtasanController::class, 'getPegawaiList']);
+    Route::get('pegawai/{pegawaiId}/logs', [LogbookAtasanController::class, 'getPegawaiLogs']);
+    Route::get('logs/{logId}', [LogbookAtasanController::class, 'getLogDetail']);
 
-        // Approve & Reject (update catatan_katim + status)
-        Route::post('logs/{logId}/approve', [LogbookKatimController::class, 'approveLog']);
-        Route::post('logs/{logId}/reject', [LogbookKatimController::class, 'rejectLog']);
-    });
+    Route::post('logs/{logId}/approve', [LogbookAtasanController::class, 'approveLog']);
+    Route::post('logs/{logId}/reject', [LogbookAtasanController::class, 'rejectLog']);
 
-    // Logbook Atasan routes
-    Route::prefix('logbook-atasan')->group(function () {
-        Route::get('pegawai', [LogbookAtasanController::class, 'getPegawaiList']);
-        Route::get('pegawai/{pegawaiId}/logs', [LogbookAtasanController::class, 'getPegawaiLogs']);
-        Route::get('logs/{logId}', [LogbookAtasanController::class, 'getLogDetail']);
-
-        Route::post('logs/{logId}/approve', [LogbookAtasanController::class, 'approveLog']);
-        Route::post('logs/{logId}/reject', [LogbookAtasanController::class, 'rejectLog']);
-
-        Route::put('logs/{logId}/catatan', [LogbookAtasanController::class, 'updateCatatanAtasan']);
-        Route::get('summary', [LogbookAtasanController::class, 'getUnitSummary']);
-    });
+    Route::put('logs/{logId}/catatan', [LogbookAtasanController::class, 'updateCatatanAtasan']);
+    Route::get('summary', [LogbookAtasanController::class, 'getUnitSummary']);
 });

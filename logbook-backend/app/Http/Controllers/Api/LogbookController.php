@@ -12,7 +12,12 @@ class LogbookController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Logbook::where('user_id', auth()->id());
+        $query = Logbook::query();
+
+        // Filter by user_id if provided
+        if ($request->has('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
 
         // Filter by date range
         if ($request->has('start_date')) {
@@ -27,12 +32,21 @@ class LogbookController extends Controller
             $query->where('status', $request->status);
         }
 
-        $logbooks = $query->orderBy('tanggal', 'asc')
-            // ->orderBy('jam_mulai', 'desc')
+        // Search by keyword
+        if ($request->has('keyword') && $request->keyword) {
+            $keyword = $request->keyword;
+            $query->where(function($q) use ($keyword) {
+                $q->where('aktivitas_kegiatan_harian', 'like', "%{$keyword}%")
+                  ->orWhere('rencana_hasil_kinerja_skp', 'like', "%{$keyword}%")
+                  ->orWhere('indikator_hasil_rencana_kerja', 'like', "%{$keyword}%");
+            });
+        }
+
+        $logbooks = $query->orderBy('tanggal', 'desc')
+            ->orderBy('jam_mulai', 'desc')
             ->get();
 
         return response()->json([
-            'success' => true,
             'data' => $logbooks
         ]);
     }
@@ -75,9 +89,17 @@ class LogbookController extends Controller
             'indikator_hasil_rencana_kerja',
             'aktivitas_kegiatan_harian',
             'keterangan',
+            'user_id',
         ]);
 
-        $data['user_id'] = auth()->id();
+        // Validate user_id is provided
+        if (!isset($data['user_id'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'user_id is required'
+            ], 422);
+        }
+
         $data['status'] = $request->status ?? 'Draft';
 
         // Handle file upload
@@ -126,7 +148,6 @@ class LogbookController extends Controller
             $logbook->load('user'); // Jika ada relasi user
 
             return response()->json([
-                'success' => true,
                 'message' => 'Logbook created successfully',
                 'data' => $logbook
             ], 201);
@@ -141,19 +162,16 @@ class LogbookController extends Controller
 
     public function show($id)
     {
-        $logbook = Logbook::where('user_id', auth()->id())
-            ->findOrFail($id);
+        $logbook = Logbook::findOrFail($id);
 
         return response()->json([
-            'success' => true,
             'data' => $logbook
         ]);
     }
 
     public function update(Request $request, $id)
     {
-        $logbook = Logbook::where('user_id', auth()->id())
-            ->findOrFail($id);
+        $logbook = Logbook::findOrFail($id);
 
         $validator = Validator::make($request->all(), [
             'tanggal' => 'sometimes|date',
@@ -212,7 +230,6 @@ class LogbookController extends Controller
         $logbook->update($data);
 
         return response()->json([
-            'success' => true,
             'message' => 'Logbook updated successfully',
             'data' => $logbook
         ]);
@@ -220,8 +237,7 @@ class LogbookController extends Controller
 
     public function destroy($id)
     {
-        $logbook = Logbook::where('user_id', auth()->id())
-            ->findOrFail($id);
+        $logbook = Logbook::findOrFail($id);
 
         // Delete file if exists
         if ($logbook->file_path) {
@@ -231,7 +247,6 @@ class LogbookController extends Controller
         $logbook->delete();
 
         return response()->json([
-            'success' => true,
             'message' => 'Logbook deleted successfully'
         ]);
     }
@@ -239,13 +254,11 @@ class LogbookController extends Controller
     // Submit logbook
     public function submit($id)
     {
-        $logbook = Logbook::where('user_id', auth()->id())
-            ->findOrFail($id);
+        $logbook = Logbook::findOrFail($id);
 
         $logbook->update(['status' => 'Disubmit']);
 
         return response()->json([
-            'success' => true,
             'message' => 'Logbook submitted successfully',
             'data' => $logbook
         ]);

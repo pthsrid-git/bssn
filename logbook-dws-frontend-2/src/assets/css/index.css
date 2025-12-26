@@ -1,0 +1,27 @@
+@import 'tailwindcss';
+@import '../../../node_modules/flowbite';
+
+@config '../../../tailwind.config.js';
+@plugin "flowbite/plugin";
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  75% {
+    transform: scale(1.02);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fadeInScale {
+  animation: fadeInScale 0.25s ease-in-out forwards;
+}
+
+.apexcharts-legend.apx-legend-position-right {
+  justify-content: center !important;
+}

@@ -1,22 +1,13 @@
 import './assets/css/index.css'
-import './font-awesome.ts'
 
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { FontAwesomeIcon } from '@bssn/ui-kit-frontend'
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 
+import { setAuthLogbookDwsFrontend, setUserDwsLogbookDwsFrontend } from '.'
 import App from './App.vue'
-import { getTestAuthData, getTestUserDefaultData, getTestUserDwsData } from './helpers/test.ts'
-import {
-  callBadgeDropdownUiKitFrontend,
-  initMenuBadge,
-  setAuthUiKitFrontend,
-  setUserDefaultUiKitFrontend,
-  setUserDwsUiKitFrontend
-} from './index.ts'
+import { getTestAuthData, getTestUserDwsData } from './helpers/test'
 import router from './router'
-import { useMenuBadgeStore } from './stores/menuBadgeStore.ts'
-import { useApiStore } from './stores/apiStore.ts'
 
 const app = createApp(App)
 
@@ -26,16 +17,7 @@ app.use(router)
 
 app.component('font-awesome-icon', FontAwesomeIcon)
 
-setAuthUiKitFrontend(getTestAuthData()) // setAuth AuthData
-setUserDefaultUiKitFrontend(getTestUserDefaultData()) // setUser UserDefaultData
-setUserDwsUiKitFrontend(getTestUserDwsData()) // setUser UserDwsData
-
-const menuBadgeStore = useMenuBadgeStore()
-initMenuBadge(menuBadgeStore)
-callBadgeDropdownUiKitFrontend()
+setAuthLogbookDwsFrontend(getTestAuthData())
+setUserDwsLogbookDwsFrontend(getTestUserDwsData())
 
 app.mount('#app')
-
-const apiStore = useApiStore()
-const token = localStorage.getItem('auth_token')
-if (token) apiStore.setToken(token)

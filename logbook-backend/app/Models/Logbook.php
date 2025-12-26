@@ -32,6 +32,8 @@ class Logbook extends Model
         'jam_selesai' => 'datetime:H:i',
     ];
 
+    protected $appends = ['file_url'];
+
     // Valid status values
     public const STATUS_DISUBMIT = 'Disubmit';
     public const STATUS_DISETUJUI = 'Disetujui';
