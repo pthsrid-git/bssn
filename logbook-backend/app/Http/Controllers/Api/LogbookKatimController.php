@@ -18,7 +18,19 @@ class LogbookKatimController extends Controller
         try {
             $user = auth()->user();
 
-            // Ambil hanya staff (parent_id = id user login)
+            // Fallback ke test user jika tidak ada autentikasi
+            if (!$user && $request->has('user_id')) {
+                $user = User::find($request->user_id);
+            }
+
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not authenticated'
+                ], 401);
+            }
+
+            // Ambil staff (parent_id = id user login) + katim sendiri
             $staffMembers = User::where('parent_id', $user->id)
                 ->select([
                     'id',
@@ -31,25 +43,47 @@ class LogbookKatimController extends Controller
                     'kode_unit_organisasi',
                     'role'
                 ])
-                ->get()
-                ->map(function ($member) {
-                    return [
-                        'id' => $member->id,
-                        'nama' => $member->fullname ?? $member->name,
-                        'nip' => $member->nip,
-                        'pangkat' => $member->pangkat ?? '-',
-                        'golongan' => $this->extractGolongan($member->pangkat),
-                        'jabatan' => $member->jabatan ?? '-',
-                        'email' => $member->email,
-                        'unit_kerja' => $member->kode_unit_organisasi,
-                        'role' => $member->role
-                    ];
-                });
+                ->get();
 
-            return response()->json([
-                'success' => true,
-                'data' => $staffMembers
-            ]);
+            // Tambahkan katim sendiri ke list
+            $katimData = User::where('id', $user->id)
+                ->select([
+                    'id',
+                    'name',
+                    'fullname',
+                    'nip',
+                    'pangkat',
+                    'jabatan',
+                    'email',
+                    'kode_unit_organisasi',
+                    'role'
+                ])
+                ->first();
+
+            // Gabungkan katim dan staff
+            $allMembers = collect();
+            if ($katimData) {
+                $allMembers->push($katimData);
+            }
+            $allMembers = $allMembers->merge($staffMembers);
+
+            // Map data
+            $teamMembers = $allMembers->map(function ($member) {
+                return [
+                    'id' => $member->id,
+                    'nama' => $member->fullname ?? $member->name,
+                    'nip' => $member->nip,
+                    'pangkat' => $member->pangkat ?? '-',
+                    'golongan' => $this->extractGolongan($member->pangkat),
+                    'jabatan' => $member->jabatan ?? '-',
+                    'email' => $member->email,
+                    'unit_kerja' => $member->kode_unit_organisasi,
+                    'role' => $member->role
+                ];
+            });
+
+            // Return array langsung tanpa wrapper
+            return response()->json($teamMembers);
         } catch (\Exception $e) {
             \Log::error('Error fetching team members', [
                 'user_id' => auth()->id(),
@@ -71,6 +105,18 @@ class LogbookKatimController extends Controller
     {
         try {
             $user = auth()->user();
+
+            // Fallback ke test user jika tidak ada autentikasi
+            if (!$user && $request->has('user_id')) {
+                $user = User::find($request->user_id);
+            }
+
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not authenticated'
+                ], 401);
+            }
 
             // Validasi bahwa member adalah bawahan dari user yang login ATAU user sendiri
             $member = User::where(function ($query) use ($user, $memberId) {
@@ -329,23 +375,46 @@ class LogbookKatimController extends Controller
     public function updateCatatanKatim(Request $request, $logId)
     {
         try {
+            \Log::info('updateCatatanKatim called', [
+                'logId' => $logId,
+                'request_data' => $request->all()
+            ]);
+
             $validated = $request->validate([
-                'catatan_katim' => 'required|string|max:1000'
+                'catatan_katim' => 'nullable|string|max:1000'
             ]);
 
             $user = auth()->user();
 
-            // Get logbook dengan validasi bahwa pemilik adalah bawahan
+            // Fallback ke test user jika tidak ada autentikasi
+            if (!$user && $request->has('user_id')) {
+                $user = User::find($request->user_id);
+            }
+
+            if (!$user) {
+                \Log::error('User not authenticated');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not authenticated'
+                ], 401);
+            }
+
+            \Log::info('User found', ['user_id' => $user->id]);
+
+            // Get logbook dengan validasi bahwa pemilik adalah bawahan ATAU user sendiri
             $logbook = Logbook::whereHas('user', function ($query) use ($user) {
-                $query->where('parent_id', $user->id);
+                $query->where('parent_id', $user->id)
+                    ->orWhere('id', $user->id);
             })->findOrFail($logId);
+
+            \Log::info('Logbook found', ['logbook_id' => $logbook->id]);
 
             // Update catatan_katim saja
             $logbook->update([
                 'catatan_katim' => $validated['catatan_katim']
             ]);
 
-            \Log::info('Catatan Katim updated', [
+            \Log::info('Catatan Katim updated successfully', [
                 'logbook_id' => $logId,
                 'katim_id' => $user->id,
                 'catatan' => $validated['catatan_katim']

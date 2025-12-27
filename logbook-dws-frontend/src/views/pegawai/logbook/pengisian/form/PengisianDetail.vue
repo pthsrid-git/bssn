@@ -27,36 +27,40 @@
         </div>
 
         <!-- Rencana Hasil Kinerja SKP -->
-        <div>
-            <label class="text-sm font-medium text-gray-900 block mb-2">Rencana Hasil Kinerja SKP</label>
-            <div class="bg-white border border-gray-300 rounded-lg p-3 text-sm text-gray-900">
-                {{ record.rencana_hasil_kinerja_skp }}
-            </div>
-        </div>
+        <FieldInput
+            name="display.rencana_hasil_kinerja_skp"
+            label="Rencana Hasil Kinerja SKP"
+            :initialValue="record.rencana_hasil_kinerja_skp"
+            :readonly="true"
+            :submitCount="0"
+          />
 
         <!-- Indikator Hasil Rencana Kerja -->
-        <div>
-            <label class="text-sm font-medium text-gray-900 block mb-2">Indikator Hasil Rencana Kerja</label>
-            <div class="bg-white border border-gray-300 rounded-lg p-3 text-sm text-gray-900">
-                {{ record.indikator_hasil_rencana_kerja }}
-            </div>
-        </div>
+        <FieldInput
+            name="display.indikator_hasil_rencana_kerja"
+            label="Indikator Hasil Rencana Kerja"
+            :initialValue="record.indikator_hasil_rencana_kerja"
+            :readonly="true"
+            :submitCount="0"
+          />
 
         <!-- Aktivitas / Kegiatan Harian -->
-        <div>
-            <label class="text-sm font-medium text-gray-900 block mb-2">Aktivitas / Kegiatan Harian</label>
-            <div class="bg-white border border-gray-300 rounded-lg p-3 text-sm text-gray-900">
-                {{ record.aktivitas_kegiatan_harian }}
-            </div>
-        </div>
-
+        <FieldInput
+            name="display.aktivitas_kegiatan_harian"
+            label="Aktivitas / Kegiatan Harian"
+            :initialValue="record.aktivitas_kegiatan_harian"
+            :readonly="true"
+            :submitCount="0"
+          />
+        
         <!-- Keterangan -->
-        <div>
-            <label class="text-sm font-medium text-gray-900 block mb-2">Keterangan</label>
-            <div class="bg-white border border-gray-300 rounded-lg p-3 text-sm text-gray-900">
-                {{ record.keterangan || '-' }}
-            </div>
-        </div>
+        <FieldInput
+            name="display.keterangan"
+            label="Keterangan"
+            :initialValue="record.keterangan || '-'"
+            :readonly="true"
+            :submitCount="0"
+          />
 
         <!-- Bukti Aktivitas Harian -->
         <div v-if="record.file_path || record.file_name">
@@ -87,20 +91,22 @@
         </div>
 
         <!-- Catatan Katim -->
-        <div>
-            <label class="text-sm font-medium text-gray-900 block mb-2">Catatan Katim</label>
-            <div class="bg-white border border-gray-300 rounded-lg p-3 text-sm text-gray-900">
-                {{ record.catatan_katim || '-' }}
-            </div>
-        </div>
-
+        <FieldInput
+            name="display.catatan_katim"
+            label="Catatan Katim"
+            :initialValue="record.catatan_katim || '-'"
+            :readonly="true"
+            :submitCount="0"
+          />
+          
         <!-- Catatan Atasan -->
-        <div>
-            <label class="text-sm font-medium text-gray-900 block mb-2">Catatan Atasan</label>
-            <div class="bg-white border border-gray-300 rounded-lg p-3 text-sm text-gray-900">
-                {{ record.catatan_atasan || '-' }}
-            </div>
-        </div>
+        <FieldInput
+            name="display.catatan_atasan"
+            label="Catatan Atasan"
+            :initialValue="record.catatan_atasan || '-'"
+            :readonly="true"
+            :submitCount="0"
+          />
     </div>
 </template>
 
@@ -108,6 +114,7 @@
 import type { PropType } from 'vue';
 import type { LogbookData } from '@/models/pegawai/logbook';
 import { formatDateIndonesian, getLogbookStatusClass, getLogbookStatusLabel } from '@/helpers/custom';
+import { FieldInput } from '@bssn/ui-kit-frontend';
 
 //============================================================================
 // Props

@@ -8,7 +8,7 @@ export default class ProjectConst {
 const storeEntities = [
   ['Admin', ['Petugas', 'Pendapatan']],
   ['Pegawai', ['Pengajuan', 'Pendapatan', 'Logbook']],
-  ['Pengolah', ['Pengajuan']],
+  ['Pengolah', ['Pengajuan', 'LogbookKatim']],
   ['', ['Api', 'Pegawai', 'Periode', 'UserDws']]
 ] as const
 
@@ -32,6 +32,7 @@ export const {
   pegawaiPengajuanStore,
   pegawaiPendapatanStore,
   pengolahPengajuanStore,
+  pengolahLogbookKatimStore,
   pegawaiLogbookStore,
   apiStore,
   periodeStore,

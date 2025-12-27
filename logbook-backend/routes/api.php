@@ -15,7 +15,7 @@ Route::apiResource('logbook', LogbookController::class);
 Route::post('logbook/{id}/submit', [LogbookController::class, 'submit']);
 
 // Logbook Katim routes (untuk ketua tim)
-Route::prefix('logbook-katim')->group(function () {
+Route::prefix('katim')->group(function () {
     // Get daftar anggota tim
     Route::get('team-members', [LogbookKatimController::class, 'getTeamMembers']);
 
@@ -36,7 +36,7 @@ Route::prefix('logbook-katim')->group(function () {
 });
 
 // Logbook Atasan routes
-Route::prefix('logbook-atasan')->group(function () {
+Route::prefix('atasan')->group(function () {
     Route::get('pegawai', [LogbookAtasanController::class, 'getPegawaiList']);
     Route::get('pegawai/{pegawaiId}/logs', [LogbookAtasanController::class, 'getPegawaiLogs']);
     Route::get('logs/{logId}', [LogbookAtasanController::class, 'getLogDetail']);

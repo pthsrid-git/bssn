@@ -1,4 +1,4 @@
 import { adminRoute } from './admin'
-import { pengolahRoute } from './pengolah'
+import { logbookKatimRoute } from './logbookkatim'
 
-export const logbookRuangKerjaRoutes = [adminRoute, pengolahRoute]
+export const logbookRuangKerjaRoutes = [adminRoute, logbookKatimRoute]

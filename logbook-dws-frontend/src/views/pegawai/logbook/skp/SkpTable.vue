@@ -2,9 +2,7 @@
     <div class="space-y-4">
         <!-- Loading State -->
         <SectionDefault v-if="isLoading" :section-status="'loading'">
-            <div class="py-12 text-center">
-                <p class="text-gray-600">Memuat data...</p>
-            </div>
+            <StateLoading info="Memuat data..." />
         </SectionDefault>
 
         <!-- Table -->
@@ -57,13 +55,15 @@
 </template>
 
 <script setup lang="ts">
-import { 
+import {
     SectionDefault,
     TableDefault,
     TableHeader,
     TableData,
     TableDataNone,
-    BadgeDefault, ButtonOutline
+    BadgeDefault,
+    ButtonOutline,
+    StateLoading
 } from '@bssn/ui-kit-frontend'
 
 defineProps({

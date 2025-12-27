@@ -122,7 +122,7 @@
 </template>
 
 <script setup lang="ts">
-import { ButtonDefault, ButtonOutline, CardDefault, type RequestState } from '@bssn/ui-kit-frontend';
+import { ButtonOutline, CardDefault, type RequestState } from '@bssn/ui-kit-frontend';
 import { computed, type PropType } from 'vue';
 import { getLogbookStatusClass, getLogbookStatusLabel } from '@/helpers/custom';
 
