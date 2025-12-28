@@ -6,7 +6,7 @@ export const logbookKaunitRoute = {
   component: LogbookKaunitView,
   meta: {
     menu: true,
-    title: 'Logbook Kaunit',
+    title: 'Logbook KA Unit Kerja',
     icon: 'fa-duotone fa-receipt',
     guard: 'logbook.kaunit.index'
   }

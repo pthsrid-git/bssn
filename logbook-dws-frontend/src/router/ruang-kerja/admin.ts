@@ -1,36 +1,13 @@
-import PendapatanView from '@/views/admin/pendapatan/PendapatanView.vue'
-import PetugasView from '@/views/admin/petugas/PetugasView.vue'
+import LogbookAdminView from '@/views/admin/logbookadmin/LogbookAdminView.vue'
 
 export const adminRoute = {
-  path: 'ruang-kerja/logbook/admin-keuangan',
-  name: 'ruang-kerja.logbook.admin-keuangan',
+  path: 'ruang-kerja/logbook/logbook-admin',
+  name: 'ruang-kerja.logbook.logbook-admin',
+  component: LogbookAdminView,
   meta: {
     menu: true,
-    title: 'Admin Keuangan',
-    icon: 'fa-duotone fa-money-bills',
+    title: 'Admin Logbook',
+    icon: 'fa-duotone fa-book',
     guard: 'logbook.admin.index'
-  },
-  redirect: { name: 'ruang-kerja.logbook.admin-keuangan.petugas' },
-  children: [
-    {
-      path: 'petugas',
-      name: 'ruang-kerja.logbook.admin-keuangan.petugas',
-      component: PetugasView,
-      meta: {
-        menu: true,
-        title: 'Petugas',
-        icon: 'fa-duotone fa-user'
-      }
-    },
-    {
-      path: 'pendapatan',
-      name: 'ruang-kerja.logbook.admin-keuangan.pendapatan',
-      component: PendapatanView,
-      meta: {
-        menu: true,
-        title: 'Pendapatan',
-        icon: 'fa-duotone fa-money-from-bracket'
-      }
-    }
-  ]
+  }
 }

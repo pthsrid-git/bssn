@@ -6,7 +6,7 @@ export default class ProjectConst {
 
 // Store Definitions
 const storeEntities = [
-  ['Admin', ['Petugas', 'Pendapatan']],
+  ['Admin', ['Petugas', 'Pendapatan', 'LogbookAdmin']],
   ['Pegawai', ['Pengajuan', 'Pendapatan', 'Logbook']],
   ['Pengolah', ['Pengajuan', 'LogbookKatim']],
   ['Kaunit', ['LogbookKaunit']],
@@ -30,6 +30,7 @@ const storeDefinitions = Object.fromEntries(
 export const {
   adminPetugasStore,
   adminPendapatanStore,
+  adminLogbookAdminStore,
   pegawaiPengajuanStore,
   pegawaiPendapatanStore,
   pengolahPengajuanStore,

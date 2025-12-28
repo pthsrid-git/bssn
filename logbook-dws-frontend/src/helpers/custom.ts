@@ -160,3 +160,149 @@ export const spellout = (n: number): string => {
 
   return 'Angka terlalu besar'
 }
+
+// ================================================================================================
+// File Helpers
+// ================================================================================================
+
+/**
+ * Get clean file name from file path or file name
+ * Removes timestamp prefix if exists
+ */
+export const getFileName = (filePath?: string | null, fileName?: string | null): string => {
+  if (fileName) {
+    return fileName
+  }
+
+  if (filePath) {
+    const parts = filePath.split('/')
+    const fullFileName = parts[parts.length - 1]
+    const cleanFileName = fullFileName.replace(/^\d+_/, '')
+    return cleanFileName
+  }
+
+  return 'File.pdf'
+}
+
+/**
+ * Format file size from bytes to human readable format
+ */
+export const formatFileSize = (bytes: number | string | null | undefined): string => {
+  if (!bytes || bytes === 0) return '0 KB'
+
+  const size = typeof bytes === 'string' ? parseInt(bytes) : bytes
+
+  if (size < 1024) {
+    return `${size} B`
+  } else if (size < 1024 * 1024) {
+    return `${(size / 1024).toFixed(2)} KB`
+  } else {
+    return `${(size / (1024 * 1024)).toFixed(2)} MB`
+  }
+}
+
+/**
+ * Download file from storage path
+ */
+export const downloadFile = (filePath: string, fileName?: string): void => {
+  if (!filePath) {
+    console.warn('File path tidak ditemukan')
+    alert('File tidak tersedia')
+    return
+  }
+
+  // Gunakan API URL dari environment variable
+  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+
+  // Hilangkan /api jika ada di akhir URL
+  const cleanBaseUrl = baseUrl.replace(/\/api$/, '')
+
+  // Buat URL lengkap ke Laravel storage
+  const fileUrl = `${cleanBaseUrl}/storage/${filePath}`
+
+  console.log('Downloading file from:', fileUrl)
+
+  // Buat link element untuk download
+  const link = document.createElement('a')
+  link.href = fileUrl
+  link.download = fileName || getFileName(filePath)
+  link.target = '_blank'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
+
+// ================================================================================================
+// Date Grouping Helpers
+// ================================================================================================
+
+/**
+ * Indonesian day names
+ */
+export const INDONESIAN_DAY_NAMES = [
+  'Minggu',
+  'Senin',
+  'Selasa',
+  'Rabu',
+  'Kamis',
+  'Jumat',
+  'Sabtu'
+] as const
+
+/**
+ * Group logs by date for calendar view
+ * Creates a date map for all days in a month and groups activities by date
+ */
+export const groupLogsByDate = <T extends { tanggal: string }>(
+  logs: T[],
+  selectedMonth: string
+): Array<{
+  date: string
+  day: string
+  dayName: string
+  activities: T[]
+}> => {
+  const groups: Array<{
+    date: string
+    day: string
+    dayName: string
+    activities: T[]
+  }> = []
+  const dateMap = new Map()
+
+  if (selectedMonth) {
+    const [year, month] = selectedMonth.split('-')
+    const daysInMonth = new Date(parseInt(year), parseInt(month), 0).getDate()
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = `${year}-${month}-${String(day).padStart(2, '0')}`
+      const dateObj = new Date(date)
+
+      dateMap.set(date, {
+        date,
+        day: String(day).padStart(2, '0'),
+        dayName: INDONESIAN_DAY_NAMES[dateObj.getDay()],
+        activities: []
+      })
+    }
+  }
+
+  logs.forEach((log) => {
+    const tanggalOnly = log.tanggal.split('T')[0]
+    if (dateMap.has(tanggalOnly)) {
+      dateMap.get(tanggalOnly).activities.push(log)
+    }
+  })
+
+  dateMap.forEach((value) => groups.push(value))
+  return groups
+}
+
+/**
+ * Check if a date string is weekend (Saturday or Sunday)
+ */
+export const isWeekend = (dateString: string): boolean => {
+  const dateObj = new Date(dateString)
+  const day = dateObj.getDay()
+  return day === 0 || day === 6
+}

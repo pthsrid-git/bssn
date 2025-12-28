@@ -88,7 +88,7 @@
             <label class="text-sm font-medium text-gray-900 block mb-2">Bukti Aktivitas Harian</label>
             <div class="w-auto">
               <div
-                @click="downloadFile"
+                @click="handleDownload"
                 class="border border-gray-200 rounded-lg p-3 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer"
               >
                 <div class="flex items-center gap-3 flex-1 min-w-0">
@@ -98,7 +98,7 @@
                     </svg>
                   </div>
                   <div class="min-w-0 flex-1">
-                    <div class="text-sm font-medium text-gray-900 truncate">{{ getFileName() }}</div>
+                    <div class="text-sm font-medium text-gray-900 truncate">{{ getFileName(record.file_path, record.file_name) }}</div>
                     <div class="text-xs text-gray-500">{{ formatFileSize(record.file_size) }}</div>
                   </div>
                 </div>
@@ -162,8 +162,14 @@ import { ButtonDefault, SectionDefault, FieldInput, validateInput } from '@bssn/
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import type { LogbookKatimData } from '@/models/pengolah/logbookKatim';
-import { formatDateIndonesian } from '@/helpers/custom';
-import { getLogbookStatusClass, getLogbookStatusLabel } from '@/helpers/custom';
+import {
+  formatDateIndonesian,
+  getLogbookStatusClass,
+  getLogbookStatusLabel,
+  getFileName,
+  formatFileSize,
+  downloadFile
+} from '@/helpers/custom';
 
 //============================================================================
 // Props
@@ -232,54 +238,10 @@ watch(() => props.record, (newRecord) => {
 //============================================================================
 const formatDate = formatDateIndonesian;
 
-const getFileName = (): string => {
-  if (props.record.file_name) {
-    return props.record.file_name;
-  }
-
+const handleDownload = () => {
   if (props.record.file_path) {
-    const path = props.record.file_path;
-    const parts = path.split('/');
-    const fullFileName = parts[parts.length - 1];
-    const fileName = fullFileName.replace(/^\d+_/, '');
-    return fileName;
+    downloadFile(props.record.file_path, props.record.file_name || undefined);
   }
-
-  return 'File.pdf';
-};
-
-const formatFileSize = (bytes: number | string | null | undefined): string => {
-  if (!bytes || bytes === 0) return '0 KB';
-
-  const size = typeof bytes === 'string' ? parseInt(bytes) : bytes;
-
-  if (size < 1024) {
-    return `${size} B`;
-  } else if (size < 1024 * 1024) {
-    return `${(size / 1024).toFixed(2)} KB`;
-  } else {
-    return `${(size / (1024 * 1024)).toFixed(2)} MB`;
-  }
-};
-
-const downloadFile = () => {
-  if (!props.record.file_path) {
-    console.warn('File path tidak ditemukan');
-    alert('File tidak tersedia');
-    return;
-  }
-
-  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-  const cleanBaseUrl = baseUrl.replace(/\/api$/, '');
-  const fileUrl = `${cleanBaseUrl}/storage/${props.record.file_path}`;
-
-  const link = document.createElement('a');
-  link.href = fileUrl;
-  link.download = getFileName();
-  link.target = '_blank';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
 };
 
 const onSubmitPressed = () => {

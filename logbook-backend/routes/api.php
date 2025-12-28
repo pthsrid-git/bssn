@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\LogbookController;
 use App\Http\Controllers\Api\LogbookKatimController;
 use App\Http\Controllers\Api\LogbookAtasanController;
+use App\Http\Controllers\Api\LogbookAdminController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -46,4 +47,14 @@ Route::prefix('kaunit')->group(function () {
 
     Route::put('logs/{logId}/catatan', [LogbookAtasanController::class, 'updateCatatanAtasan']);
     Route::get('summary', [LogbookAtasanController::class, 'getUnitSummary']);
+});
+
+// Logbook Admin routes
+Route::prefix('logbook-admin')->group(function () {
+    Route::get('units', [LogbookAdminController::class, 'getUnitsList']);
+    Route::get('pegawai', [LogbookAdminController::class, 'getAllPegawai']);
+    Route::get('units/{unitCode}/pegawai', [LogbookAdminController::class, 'getUnitPegawai']);
+    Route::get('pegawai/{pegawaiId}/logs', [LogbookAdminController::class, 'getPegawaiLogs']);
+    Route::get('logs/{logId}', [LogbookAdminController::class, 'getLogDetail']);
+    Route::get('summary', [LogbookAdminController::class, 'getOverallSummary']);
 });

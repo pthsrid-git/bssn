@@ -13,13 +13,15 @@
           </svg>
         </button>
         <div class="flex flex-col gap-1">
-          <h1 class="text-xl font-bold text-gray-900">{{ pegawaiName || '-' }}</h1>
+          <h1 class="text-xl font-bold text-gray-900">{{ pegawai.nama || '-' }}</h1>
           <div class="flex items-center gap-2 text-sm text-gray-500">
-            <span>{{ pegawaiNip || '-' }}</span>
-            <span v-if="pegawaiPangkat">|</span>
-            <span v-if="pegawaiPangkat">{{ pegawaiPangkat }}</span>
-            <span v-if="pegawaiJabatan">|</span>
-            <span v-if="pegawaiJabatan">{{ pegawaiJabatan }}</span>
+            <span>{{ pegawai.nip || '-' }}</span>
+            <span v-if="pegawai.pangkat">|</span>
+            <span v-if="pegawai.pangkat">{{ pegawai.pangkat }}</span>
+            <span v-if="pegawai.jabatan">|</span>
+            <span v-if="pegawai.jabatan">{{ pegawai.jabatan }}</span>
+            <span v-if="pegawai.unit_kerja">|</span>
+            <span v-if="pegawai.unit_kerja">{{ pegawai.unit_kerja }}</span>
           </div>
         </div>
       </div>
@@ -149,15 +151,6 @@
                       <ButtonOutline variant="info" @click="viewDetailClick(activity)">
                         Detail
                       </ButtonOutline>
-
-                      <div v-if="activity.status === 'Disubmit'" class="flex flex-col gap-2">
-                        <ButtonDefault variant="success" @click="$emit('approve', activity)">
-                          Setuju
-                        </ButtonDefault>
-                        <ButtonDefault variant="danger" @click="$emit('reject', activity)">
-                          Tolak
-                        </ButtonDefault>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -182,48 +175,24 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, type PropType } from 'vue';
-import { CardDefault, ButtonOutline, ButtonDefault, StateLoading, FieldSearch } from '@bssn/ui-kit-frontend';
-import type { LogbookKaunitData } from '@/models/kaunit/logbookKaunit';
-import {
-  formatCurrentMonth,
-  getLogbookStatusClass,
-  getLogbookStatusLabel,
-  groupLogsByDate,
-  isWeekend
-} from '@/helpers/custom';
+import { computed, onMounted, ref, type PropType } from 'vue';
+import { CardDefault, ButtonOutline, StateLoading, FieldSearch, type PageDefaultExposed } from '@bssn/ui-kit-frontend';
+import type { PegawaiAdminData, LogbookAdminData } from '@/models/admin/logbookAdmin';
+import { formatCurrentMonth, getLogbookStatusClass, getLogbookStatusLabel } from '@/helpers/custom';
+import { useLogbookAdminStore } from '@/stores/admin/logbookAdminStore';
+import LogbookAdminDetail from '../form/LogbookAdminDetail.vue';
 
 //============================================================================
 // Props
 //============================================================================
 const props = defineProps({
-  pegawaiLogs: {
-    type: Array as PropType<LogbookKaunitData[]>,
+  pegawai: {
+    type: Object as PropType<PegawaiAdminData>,
     required: true
   },
-  loadingLogs: {
-    type: Boolean,
-    default: false
-  },
-  selectedMonth: {
-    type: String,
-    required: true
-  },
-  pegawaiName: {
-    type: String,
-    default: '-'
-  },
-  pegawaiNip: {
-    type: String,
-    default: '-'
-  },
-  pegawaiPangkat: {
-    type: String,
-    default: ''
-  },
-  pegawaiJabatan: {
-    type: String,
-    default: ''
+  pageDefault: {
+    type: Object as PropType<PageDefaultExposed | null>,
+    default: null
   }
 });
 
@@ -231,24 +200,58 @@ const props = defineProps({
 // Emits
 //============================================================================
 const emit = defineEmits<{
-  viewDetail: [log: LogbookKaunitData];
-  approve: [log: LogbookKaunitData];
-  reject: [log: LogbookKaunitData];
   back: [];
 }>();
 
 //============================================================================
 // State
 //============================================================================
+const logbookAdminStore = useLogbookAdminStore();
 const searchKeyword = ref('');
+const selectedMonth = ref('');
+
+// Initialize selected month
+const now = new Date();
+selectedMonth.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
 //============================================================================
 // Computed
 //============================================================================
 const formattedMonth = computed(() => formatCurrentMonth());
+const pegawaiLogs = computed(() => logbookAdminStore.pegawaiLogs.data || []);
+const loadingLogs = computed(() => logbookAdminStore.pegawaiLogs.status === 'loading');
 
 const groupedLogs = computed(() => {
-  return groupLogsByDate(props.pegawaiLogs, props.selectedMonth);
+  const groups: any[] = [];
+  const dateMap = new Map();
+
+  if (selectedMonth.value) {
+    const [year, month] = selectedMonth.value.split('-');
+    const daysInMonth = new Date(parseInt(year), parseInt(month), 0).getDate();
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = `${year}-${month}-${String(day).padStart(2, '0')}`;
+      const dateObj = new Date(date);
+      const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+
+      dateMap.set(date, {
+        date,
+        day: String(day).padStart(2, '0'),
+        dayName: dayNames[dateObj.getDay()],
+        activities: []
+      });
+    }
+  }
+
+  pegawaiLogs.value.forEach(log => {
+    const tanggalOnly = log.tanggal.split('T')[0];
+    if (dateMap.has(tanggalOnly)) {
+      dateMap.get(tanggalOnly).activities.push(log);
+    }
+  });
+
+  dateMap.forEach(value => groups.push(value));
+  return groups;
 });
 
 //============================================================================
@@ -259,12 +262,46 @@ const onSearchUpdate = (value: string) => {
   // TODO: Implement search filtering logic if needed
 };
 
-const viewDetailClick = (activity: LogbookKaunitData) => {
-  emit('viewDetail', activity);
+const viewDetailClick = (activity: LogbookAdminData) => {
+  props.pageDefault?.openDrawerDefault(
+    'Detail Logbook',
+    LogbookAdminDetail,
+    {
+      record: activity,
+      pegawaiName: props.pegawai.nama,
+      pegawaiNip: props.pegawai.nip
+    }
+  );
 };
 
-
-const getFileCount = (activity: LogbookKaunitData) => {
+const getFileCount = (activity: LogbookAdminData) => {
   return activity.file_path || activity.file_name ? 1 : 0;
 };
+
+const isWeekend = (date: string) => {
+  const dateObj = new Date(date);
+  const day = dateObj.getDay();
+  return day === 0 || day === 6;
+};
+
+const loadPegawaiLogs = async () => {
+  if (!props.pegawai?.id) {
+    return;
+  }
+
+  const filters: { start_date?: string; end_date?: string } = {};
+  if (selectedMonth.value) {
+    const [year, month] = selectedMonth.value.split('-');
+    const startDate = `${year}-${month}-01`;
+    const daysInMonth = new Date(parseInt(year), parseInt(month), 0).getDate();
+    filters.start_date = startDate;
+    filters.end_date = `${year}-${month}-${String(daysInMonth).padStart(2, '0')}`;
+  }
+
+  await logbookAdminStore.callPegawaiLogs(props.pegawai.id, filters);
+};
+
+onMounted(() => {
+  loadPegawaiLogs();
+});
 </script>

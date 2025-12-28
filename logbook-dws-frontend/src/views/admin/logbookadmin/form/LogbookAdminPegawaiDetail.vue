@@ -20,6 +20,8 @@
             <span v-if="pegawaiPangkat">{{ pegawaiPangkat }}</span>
             <span v-if="pegawaiJabatan">|</span>
             <span v-if="pegawaiJabatan">{{ pegawaiJabatan }}</span>
+            <span v-if="pegawaiUnitKerja">|</span>
+            <span v-if="pegawaiUnitKerja">{{ pegawaiUnitKerja }}</span>
           </div>
         </div>
       </div>
@@ -149,15 +151,6 @@
                       <ButtonOutline variant="info" @click="viewDetailClick(activity)">
                         Detail
                       </ButtonOutline>
-
-                      <div v-if="activity.status === 'Disubmit'" class="flex flex-col gap-2">
-                        <ButtonDefault variant="success" @click="$emit('approve', activity)">
-                          Setuju
-                        </ButtonDefault>
-                        <ButtonDefault variant="danger" @click="$emit('reject', activity)">
-                          Tolak
-                        </ButtonDefault>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -183,8 +176,8 @@
 
 <script setup lang="ts">
 import { computed, ref, type PropType } from 'vue';
-import { CardDefault, ButtonOutline, ButtonDefault, StateLoading, FieldSearch } from '@bssn/ui-kit-frontend';
-import type { LogbookKaunitData } from '@/models/kaunit/logbookKaunit';
+import { CardDefault, ButtonOutline, StateLoading, FieldSearch } from '@bssn/ui-kit-frontend';
+import type { LogbookAdminData } from '@/models/admin/logbookAdmin';
 import {
   formatCurrentMonth,
   getLogbookStatusClass,
@@ -198,7 +191,7 @@ import {
 //============================================================================
 const props = defineProps({
   pegawaiLogs: {
-    type: Array as PropType<LogbookKaunitData[]>,
+    type: Array as PropType<LogbookAdminData[]>,
     required: true
   },
   loadingLogs: {
@@ -224,6 +217,10 @@ const props = defineProps({
   pegawaiJabatan: {
     type: String,
     default: ''
+  },
+  pegawaiUnitKerja: {
+    type: String,
+    default: ''
   }
 });
 
@@ -231,9 +228,7 @@ const props = defineProps({
 // Emits
 //============================================================================
 const emit = defineEmits<{
-  viewDetail: [log: LogbookKaunitData];
-  approve: [log: LogbookKaunitData];
-  reject: [log: LogbookKaunitData];
+  viewDetail: [log: LogbookAdminData];
   back: [];
 }>();
 
@@ -259,12 +254,11 @@ const onSearchUpdate = (value: string) => {
   // TODO: Implement search filtering logic if needed
 };
 
-const viewDetailClick = (activity: LogbookKaunitData) => {
+const viewDetailClick = (activity: LogbookAdminData) => {
   emit('viewDetail', activity);
 };
 
-
-const getFileCount = (activity: LogbookKaunitData) => {
+const getFileCount = (activity: LogbookAdminData) => {
   return activity.file_path || activity.file_name ? 1 : 0;
 };
 </script>
