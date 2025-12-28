@@ -36,7 +36,7 @@ Route::prefix('katim')->group(function () {
 });
 
 // Logbook Atasan routes
-Route::prefix('atasan')->group(function () {
+Route::prefix('kaunit')->group(function () {
     Route::get('pegawai', [LogbookAtasanController::class, 'getPegawaiList']);
     Route::get('pegawai/{pegawaiId}/logs', [LogbookAtasanController::class, 'getPegawaiLogs']);
     Route::get('logs/{logId}', [LogbookAtasanController::class, 'getLogDetail']);

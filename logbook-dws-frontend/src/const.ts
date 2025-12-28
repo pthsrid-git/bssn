@@ -9,6 +9,7 @@ const storeEntities = [
   ['Admin', ['Petugas', 'Pendapatan']],
   ['Pegawai', ['Pengajuan', 'Pendapatan', 'Logbook']],
   ['Pengolah', ['Pengajuan', 'LogbookKatim']],
+  ['Kaunit', ['LogbookKaunit']],
   ['', ['Api', 'Pegawai', 'Periode', 'UserDws']]
 ] as const
 
@@ -33,6 +34,7 @@ export const {
   pegawaiPendapatanStore,
   pengolahPengajuanStore,
   pengolahLogbookKatimStore,
+  kaunitLogbookKaunitStore,
   pegawaiLogbookStore,
   apiStore,
   periodeStore,
