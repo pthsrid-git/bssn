@@ -24,7 +24,8 @@ import {
   unitPegawaiUrl,
   pegawaiLogsAdminUrl,
   detailLogAdminUrl,
-  summaryAdminUrl
+  summaryAdminUrl,
+  downloadAbkReportUrl
 } from '@/urls/admin/logbookAdmin'
 
 export const useLogbookAdminStore = defineStore(adminLogbookAdminStore, {
@@ -249,6 +250,40 @@ export const useLogbookAdminStore = defineStore(adminLogbookAdminStore, {
     },
     clearSummary() {
       this.summary = requestState<SummaryAdminData | null>(null)
+    },
+    async downloadAbkReport(year: number) {
+      const userId = import.meta.env.VITE_TEST_USER_ID
+        ? Number(import.meta.env.VITE_TEST_USER_ID)
+        : undefined
+
+      let url = downloadAbkReportUrl(year)
+      if (userId) {
+        url += `&user_id=${userId}`
+      }
+
+      try {
+        const response = await getRequest(url, {
+          responseType: 'blob'
+        })
+
+        // Create blob from response
+        const blob = new Blob([response.data], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        })
+
+        // Create download link
+        const downloadUrl = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = downloadUrl
+        link.download = `Laporan_ABK_${year}.xlsx`
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        window.URL.revokeObjectURL(downloadUrl)
+      } catch (error) {
+        console.error('Error downloading ABK report:', error)
+        throw error
+      }
     }
   }
 })

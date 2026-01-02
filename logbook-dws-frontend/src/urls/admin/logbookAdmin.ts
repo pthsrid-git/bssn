@@ -36,3 +36,7 @@ export const detailLogAdminUrl = (logId: number) => {
 export const summaryAdminUrl = () => {
   return `/logbook-admin/summary`
 }
+
+export const downloadAbkReportUrl = (year: number) => {
+  return `/logbook-admin/abk/download?year=${year}`
+}

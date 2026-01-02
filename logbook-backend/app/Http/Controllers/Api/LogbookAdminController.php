@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Logbook;
 use App\Models\User;
+use App\Exports\AbkReportExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LogbookAdminController extends Controller
 {
@@ -396,6 +398,51 @@ class LogbookAdminController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal mengambil ringkasan'
+            ], 500);
+        }
+    }
+
+    /**
+     * GET /logbook-admin/abk/download
+     * Download ABK Report in Excel format
+     */
+    public function downloadAbkReport(Request $request)
+    {
+        try {
+            $user = auth()->user();
+
+            // Fallback ke test user jika tidak ada autentikasi
+            if (!$user && $request->has('user_id')) {
+                $user = User::find($request->user_id);
+            }
+
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not authenticated'
+                ], 401);
+            }
+
+            $year = $request->get('year', now()->year);
+
+            // Log untuk debugging
+            $logbookCount = Logbook::whereYear('tanggal', $year)
+                ->where('status', 'Disetujui')
+                ->count();
+            \Log::info('ABK Download Request', [
+                'year' => $year,
+                'user_id' => $user->id,
+                'logbook_count' => $logbookCount
+            ]);
+
+            $fileName = 'Laporan_ABK_' . $year . '.xlsx';
+
+            return Excel::download(new AbkReportExport($year), $fileName);
+        } catch (\Exception $e) {
+            \Log::error('downloadAbkReport error', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengunduh laporan ABK: ' . $e->getMessage()
             ], 500);
         }
     }

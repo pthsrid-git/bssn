@@ -57,4 +57,5 @@ Route::prefix('logbook-admin')->group(function () {
     Route::get('pegawai/{pegawaiId}/logs', [LogbookAdminController::class, 'getPegawaiLogs']);
     Route::get('logs/{logId}', [LogbookAdminController::class, 'getLogDetail']);
     Route::get('summary', [LogbookAdminController::class, 'getOverallSummary']);
+    Route::get('abk/download', [LogbookAdminController::class, 'downloadAbkReport']);
 });
