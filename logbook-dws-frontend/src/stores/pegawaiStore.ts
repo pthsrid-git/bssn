@@ -1,4 +1,4 @@
-import { composeErrorMessage, requestState, responseDataArrayFromJson } from '@bssn/ui-kit-frontend'
+import { composeErrorMessage, requestState } from '@bssn/ui-kit-frontend'
 import { defineStore } from 'pinia'
 
 import { pegawaiStore } from '@/const'
@@ -44,8 +44,13 @@ export const usePegawaiStore = defineStore(pegawaiStore, {
         } else {
           response = await getRequest(url)
         }
-        const responseData = responseDataArrayFromJson<PegawaiData>(response, pegawaiDataFromJson)
-        this.all.data = responseData.items
+        // Handle response format: { success: true, data: [...] }
+        const dataArray = Array.isArray(response.data?.data)
+          ? response.data.data
+          : Array.isArray(response.data)
+            ? response.data
+            : []
+        this.all.data = dataArray.map(pegawaiDataFromJson)
         this.all.status = 'success'
       } catch (error) {
         log(error)

@@ -266,4 +266,20 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Logbook::class);
     }
+
+    /**
+     * Get user's assigned roles (from roles table)
+     */
+    public function assignedRoles()
+    {
+        return $this->hasMany(Role::class);
+    }
+
+    /**
+     * Check if user has specific assigned role
+     */
+    public function hasAssignedRole(string $role): bool
+    {
+        return $this->assignedRoles()->where('role', $role)->exists();
+    }
 }

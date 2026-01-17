@@ -4,12 +4,34 @@ use App\Http\Controllers\Api\LogbookController;
 use App\Http\Controllers\Api\LogbookKatimController;
 use App\Http\Controllers\Api\LogbookAtasanController;
 use App\Http\Controllers\Api\LogbookAdminController;
+use App\Http\Controllers\Api\PetugasLogbookController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('users')->group(function () {
     Route::get('{id}', [UserController::class, 'show']);
 });
+
+// Petugas Logbook routes (Admin ePerforma, PKO, PMK) - HARUS SEBELUM apiResource
+Route::prefix('logbook')->group(function () {
+    // Admin ePerforma
+    Route::get('admin-eperforma', [PetugasLogbookController::class, 'getAdminEperforma']);
+    Route::post('admin-eperforma', [PetugasLogbookController::class, 'storeAdminEperforma']);
+    Route::delete('admin-eperforma/{guid}', [PetugasLogbookController::class, 'destroyAdminEperforma']);
+
+    // Pengelola Kinerja Organisasi (PKO)
+    Route::get('pengelola-kinerja-organisasi', [PetugasLogbookController::class, 'getPengelolaKinerjaOrganisasi']);
+    Route::post('pengelola-kinerja-organisasi', [PetugasLogbookController::class, 'storePengelolaKinerjaOrganisasi']);
+    Route::delete('pengelola-kinerja-organisasi/{guid}', [PetugasLogbookController::class, 'destroyPengelolaKinerjaOrganisasi']);
+
+    // PMK (Pengelola Manajemen Kinerja)
+    Route::get('pmk', [PetugasLogbookController::class, 'getPmk']);
+    Route::post('pmk', [PetugasLogbookController::class, 'storePmk']);
+    Route::delete('pmk/{guid}', [PetugasLogbookController::class, 'destroyPmk']);
+});
+
+// Get all pegawai for dropdown
+Route::get('pegawai', [PetugasLogbookController::class, 'getAllPegawaiForDropdown']);
 
 // Logbook routes (untuk pegawai/PKO)
 Route::apiResource('logbook', LogbookController::class);
