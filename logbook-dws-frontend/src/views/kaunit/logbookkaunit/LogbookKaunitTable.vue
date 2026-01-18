@@ -12,7 +12,12 @@
         </tr>
       </template>
       <template #body>
-        <template v-if="records.data && records.data.length > 0">
+        <tr v-if="records.status === 'loading'">
+          <td colspan="6">
+            <StateLoading info="Memuat data pegawai..." />
+          </td>
+        </tr>
+        <template v-else-if="records.data && records.data.length > 0">
           <tr v-for="(pegawai, index) in records.data" :key="pegawai.id" class="hover:bg-gray-50">
             <TableData alignment="center" customClass="w-0">
               {{ (records.meta.currentPage - 1) * records.meta.perPage + 1 + index }}
@@ -23,7 +28,7 @@
             <TableData>{{ pegawai.jabatan }}</TableData>
             <TableData alignment="center">
               <ButtonOutline variant="info" @click="$emit('viewPegawaiLogbook', pegawai)">
-                Lihat
+                <div class="text-nowrap">Lihat Logbook</div>
               </ButtonOutline>
             </TableData>
           </tr>
@@ -47,6 +52,7 @@ import {
   TableDataNone,
   TablePagination,
   ButtonOutline,
+  StateLoading,
   type PaginatedRequestState
 } from '@bssn/ui-kit-frontend';
 import type { PropType } from 'vue';

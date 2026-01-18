@@ -16,7 +16,9 @@
       </template>
       <template #body>
         <tr v-if="pegawaiRecords.status === 'loading'">
-          <TableDataNone label="Memuat data..." colspan="7" />
+          <td colspan="7">
+            <StateLoading info="Memuat data pegawai..." />
+          </td>
         </tr>
         <template v-else-if="pegawaiRecords.data && pegawaiRecords.data.length > 0">
           <tr v-for="(pegawai, index) in pegawaiRecords.data" :key="pegawai.id" class="hover:bg-gray-50">
@@ -55,7 +57,8 @@ import {
   TableData,
   TableDataNone,
   TablePagination,
-  ButtonOutline
+  ButtonOutline,
+  StateLoading
 } from '@bssn/ui-kit-frontend';
 import type { PropType } from 'vue';
 import type { PegawaiAdminData } from '@/models/admin/logbookAdmin';

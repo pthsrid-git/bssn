@@ -15,7 +15,12 @@
         </tr>
       </template>
       <template #body>
-        <template v-if="records.data && records.data.length > 0">
+        <tr v-if="records.status === 'loading'">
+          <td colspan="9">
+            <StateLoading info="Memuat data unit..." />
+          </td>
+        </tr>
+        <template v-else-if="records.data && records.data.length > 0">
           <tr v-for="(unit, index) in records.data" :key="unit.kode_unit">
             <TableData alignment="center" customClass="w-0">
               {{ (records.meta.currentPage - 1) * records.meta.perPage + 1 + index }}
@@ -41,7 +46,7 @@
             </TableData>
             <TableData alignment="center">
               <ButtonOutline variant="info" @click="$emit('viewUnit', unit)">
-                Lihat
+                <div class="text-nowrap">Lihat Detail</div>
               </ButtonOutline>
             </TableData>
           </tr>
@@ -65,6 +70,7 @@ import {
   TableDataNone,
   TablePagination,
   ButtonOutline,
+  StateLoading,
   type PaginatedRequestState
 } from '@bssn/ui-kit-frontend';
 import type { PropType } from 'vue';

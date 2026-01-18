@@ -84,7 +84,7 @@ const pageDefault = ref<PageDefaultExposed | null>(null);
 const logbookkatimstore = useLogbookKatimStore();
 
 const teamMembers = ref<any[]>([]);
-const loading = ref(false);
+const loading = computed(() => logbookkatimstore.teamMembers.status === 'loading');
 const selectedMember = ref<any | null>(null);
 const memberLogs = computed(() => logbookkatimstore.memberLogs.data || []);
 const loadingLogs = computed(() => logbookkatimstore.memberLogs.status === 'loading');
@@ -104,8 +104,6 @@ onMounted(() => {
 });
 
 const loadTeamMembers = async () => {
-  loading.value = true;
-
   try {
     await logbookkatimstore.callTeamMembers();
     const members = logbookkatimstore.teamMembers;
@@ -116,8 +114,6 @@ const loadTeamMembers = async () => {
     }
   } catch (error) {
     teamMembers.value = [];
-  } finally {
-    loading.value = false;
   }
 };
 

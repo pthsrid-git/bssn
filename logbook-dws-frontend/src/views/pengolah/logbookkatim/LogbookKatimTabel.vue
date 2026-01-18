@@ -12,7 +12,9 @@
     </template>
     <template #body>
       <tr v-if="loading">
-        <TableDataNone label="Memuat data..." />
+        <td colspan="6">
+          <StateLoading info="Memuat data anggota tim..." />
+        </td>
       </tr>
       <template v-else-if="teamMembers.length > 0">
         <tr v-for="(member, index) in teamMembers" :key="member.id" class="hover:bg-gray-50">
@@ -23,7 +25,7 @@
           <TableData>{{ member.jabatan }}</TableData>
           <TableData alignment="center">
             <ButtonOutline variant="info" @click="$emit('viewMemberLogbook', member)">
-              Lihat Logbook
+              <div class="text-nowrap">Lihat Logbook</div> 
             </ButtonOutline>
           </TableData>
         </tr>
@@ -36,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { TableDefault, TableHeader, TableData, TableDataNone, ButtonOutline } from '@bssn/ui-kit-frontend';
+import { TableDefault, TableHeader, TableData, TableDataNone, ButtonOutline, StateLoading } from '@bssn/ui-kit-frontend';
 
 defineProps<{
   teamMembers: any[];
