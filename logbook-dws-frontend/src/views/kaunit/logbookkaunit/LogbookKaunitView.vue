@@ -155,7 +155,7 @@ const viewLogDetail = (log: LogbookKaunitData) => {
       record: log,
       pegawaiName: selectedPegawai.value?.nama,
       pegawaiNip: selectedPegawai.value?.nip,
-      readOnly: true
+      readOnly: false
     }
   );
 };

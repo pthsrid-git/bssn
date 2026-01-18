@@ -27,14 +27,11 @@
             <TableData alignment="center">{{ pegawai.jabatan || '-' }}</TableData>
             <TableData alignment="center">{{ pegawai.tim || '-' }}</TableData>
             <TableData alignment="center">
-              <div class="flex justify-center">
-                <button
-                  class="px-3 py-1 border border-info-300 text-info-600 rounded text-xs hover:bg-info-50 whitespace-nowrap"
-                  @click="$emit('viewPegawai', pegawai)"
-                >
-                  Lihat logbook
-                </button>
-              </div>
+            <ButtonOutline
+                    variant="info"
+                    @clicked="onViewPegawai(pegawai)"
+                    > <div class="text-nowrap">Lihat Logbook</div>
+                </ButtonOutline>
             </TableData>
           </tr>
         </template>
@@ -57,7 +54,8 @@ import {
   TableHeader,
   TableData,
   TableDataNone,
-  TablePagination
+  TablePagination,
+  ButtonOutline
 } from '@bssn/ui-kit-frontend';
 import type { PropType } from 'vue';
 import type { PegawaiAdminData } from '@/models/admin/logbookAdmin';
@@ -74,6 +72,15 @@ interface PegawaiRecords {
   [key: string]: any;
 }
 
+const emit = defineEmits<{
+  viewPegawai: [pegawai: PegawaiAdminData];
+  back: [];
+}>();
+
+const onViewPegawai = (pegawai: PegawaiAdminData) => {
+  emit('viewPegawai', pegawai);
+};
+
 defineProps({
   pegawaiRecords: {
     type: Object as PropType<PegawaiRecords>,
@@ -81,7 +88,7 @@ defineProps({
   }
 });
 
-defineEmits<{
-  viewPegawai: [pegawai: PegawaiAdminData];
-}>();
-</script>
+// defineEmits<{
+//   viewPegawai: [pegawai: PegawaiAdminData];
+// }>();
+// </script>

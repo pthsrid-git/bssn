@@ -87,14 +87,11 @@
                 <TableData alignment="center">{{ pegawai.jabatan || '-' }}</TableData>
                 <TableData alignment="center">{{ pegawai.tim || '-' }}</TableData>
                 <TableData alignment="center">
-                  <div class="flex justify-center">
-                    <button
-                      class="px-3 py-1 border border-info-300 text-info-600 rounded text-xs hover:bg-info-50 whitespace-nowrap"
-                      @click="onViewPegawai(pegawai)"
-                    >
-                      Lihat logbook
-                    </button>
-                  </div>
+                <!-- <ButtonOutline
+                    variant="info"
+                    @clicked="onViewPegawai(pegawai)"
+                    > Lihat Logbook 
+                </ButtonOutline> -->
                 </TableData>
               </tr>
             </template>
@@ -121,7 +118,8 @@ import {
   TableHeader,
   TableData,
   TableDataNone,
-  TablePagination
+  TablePagination,
+  ButtonOutline
 } from '@bssn/ui-kit-frontend';
 import { computed, onMounted, onUnmounted, type PropType } from 'vue';
 import { useLogbookAdminStore } from '@/stores/admin/logbookAdminStore';
@@ -134,10 +132,10 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits<{
-  viewPegawai: [pegawai: PegawaiAdminData];
-  back: [];
-}>();
+// const emit = defineEmits<{
+//   viewPegawai: [pegawai: PegawaiAdminData];
+//   back: [];
+// }>();
 
 const logbookAdminStore = useLogbookAdminStore();
 const pegawaiRecords = computed(() => logbookAdminStore.pegawaiList);
@@ -150,9 +148,9 @@ const onLoadPegawai = async () => {
   );
 };
 
-const onViewPegawai = (pegawai: PegawaiAdminData) => {
-  emit('viewPegawai', pegawai);
-};
+// const onViewPegawai = (pegawai: PegawaiAdminData) => {
+//   emit('viewPegawai', pegawai);
+// };
 
 onMounted(async () => {
   await onLoadPegawai();

@@ -6,8 +6,8 @@ export const petugasLogbookRoute = {
   component: PetugasLogbookView,
   meta: {
     menu: true,
-    title: 'Admin Performa - Petugas',
-    icon: 'fa-duotone fa-users-gear',
+    title: 'Admin Logbook - Petugas',
+    icon: 'fa-duotone fa-book',
     guard: 'logbook.admin.index'
   }
 }

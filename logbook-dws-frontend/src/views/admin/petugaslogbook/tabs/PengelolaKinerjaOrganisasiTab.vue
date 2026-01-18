@@ -1,8 +1,8 @@
 <template>
-  <CardDefault>
+  <!-- <CardDefault> -->
     <div class="flex flex-col gap-4">
       <div class="flex flex-row items-center justify-between">
-        <span class="font-semibold">TABEL PENGELOLA KINERJA ORGANISASI</span>
+        <span class="font-semibold">TABEL KAUNIT</span>
         <FieldSearch
           name="filter.keyword"
           placeholder="search"
@@ -44,13 +44,13 @@
           </TableDefault>
           <TablePagination :pagination="records.meta" @update:page="onPageChange">
             <template #action>
-              <ButtonDefault variant="warning" @clicked="onAddClick">TAMBAH PETUGAS</ButtonDefault>
+              <ButtonDefault variant="warning" @clicked="onAddClick">Tambah Petugas</ButtonDefault>
             </template>
           </TablePagination>
         </div>
       </SectionDefault>
     </div>
-  </CardDefault>
+  <!-- </CardDefault> -->
 </template>
 
 <script setup lang="ts">

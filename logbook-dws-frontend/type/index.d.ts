@@ -13,5 +13,5 @@ export declare function removeUserDwsLogbookDwsFrontend(): void
 // ================================================================================================
 // Router
 // ================================================================================================
-export declare const logbookRuangPribadiRoutes: RouteRecordRaw[]
+export declare const logbookRuangPribadiKepagawaianSubRoute: RouteRecordRaw[]
 export declare const logbookRuangKerjaRoutes: RouteRecordRaw[]

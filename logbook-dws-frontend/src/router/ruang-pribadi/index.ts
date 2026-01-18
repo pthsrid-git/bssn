@@ -1,3 +1,3 @@
-import { keuanganRoute } from './pegawai'
+import { kepegawaianRoute } from './kepegawaian'
 
-export const logbookRuangPribadiRoutes = [keuanganRoute]
+export const logbookRuangPribadiRoutes = [kepegawaianRoute]

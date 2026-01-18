@@ -10,7 +10,7 @@
     @confirmModalConfirmation="onConfirmModalConfirmation"
   >
     <div class="flex flex-col w-full h-full gap-4 xl:gap-6">
-      <TitleSection variant="warning">ADMIN PERFORMA - PETUGAS</TitleSection>
+      <TitleSection variant="warning">ADMIN LOGBOOK - PETUGAS</TitleSection>
       <TabDefault
         ref="tabDefault"
         :tabs="tabs"
@@ -57,15 +57,15 @@ const pageDefault = ref<PageDefaultExposed | null>(null)
 const tabs = [
   {
     name: 'admin-eperforma',
-    label: 'Admin ePerforma'
+    label: 'Tambah Admin'
   },
   {
     name: 'pengelola-kinerja-organisasi',
-    label: 'Pengelola Kinerja Organisasi'
+    label: 'Tambah Kaunit'
   },
   {
     name: 'pmk',
-    label: 'PMK'
+    label: 'Tambah Katim'
   }
 ]
 

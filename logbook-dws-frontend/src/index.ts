@@ -5,7 +5,7 @@ import { type AuthData, type UserDwsData } from '@bssn/ui-kit-frontend'
 import ProjectConst from './const.ts'
 import { log } from './helpers/custom.ts'
 import { logbookRuangKerjaRoutes } from './router/ruang-kerja'
-import { logbookRuangPribadiRoutes } from './router/ruang-pribadi'
+import { logbookRuangPribadiKepagawaianSubRoute } from './router/ruang-pribadi/kepegawaianSub.ts'
 import { useApiStore } from './stores/apiStore.ts'
 import { useUserDwsStore } from './stores/userDwsStore.ts'
 
@@ -40,4 +40,4 @@ export const removeUserDwsLogbookDwsFrontend = () => {
 // ================================================================================================
 // export router
 // ================================================================================================
-export { logbookRuangPribadiRoutes, logbookRuangKerjaRoutes }
+export { logbookRuangPribadiKepagawaianSubRoute, logbookRuangKerjaRoutes }
