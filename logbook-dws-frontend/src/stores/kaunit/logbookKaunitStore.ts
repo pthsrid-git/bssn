@@ -37,10 +37,7 @@ export const useLogbookKaunitStore = defineStore(kaunitLogbookKaunitStore, {
   },
   actions: {
     async callRecords(keyword: string, page: number) {
-      const userId = import.meta.env.VITE_TEST_USER_ID
-        ? Number(import.meta.env.VITE_TEST_USER_ID)
-        : undefined
-      const url = recordsLogbookKaunitUrl(keyword, page, userId)
+      const url = recordsLogbookKaunitUrl(keyword, page)
       log(`url: ${url}`)
       this.records.status = 'loading'
       this.records.errorMessage = null
@@ -63,14 +60,9 @@ export const useLogbookKaunitStore = defineStore(kaunitLogbookKaunitStore, {
       this.records = paginatedRequestState<LogbookKaunitData[]>([])
     },
     async callPegawaiList(keyword: string, page: number) {
-      const userId = import.meta.env.VITE_TEST_USER_ID
-        ? Number(import.meta.env.VITE_TEST_USER_ID)
-        : undefined
-
       let url = pegawaiListUrl()
       const params = new URLSearchParams()
 
-      if (userId) params.append('user_id', userId.toString())
       if (keyword) params.append('keyword', keyword)
       params.append('page', page.toString())
       params.append('per_page', '10')
@@ -107,12 +99,7 @@ export const useLogbookKaunitStore = defineStore(kaunitLogbookKaunitStore, {
       this.currentPegawaiId = pegawaiId
       this.currentFilters = filters || null
 
-      const userId = import.meta.env.VITE_TEST_USER_ID
-        ? Number(import.meta.env.VITE_TEST_USER_ID)
-        : undefined
-
       const url = pegawaiLogsUrl(pegawaiId, {
-        user_id: userId,
         start_date: filters?.start_date,
         end_date: filters?.end_date
       })
@@ -139,15 +126,7 @@ export const useLogbookKaunitStore = defineStore(kaunitLogbookKaunitStore, {
       this.pegawaiLogs = requestState<LogbookKaunitData[]>([])
     },
     async callApproveLog(logId: number, catatan?: string) {
-      const userId = import.meta.env.VITE_TEST_USER_ID
-        ? Number(import.meta.env.VITE_TEST_USER_ID)
-        : undefined
-
-      let url = approveLogKaunitUrl(logId)
-      if (userId) {
-        url += `?user_id=${userId}`
-      }
-
+      const url = approveLogKaunitUrl(logId)
       const data = catatan ? { catatan_atasan: catatan } : {}
 
       log(`url: ${url} | data: ${JSON.stringify(data)}`)
@@ -172,15 +151,7 @@ export const useLogbookKaunitStore = defineStore(kaunitLogbookKaunitStore, {
       this.approve = requestState()
     },
     async callRejectLog(logId: number, catatan: string) {
-      const userId = import.meta.env.VITE_TEST_USER_ID
-        ? Number(import.meta.env.VITE_TEST_USER_ID)
-        : undefined
-
-      let url = rejectLogKaunitUrl(logId)
-      if (userId) {
-        url += `?user_id=${userId}`
-      }
-
+      const url = rejectLogKaunitUrl(logId)
       const data = { catatan_atasan: catatan }
 
       log(`url: ${url} | data: ${JSON.stringify(data)}`)

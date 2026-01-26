@@ -1,9 +1,5 @@
-export const recordsLogbookKatimUrl = (keyword: string, page: number, userId?: number) => {
-  let url = `/logbook?keyword=${keyword}&page=${page}`
-  if (userId) {
-    url += `&user_id=${userId}`
-  }
-  return url
+export const recordsLogbookKatimUrl = (keyword: string, page: number) => {
+  return `/logbook?keyword=${keyword}&page=${page}`
 }
 export const addLogbookUrl = () => {
   return `/logbook`
@@ -38,7 +34,6 @@ export const memberLogsUrl = (
   params?: {
     keyword?: string
     page?: number
-    user_id?: number
     start_date?: string
     end_date?: string
   }
@@ -48,7 +43,6 @@ export const memberLogsUrl = (
 
   if (params?.keyword) queryParams.append('keyword', params.keyword)
   if (params?.page) queryParams.append('page', params.page.toString())
-  if (params?.user_id) queryParams.append('user_id', params.user_id.toString())
   if (params?.start_date) queryParams.append('start_date', params.start_date)
   if (params?.end_date) queryParams.append('end_date', params.end_date)
 

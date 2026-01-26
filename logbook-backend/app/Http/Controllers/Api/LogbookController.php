@@ -14,9 +14,10 @@ class LogbookController extends Controller
     {
         $query = Logbook::query();
 
-        // Filter by user_id if provided
-        if ($request->has('user_id')) {
-            $query->where('user_id', $request->user_id);
+        // Filter by authenticated user
+        $user = auth()->user();
+        if ($user) {
+            $query->where('user_id', $user->id);
         }
 
         // Filter by date range
@@ -89,16 +90,17 @@ class LogbookController extends Controller
             'indikator_hasil_rencana_kerja',
             'aktivitas_kegiatan_harian',
             'keterangan',
-            'user_id',
         ]);
 
-        // Validate user_id is provided
-        if (!isset($data['user_id'])) {
+        // Get user_id from authenticated user
+        $user = auth()->user();
+        if (!$user) {
             return response()->json([
                 'success' => false,
-                'message' => 'user_id is required'
-            ], 422);
+                'message' => 'Unauthorized'
+            ], 401);
         }
+        $data['user_id'] = $user->id;
 
         $data['status'] = $request->status ?? 'Draft';
 

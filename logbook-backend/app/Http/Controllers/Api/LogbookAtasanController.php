@@ -18,11 +18,6 @@ class LogbookAtasanController extends Controller
         try {
             $user = auth()->user();
 
-            // Fallback ke test user jika tidak ada autentikasi
-            if (!$user && $request->has('user_id')) {
-                $user = User::find($request->user_id);
-            }
-
             if (!$user) {
                 return response()->json([
                     'success' => false,
@@ -89,11 +84,6 @@ class LogbookAtasanController extends Controller
         try {
             $user = auth()->user();
 
-            // Fallback ke test user jika tidak ada autentikasi
-            if (!$user && $request->has('user_id')) {
-                $user = User::find($request->user_id);
-            }
-
             if (!$user) {
                 return response()->json([
                     'success' => false,
@@ -144,11 +134,6 @@ class LogbookAtasanController extends Controller
         try {
             $user = auth()->user();
 
-            // Fallback ke test user jika tidak ada autentikasi
-            if (!$user && $request->has('user_id')) {
-                $user = User::find($request->user_id);
-            }
-
             if (!$user) {
                 return response()->json([
                     'success' => false,
@@ -193,11 +178,6 @@ class LogbookAtasanController extends Controller
 
         $user = auth()->user();
 
-        // Fallback ke test user jika tidak ada autentikasi
-        if (!$user && $request->has('user_id')) {
-            $user = User::find($request->user_id);
-        }
-
         if (!$user) {
             return response()->json([
                 'success' => false,
@@ -240,11 +220,6 @@ class LogbookAtasanController extends Controller
 
         $user = auth()->user();
 
-        // Fallback ke test user jika tidak ada autentikasi
-        if (!$user && $request->has('user_id')) {
-            $user = User::find($request->user_id);
-        }
-
         if (!$user) {
             return response()->json([
                 'success' => false,
@@ -280,11 +255,6 @@ class LogbookAtasanController extends Controller
 
         $user = auth()->user();
 
-        // Fallback ke test user jika tidak ada autentikasi
-        if (!$user && $request->has('user_id')) {
-            $user = User::find($request->user_id);
-        }
-
         if (!$user) {
             return response()->json([
                 'success' => false,
@@ -312,11 +282,6 @@ class LogbookAtasanController extends Controller
     public function getUnitSummary(Request $request)
     {
         $user = auth()->user();
-
-        // Fallback ke test user jika tidak ada autentikasi
-        if (!$user && $request->has('user_id')) {
-            $user = User::find($request->user_id);
-        }
 
         if (!$user) {
             return response()->json([

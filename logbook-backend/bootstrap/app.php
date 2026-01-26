@@ -18,7 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
-            'jwt.auth' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
+            'auth.jwt' => \App\Http\Middleware\JwtAuthDev::class,
             'jwt.refresh' => \Tymon\JWTAuth\Http\Middleware\RefreshToken::class,
         ]);
     })

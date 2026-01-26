@@ -42,14 +42,9 @@ export const useLogbookAdminStore = defineStore(adminLogbookAdminStore, {
   },
   actions: {
     async callUnits(keyword: string, page: number) {
-      const userId = import.meta.env.VITE_TEST_USER_ID
-        ? Number(import.meta.env.VITE_TEST_USER_ID)
-        : undefined
-
       let url = unitsListUrl()
       const params = new URLSearchParams()
 
-      if (userId) params.append('user_id', userId.toString())
       if (keyword) params.append('keyword', keyword)
       params.append('page', page.toString())
       params.append('per_page', '10')
@@ -83,14 +78,9 @@ export const useLogbookAdminStore = defineStore(adminLogbookAdminStore, {
       this.units = paginatedRequestState<UnitData[]>([])
     },
     async callAllPegawai(keyword: string, page: number) {
-      const userId = import.meta.env.VITE_TEST_USER_ID
-        ? Number(import.meta.env.VITE_TEST_USER_ID)
-        : undefined
-
       let url = allPegawaiUrl()
       const params = new URLSearchParams()
 
-      if (userId) params.append('user_id', userId.toString())
       if (keyword) params.append('keyword', keyword)
       params.append('page', page.toString())
       params.append('per_page', '10')
@@ -121,14 +111,9 @@ export const useLogbookAdminStore = defineStore(adminLogbookAdminStore, {
       }
     },
     async callUnitPegawai(unitCode: string, keyword: string, page: number) {
-      const userId = import.meta.env.VITE_TEST_USER_ID
-        ? Number(import.meta.env.VITE_TEST_USER_ID)
-        : undefined
-
       let url = unitPegawaiUrl(unitCode)
       const params = new URLSearchParams()
 
-      if (userId) params.append('user_id', userId.toString())
       if (keyword) params.append('keyword', keyword)
       params.append('page', page.toString())
       params.append('per_page', '10')
@@ -168,12 +153,7 @@ export const useLogbookAdminStore = defineStore(adminLogbookAdminStore, {
       this.currentPegawaiId = pegawaiId
       this.currentFilters = filters || null
 
-      const userId = import.meta.env.VITE_TEST_USER_ID
-        ? Number(import.meta.env.VITE_TEST_USER_ID)
-        : undefined
-
       const url = pegawaiLogsAdminUrl(pegawaiId, {
-        user_id: userId,
         start_date: filters?.start_date,
         end_date: filters?.end_date
       })
@@ -200,15 +180,7 @@ export const useLogbookAdminStore = defineStore(adminLogbookAdminStore, {
       this.pegawaiLogs = requestState<LogbookAdminData[]>([])
     },
     async callLogDetail(logId: number) {
-      const userId = import.meta.env.VITE_TEST_USER_ID
-        ? Number(import.meta.env.VITE_TEST_USER_ID)
-        : undefined
-
-      let url = detailLogAdminUrl(logId)
-      if (userId) {
-        url += `?user_id=${userId}`
-      }
-
+      const url = detailLogAdminUrl(logId)
       this.logDetail.status = 'loading'
       this.logDetail.errorMessage = null
       try {
@@ -226,15 +198,7 @@ export const useLogbookAdminStore = defineStore(adminLogbookAdminStore, {
       this.logDetail = requestState<LogbookAdminData | null>(null)
     },
     async callSummary() {
-      const userId = import.meta.env.VITE_TEST_USER_ID
-        ? Number(import.meta.env.VITE_TEST_USER_ID)
-        : undefined
-
-      let url = summaryAdminUrl()
-      if (userId) {
-        url += `?user_id=${userId}`
-      }
-
+      const url = summaryAdminUrl()
       this.summary.status = 'loading'
       this.summary.errorMessage = null
       try {
@@ -252,14 +216,7 @@ export const useLogbookAdminStore = defineStore(adminLogbookAdminStore, {
       this.summary = requestState<SummaryAdminData | null>(null)
     },
     async downloadAbkReport(year: number) {
-      const userId = import.meta.env.VITE_TEST_USER_ID
-        ? Number(import.meta.env.VITE_TEST_USER_ID)
-        : undefined
-
-      let url = downloadAbkReportUrl(year)
-      if (userId) {
-        url += `&user_id=${userId}`
-      }
+      const url = downloadAbkReportUrl(year)
 
       try {
         const response = await getRequest(url, {

@@ -40,10 +40,7 @@ export const useLogbookKatimStore = defineStore(pengolahLogbookKatimStore, {
   },
   actions: {
     async callRecords(keyword: string, page: number) {
-      const userId = import.meta.env.VITE_TEST_USER_ID
-        ? Number(import.meta.env.VITE_TEST_USER_ID)
-        : undefined
-      const url = recordsLogbookKatimUrl(keyword, page, userId)
+      const url = recordsLogbookKatimUrl(keyword, page)
       log(`url: ${url}`)
       this.records.status = 'loading'
       this.records.errorMessage = null
@@ -70,10 +67,7 @@ export const useLogbookKatimStore = defineStore(pengolahLogbookKatimStore, {
       this.records = requestState<LogbookKatimData[]>([])
     },
     async callTeamMembers() {
-      const userId = import.meta.env.VITE_TEST_USER_ID
-        ? Number(import.meta.env.VITE_TEST_USER_ID)
-        : undefined
-      const url = `${teamMembersUrl()}${userId ? `?user_id=${userId}` : ''}`
+      const url = teamMembersUrl()
       this.teamMembers.status = 'loading'
       this.teamMembers.errorMessage = null
       try {
@@ -103,12 +97,7 @@ export const useLogbookKatimStore = defineStore(pengolahLogbookKatimStore, {
       this.currentMemberId = memberId
       this.currentFilters = filters || null
 
-      const userId = import.meta.env.VITE_TEST_USER_ID
-        ? Number(import.meta.env.VITE_TEST_USER_ID)
-        : undefined
-
       const url = memberLogsUrl(memberId, {
-        user_id: userId,
         start_date: filters?.start_date,
         end_date: filters?.end_date
       })
@@ -133,15 +122,11 @@ export const useLogbookKatimStore = defineStore(pengolahLogbookKatimStore, {
       this.memberLogs = requestState<LogbookKatimData[]>([])
     },
     async callAdd(values: Record<string, any>) {
-      const userId = import.meta.env.VITE_TEST_USER_ID
-        ? Number(import.meta.env.VITE_TEST_USER_ID)
-        : undefined
       const url = addLogbookUrl()
-      const data = { ...values, user_id: userId }
-      log(`url: ${url} | values: ${JSON.stringify(data)}`)
+      log(`url: ${url} | values: ${JSON.stringify(values)}`)
       this.add.status = 'loading'
       this.add.errorMessage = null
-      const formData = mapFormData(new FormData(), data) as FormData
+      const formData = mapFormData(new FormData(), values) as FormData
       try {
         if (dummy) {
           await new Promise((resolve) => setTimeout(resolve, 500))
@@ -159,15 +144,7 @@ export const useLogbookKatimStore = defineStore(pengolahLogbookKatimStore, {
       this.add = requestState()
     },
     async callUpdateCatatanKatim(logId: number, catatan: string) {
-      const userId = import.meta.env.VITE_TEST_USER_ID
-        ? Number(import.meta.env.VITE_TEST_USER_ID)
-        : undefined
-
-      let url = updateCatatanKatimUrl(logId)
-      if (userId) {
-        url += `?user_id=${userId}`
-      }
-
+      const url = updateCatatanKatimUrl(logId)
       const data = { catatan_katim: catatan }
 
       log(`url: ${url} | data: ${JSON.stringify(data)}`)

@@ -24,10 +24,7 @@ export const useLogbookStore = defineStore(pegawaiLogbookStore, {
   },
   actions: {
     async callRecords(keyword: string, page: number) {
-      const userId = import.meta.env.VITE_TEST_USER_ID
-        ? Number(import.meta.env.VITE_TEST_USER_ID)
-        : undefined
-      const url = recordsLogbookUrl(keyword, page, userId)
+      const url = recordsLogbookUrl(keyword, page)
       log(`url: ${url}`)
       this.records.status = 'loading'
       this.records.errorMessage = null
@@ -54,15 +51,11 @@ export const useLogbookStore = defineStore(pegawaiLogbookStore, {
       this.records = requestState<LogbookData[]>([])
     },
     async callAdd(values: Record<string, any>) {
-      const userId = import.meta.env.VITE_TEST_USER_ID
-        ? Number(import.meta.env.VITE_TEST_USER_ID)
-        : undefined
       const url = addLogbookUrl()
-      const data = { ...values, user_id: userId }
-      log(`url: ${url} | values: ${JSON.stringify(data)}`)
+      log(`url: ${url} | values: ${JSON.stringify(values)}`)
       this.add.status = 'loading'
       this.add.errorMessage = null
-      const formData = mapFormData(new FormData(), data) as FormData
+      const formData = mapFormData(new FormData(), values) as FormData
       try {
         if (dummy) {
           await new Promise((resolve) => setTimeout(resolve, 500))

@@ -21,11 +21,6 @@ class LogbookAdminController extends Controller
         try {
             $user = auth()->user();
 
-            // Fallback ke test user jika tidak ada autentikasi
-            if (!$user && $request->has('user_id')) {
-                $user = User::find($request->user_id);
-            }
-
             if (!$user) {
                 return response()->json([
                     'success' => false,
@@ -112,11 +107,6 @@ class LogbookAdminController extends Controller
         try {
             $user = auth()->user();
 
-            // Fallback ke test user jika tidak ada autentikasi
-            if (!$user && $request->has('user_id')) {
-                $user = User::find($request->user_id);
-            }
-
             if (!$user) {
                 return response()->json([
                     'success' => false,
@@ -185,11 +175,6 @@ class LogbookAdminController extends Controller
         try {
             $user = auth()->user();
 
-            // Fallback ke test user jika tidak ada autentikasi
-            if (!$user && $request->has('user_id')) {
-                $user = User::find($request->user_id);
-            }
-
             if (!$user) {
                 return response()->json([
                     'success' => false,
@@ -257,11 +242,6 @@ class LogbookAdminController extends Controller
         try {
             $user = auth()->user();
 
-            // Fallback ke test user jika tidak ada autentikasi
-            if (!$user && $request->has('user_id')) {
-                $user = User::find($request->user_id);
-            }
-
             if (!$user) {
                 return response()->json([
                     'success' => false,
@@ -311,11 +291,6 @@ class LogbookAdminController extends Controller
         try {
             $user = auth()->user();
 
-            // Fallback ke test user jika tidak ada autentikasi
-            if (!$user && $request->has('user_id')) {
-                $user = User::find($request->user_id);
-            }
-
             if (!$user) {
                 return response()->json([
                     'success' => false,
@@ -354,11 +329,6 @@ class LogbookAdminController extends Controller
     {
         try {
             $user = auth()->user();
-
-            // Fallback ke test user jika tidak ada autentikasi
-            if (!$user && $request->has('user_id')) {
-                $user = User::find($request->user_id);
-            }
 
             if (!$user) {
                 return response()->json([
@@ -410,11 +380,6 @@ class LogbookAdminController extends Controller
     {
         try {
             $user = auth()->user();
-
-            // Fallback ke test user jika tidak ada autentikasi
-            if (!$user && $request->has('user_id')) {
-                $user = User::find($request->user_id);
-            }
 
             if (!$user) {
                 return response()->json([

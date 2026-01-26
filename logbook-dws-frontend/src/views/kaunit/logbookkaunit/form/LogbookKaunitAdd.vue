@@ -131,7 +131,9 @@
 
     <!-- Action Buttons -->
     <div v-if="!readOnly" class="flex gap-3">
+      <!-- Show reject button only if mode is 'reject' or 'both' -->
       <ButtonDefault
+        v-if="mode === 'reject' || mode === 'both'"
         variant="danger"
         customClass="flex-1"
         @click="handleReject"
@@ -140,7 +142,9 @@
       >
         Tolak
       </ButtonDefault>
+      <!-- Show approve button only if mode is 'approve' or 'both' -->
       <ButtonDefault
+        v-if="mode === 'approve' || mode === 'both'"
         variant="warning"
         customClass="flex-1"
         @click="handleApprove"
@@ -185,6 +189,10 @@ const props = defineProps({
   readOnly: {
     type: Boolean,
     default: false
+  },
+  mode: {
+    type: String as PropType<'approve' | 'reject' | 'both'>,
+    default: 'both'
   },
   onApprove: {
     type: Function as PropType<(catatan: string, logId: number) => Promise<void>>,

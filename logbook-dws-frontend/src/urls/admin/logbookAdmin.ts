@@ -13,7 +13,6 @@ export const unitPegawaiUrl = (unitCode: string) => {
 export const pegawaiLogsAdminUrl = (
   pegawaiId: number,
   params?: {
-    user_id?: number
     start_date?: string
     end_date?: string
   }
@@ -21,7 +20,6 @@ export const pegawaiLogsAdminUrl = (
   let url = `/logbook-admin/pegawai/${pegawaiId}/logs`
   const queryParams = new URLSearchParams()
 
-  if (params?.user_id) queryParams.append('user_id', params.user_id.toString())
   if (params?.start_date) queryParams.append('start_date', params.start_date)
   if (params?.end_date) queryParams.append('end_date', params.end_date)
 

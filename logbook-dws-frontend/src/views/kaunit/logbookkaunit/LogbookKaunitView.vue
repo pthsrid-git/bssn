@@ -155,7 +155,10 @@ const viewLogDetail = (log: LogbookKaunitData) => {
       record: log,
       pegawaiName: selectedPegawai.value?.nama,
       pegawaiNip: selectedPegawai.value?.nip,
-      readOnly: false
+      readOnly: false,
+      mode: 'both',
+      onApprove: approveCatatanKaunit,
+      onReject: rejectCatatanKaunit
     }
   );
 };
@@ -164,6 +167,7 @@ const approveCatatanKaunit = async (catatan: string, logId: number) => {
   try {
     await logbookkaunitstore.callApproveLog(logId, catatan);
     pageDefault.value?.closeDrawerDefault();
+    await loadPegawaiLogs();
   } catch (error) {
     // Error handled by store
   }
@@ -173,6 +177,7 @@ const rejectCatatanKaunit = async (catatan: string, logId: number) => {
   try {
     await logbookkaunitstore.callRejectLog(logId, catatan);
     pageDefault.value?.closeDrawerDefault();
+    await loadPegawaiLogs();
   } catch (error) {
     // Error handled by store
   }
@@ -186,8 +191,8 @@ const handleApprove = async (activity: LogbookKaunitData) => {
       record: activity,
       pegawaiName: selectedPegawai.value?.nama,
       pegawaiNip: selectedPegawai.value?.nip,
-      onApprove: approveCatatanKaunit,
-      onReject: rejectCatatanKaunit
+      mode: 'approve',
+      onApprove: approveCatatanKaunit
     }
   );
 };
@@ -200,7 +205,7 @@ const handleReject = async (activity: LogbookKaunitData) => {
       record: activity,
       pegawaiName: selectedPegawai.value?.nama,
       pegawaiNip: selectedPegawai.value?.nip,
-      onApprove: approveCatatanKaunit,
+      mode: 'reject',
       onReject: rejectCatatanKaunit
     }
   );

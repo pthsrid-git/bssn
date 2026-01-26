@@ -1,9 +1,5 @@
-export const recordsLogbookUrl = (keyword: string, page: number, userId?: number) => {
-  let url = `/logbook?keyword=${keyword}&page=${page}`
-  if (userId) {
-    url += `&user_id=${userId}`
-  }
-  return url
+export const recordsLogbookUrl = (keyword: string, page: number) => {
+  return `/logbook?keyword=${keyword}&page=${page}`
 }
 export const addLogbookUrl = () => {
   return `/logbook`
